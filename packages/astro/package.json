@@ -1,0 +1,64 @@
+{
+  "name": "@brandcloud/astro",
+  "version": "0.9.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Astro marketing components with zero client JavaScript by default, styled only with @brandcloud/tokens.",
+  "type": "module",
+  "keywords": [
+    "astro-component",
+    "withastro",
+    "brand-ui"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.astro"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./components/*.astro": "./src/components/*.astro",
+    "./copy-types": {
+      "types": "./src/copy-types.ts",
+      "default": "./src/copy-types.ts"
+    },
+    "./lib": {
+      "types": "./src/lib/index.ts",
+      "default": "./src/lib/index.ts"
+    },
+    "./styles/base.css": "./src/styles/base.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "!src/**/*.test.ts",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "typecheck": "astro check",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@brandcloud/tokens": "^0.9.0 || ^1.0.0",
+    "astro": "^7.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@brandcloud/tokens": "workspace:*",
+    "astro": "^7.3.5",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zammi1/brandcloud.git",
+    "directory": "packages/astro"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

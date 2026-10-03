@@ -1,0 +1,54 @@
+{
+  "name": "@brandcloud/antipatterns",
+  "version": "0.9.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Rules, a detector and bad/good example pairs for the visual tells of AI-generated web design.",
+  "type": "module",
+  "bin": {
+    "brand-detect": "./detect.mjs"
+  },
+  "exports": {
+    ".": "./lib/engine.mjs",
+    "./rules.json": "./rules.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "detect.mjs",
+    "lib",
+    "rules.json",
+    "research/sources.json",
+    "research/TAXONOMY.md",
+    "README.md",
+    "AGENTS.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "detect": "node detect.mjs",
+    "test": "node --test --test-reporter=spec test/*.test.mjs",
+    "test:rules": "node --test test/rules.test.mjs",
+    "pairs": "node scripts/build-pairs.mjs",
+    "render": "node scripts/render-pairs.mjs",
+    "gallery": "node scripts/build-gallery.mjs",
+    "matrix": "node scripts/matrix.mjs",
+    "build:pairs": "node scripts/build-pairs.mjs && node scripts/render-assets.mjs && node scripts/render-pairs.mjs && node scripts/build-taxonomy.mjs && node scripts/build-gallery.mjs"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.12.0"
+  },
+  "keywords": [
+    "design",
+    "lint",
+    "accessibility",
+    "ai",
+    "detector"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zammi1/brandcloud.git",
+    "directory": "packages/antipatterns"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

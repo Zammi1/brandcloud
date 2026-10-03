@@ -1,0 +1,59 @@
+/*
+ * @brandcloud/motion View Transitions recipes. Opt-in: importing this file turns on cross-document
+ * transitions for same-origin navigations (MPA, plain Astro without <ClientRouter />).
+ * With Astro's <ClientRouter />, skip the @view-transition rule (the router drives transitions)
+ * and keep the pseudo-element timing below.
+ *
+ * Name the one or two elements that should morph between pages, e.g.
+ *   <img style="view-transition-name: case-hero" class="vt-morph">
+ * Everything else gets a short cross-fade. Never name every card: one shared element per page.
+ */
+@view-transition {
+  navigation: auto;
+}
+
+/* Page cross-fade: short and quiet. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--brand-motion-duration-normal, 220ms);
+  animation-timing-function: var(--brand-motion-ease-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* Shared elements that morph between states or pages. */
+.vt-morph {
+  view-transition-class: brand-morph;
+}
+::view-transition-group(.brand-morph) {
+  animation-duration: var(--brand-motion-duration-slower, 480ms);
+  animation-timing-function: var(--brand-motion-ease-move, cubic-bezier(0.65, 0, 0.35, 1));
+}
+
+/* Keep the header still while the page underneath changes. */
+.vt-static {
+  view-transition-name: site-header;
+}
+::view-transition-group(site-header) {
+  animation: none;
+}
+
+/* Reduced motion: no morphing movement and no resizing, but keep a short cross-fade so the
+   change is still visible (not a hard cut). The group snaps to its end box; the old and new
+   snapshots fade over 140ms. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: var(--brand-motion-duration-fast, 140ms) !important;
+    animation-timing-function: linear !important;
+  }
+}
+:root[data-motion="reduce"]::view-transition-group(*) {
+  animation-duration: 0s !important;
+}
+:root[data-motion="reduce"]::view-transition-old(*),
+:root[data-motion="reduce"]::view-transition-new(*) {
+  animation-duration: var(--brand-motion-duration-fast, 140ms) !important;
+  animation-timing-function: linear !important;
+}

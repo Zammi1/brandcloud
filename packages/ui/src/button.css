@@ -1,0 +1,350 @@
+/*
+  Button family. Markup contract (also used by raw `.brand-button` markup in Dialog, Drawer, StickySaveBar):
+    data-tone       brand | ink | neutral | danger | whatsapp | level | quiet (legacy: neutral ghost)
+    data-appearance depth | solid | outline | ghost   (omit to let the brand decide)
+    data-level      sky | blue | navy | pearl | obsidian (with data-tone="level")
+    data-size       sm | md | lg
+
+  Default appearance when data-appearance is omitted:
+    - level tone: depth (offer levels are tonal by definition)
+    - quiet tone: ghost
+    - every other tone: solid, or depth inside any [data-button-appearance="depth"] ancestor.
+
+  Depth is a light model: one hue, lighter top to deeper bottom, a thin top sheen and rim,
+  a soft same-hue halo underneath. Colours come from tokens (`action-depth-*`, `level-*`,
+  `action-ink*`, `whatsapp*`); the fallbacks are derived from existing semantic tokens.
+  No arrows inside buttons. The only icon allowed is a channel glyph (WhatsApp, phone).
+*/
+@layer components {
+  .brand-button {
+    /* Palette: set per tone. */
+    --brand-button-fill: var(--brand-accent);
+    --brand-button-fill-hover: var(--brand-accent-hover);
+    --brand-button-on: var(--brand-accent-text);
+    --brand-button-line: transparent;
+    --brand-button-ink: var(--brand-accent);
+    --brand-button-ink-hover: var(--brand-accent-hover);
+    --brand-button-ghost-hover: var(--brand-accent-subtle);
+    --brand-button-from: var(--brand-action-depth-from, color-mix(in srgb, var(--brand-accent) 84%, white));
+    --brand-button-to: var(--brand-action-depth-to, var(--brand-accent));
+    --brand-button-glow: var(--brand-action-depth-glow, transparent);
+    --brand-button-sheen: var(--brand-action-depth-sheen, color-mix(in srgb, white 8%, transparent));
+    --brand-button-rim: color-mix(in srgb, white 35%, transparent);
+    --brand-button-halo: var(--brand-button-to);
+    --brand-button-contact: color-mix(in srgb, var(--brand-button-to) 60%, black);
+    --brand-button-depth-on: var(--brand-action-depth-text, var(--brand-accent-text));
+    --brand-button-depth-line: transparent;
+    --brand-button-depth-shadow:
+      0 0 0 1px var(--brand-button-depth-line),
+      0 2px 3px color-mix(in srgb, var(--brand-button-contact) 35%, transparent),
+      0 12px 28px -8px color-mix(in srgb, var(--brand-button-halo) 50%, transparent);
+    --brand-button-depth-shadow-hover:
+      0 0 0 1px var(--brand-button-depth-line),
+      0 2px 3px color-mix(in srgb, var(--brand-button-contact) 35%, transparent),
+      0 12px 28px -8px color-mix(in srgb, var(--brand-button-halo) 68%, transparent);
+
+    /* Recipe: set per appearance. Solid is the base. */
+    --brand-button-bg: var(--brand-button-fill);
+    --brand-button-bg-hover: var(--brand-button-fill-hover);
+    --brand-button-fg: var(--brand-button-on);
+    --brand-button-fg-hover: var(--brand-button-fg);
+    --brand-button-border: var(--brand-button-line);
+    --brand-button-border-hover: var(--brand-button-border);
+    --brand-button-shadow: none;
+    --brand-button-shadow-hover: var(--brand-button-shadow);
+
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border: 1px solid var(--brand-button-border);
+    border-radius: var(--brand-radius-sm);
+    padding-inline: 1rem;
+    background: var(--brand-button-bg);
+    box-shadow: var(--brand-button-shadow);
+    color: var(--brand-button-fg);
+    font-weight: 650;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background var(--brand-duration-fast),
+      transform var(--brand-duration-fast),
+      border-color var(--brand-duration-fast),
+      box-shadow var(--brand-duration-fast),
+      color var(--brand-duration-fast),
+      filter var(--brand-duration-fast);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .brand-button__label { display: inline-flex; min-inline-size: 0; align-items: center; gap: 0.5em; }
+  .brand-button svg { inline-size: 1.125em; block-size: 1.125em; flex: none; }
+
+  .brand-button:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: var(--brand-button-border-hover);
+    background: var(--brand-button-bg-hover);
+    box-shadow: var(--brand-button-shadow-hover);
+    color: var(--brand-button-fg-hover);
+    transform: translateY(-1px);
+  }
+  .brand-button:active:not(:disabled, [aria-disabled="true"]) { transform: translateY(0) scale(0.98); }
+  .brand-button:focus-visible { outline: 2px solid var(--brand-focus); outline-offset: 2px; }
+  .brand-button:disabled,
+  .brand-button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.58; }
+  .brand-button[aria-busy="true"] { cursor: progress; }
+  .brand-button[data-size="sm"] { min-height: 2.25rem; padding-inline: 0.75rem; font-size: 0.875rem; }
+  .brand-button[data-size="lg"] { min-height: 3.25rem; padding-inline: 1.4rem; font-size: 1.05rem; }
+
+  /* Toggle buttons. */
+  .brand-button[aria-pressed="true"] {
+    --brand-button-shadow: inset 0 2px 4px color-mix(in srgb, black 22%, transparent);
+    filter: brightness(0.94);
+  }
+
+  .brand-button__spinner {
+    width: 1em;
+    height: 1em;
+    flex: none;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 999px;
+    animation: brand-spin 0.7s linear infinite;
+  }
+  @keyframes brand-spin { to { transform: rotate(360deg); } }
+
+  /* Tones: palette only. */
+  .brand-button[data-tone="neutral"],
+  .brand-button[data-tone="quiet"] {
+    --brand-button-fill: var(--brand-surface);
+    --brand-button-fill-hover: var(--brand-surface-muted);
+    --brand-button-on: var(--brand-text);
+    --brand-button-line: var(--brand-border);
+    --brand-button-ink: var(--brand-text);
+    --brand-button-ink-hover: var(--brand-accent);
+    --brand-button-ghost-hover: var(--brand-surface-muted);
+    --brand-button-from: var(--brand-surface-raised);
+    --brand-button-to: var(--brand-surface-muted);
+    --brand-button-glow: transparent;
+    --brand-button-sheen: color-mix(in srgb, white 70%, transparent);
+    --brand-button-rim: white;
+    --brand-button-halo: var(--brand-border-strong);
+    --brand-button-contact: var(--brand-border-strong);
+    --brand-button-depth-on: var(--brand-text);
+    --brand-button-depth-line: var(--brand-border);
+  }
+  .brand-button[data-tone="ink"] {
+    --brand-button-fill: var(--brand-action-ink, var(--brand-text));
+    --brand-button-fill-hover: var(--brand-action-ink-hover, color-mix(in srgb, var(--brand-text) 86%, var(--brand-surface)));
+    --brand-button-on: var(--brand-action-ink-text, var(--brand-canvas));
+    --brand-button-ink: var(--brand-action-ink, var(--brand-text));
+    --brand-button-ink-hover: var(--brand-action-ink-hover, var(--brand-text));
+    --brand-button-ghost-hover: var(--brand-surface-muted);
+    --brand-button-from: color-mix(in srgb, var(--brand-action-ink, var(--brand-text)) 82%, white);
+    --brand-button-to: var(--brand-action-ink, var(--brand-text));
+    --brand-button-glow: transparent;
+    --brand-button-sheen: color-mix(in srgb, white 14%, transparent);
+    --brand-button-rim: color-mix(in srgb, white 22%, transparent);
+    --brand-button-halo: black;
+    --brand-button-contact: black;
+    --brand-button-depth-on: var(--brand-action-ink-text, var(--brand-canvas));
+  }
+  .brand-button[data-tone="danger"] {
+    --brand-button-fill: var(--brand-danger);
+    --brand-button-fill-hover: var(--brand-danger);
+    --brand-button-on: white;
+    --brand-button-ink: var(--brand-danger);
+    --brand-button-ink-hover: var(--brand-danger);
+    --brand-button-ghost-hover: var(--brand-status-danger-subtle);
+    --brand-button-from: color-mix(in srgb, var(--brand-danger) 84%, white);
+    --brand-button-to: var(--brand-danger);
+    --brand-button-glow: transparent;
+    --brand-button-sheen: color-mix(in srgb, white 12%, transparent);
+    --brand-button-depth-on: white;
+  }
+  .brand-button[data-tone="whatsapp"] {
+    --brand-button-fill: var(--brand-whatsapp, var(--brand-status-success));
+    --brand-button-fill-hover: var(--brand-whatsapp-hover, color-mix(in srgb, var(--brand-status-success) 86%, black));
+    --brand-button-on: var(--brand-whatsapp-text, white);
+    --brand-button-ink: color-mix(in srgb, var(--brand-whatsapp, var(--brand-status-success)) 60%, var(--brand-text));
+    --brand-button-ink-hover: var(--brand-text);
+    --brand-button-ghost-hover: var(--brand-status-success-subtle);
+    --brand-button-from: color-mix(in srgb, var(--brand-whatsapp, var(--brand-status-success)) 80%, white);
+    --brand-button-to: var(--brand-whatsapp, var(--brand-status-success));
+    --brand-button-glow: transparent;
+    --brand-button-sheen: color-mix(in srgb, white 20%, transparent);
+    --brand-button-rim: color-mix(in srgb, white 60%, transparent);
+    --brand-button-contact: color-mix(in srgb, var(--brand-whatsapp-hover, var(--brand-status-success)) 50%, black);
+    --brand-button-depth-on: var(--brand-whatsapp-text, white);
+  }
+
+  /* Offer levels: highlight (top), base (bottom), deep (contact shadow), halo (glow), text. */
+  .brand-button[data-tone="level"] {
+    --brand-button-level-highlight: var(--brand-level-blue-highlight, color-mix(in srgb, var(--brand-accent) 84%, white));
+    --brand-button-level-base: var(--brand-level-blue-base, var(--brand-accent));
+    --brand-button-level-deep: var(--brand-level-blue-deep, var(--brand-accent-hover));
+    --brand-button-level-halo: var(--brand-level-blue-halo, var(--brand-accent));
+    --brand-button-level-text: var(--brand-level-blue-text, var(--brand-accent-text));
+    --brand-button-fill: var(--brand-button-level-base);
+    --brand-button-fill-hover: var(--brand-button-level-deep);
+    --brand-button-on: var(--brand-button-level-text);
+    --brand-button-ink: color-mix(in srgb, var(--brand-button-level-base) 70%, var(--brand-text));
+    --brand-button-ink-hover: var(--brand-text);
+    --brand-button-ghost-hover: color-mix(in srgb, var(--brand-button-level-base) 10%, transparent);
+    --brand-button-from: var(--brand-button-level-highlight);
+    --brand-button-to: var(--brand-button-level-base);
+    --brand-button-glow: transparent;
+    --brand-button-sheen: color-mix(in srgb, white 14%, transparent);
+    --brand-button-rim: color-mix(in srgb, white 50%, transparent);
+    --brand-button-halo: var(--brand-button-level-halo);
+    --brand-button-contact: var(--brand-button-level-deep);
+    --brand-button-depth-on: var(--brand-button-level-text);
+  }
+  .brand-button[data-tone="level"][data-level="sky"] {
+    --brand-button-level-highlight: var(--brand-level-sky-highlight, color-mix(in srgb, var(--brand-accent) 45%, white));
+    --brand-button-level-base: var(--brand-level-sky-base, color-mix(in srgb, var(--brand-accent) 68%, white));
+    --brand-button-level-deep: var(--brand-level-sky-deep, var(--brand-accent));
+    --brand-button-level-halo: var(--brand-level-sky-halo, var(--brand-accent));
+    --brand-button-level-text: var(--brand-level-sky-text, var(--brand-text));
+    --brand-button-sheen: color-mix(in srgb, white 22%, transparent);
+    --brand-button-rim: color-mix(in srgb, white 65%, transparent);
+  }
+  .brand-button[data-tone="level"][data-level="navy"] {
+    --brand-button-level-highlight: var(--brand-level-navy-highlight, var(--brand-accent-hover));
+    --brand-button-level-base: var(--brand-level-navy-base, color-mix(in srgb, var(--brand-accent-hover) 62%, black));
+    --brand-button-level-deep: var(--brand-level-navy-deep, color-mix(in srgb, var(--brand-accent-hover) 30%, black));
+    --brand-button-level-halo: var(--brand-level-navy-halo, var(--brand-accent-hover));
+    --brand-button-level-text: var(--brand-level-navy-text, white);
+    --brand-button-sheen: color-mix(in srgb, white 16%, transparent);
+    --brand-button-rim: color-mix(in srgb, white 35%, transparent);
+  }
+  .brand-button[data-tone="level"][data-level="pearl"] {
+    --brand-button-level-highlight: var(--brand-level-pearl-highlight, var(--brand-surface-raised));
+    --brand-button-level-base: var(--brand-level-pearl-base, var(--brand-surface-muted));
+    --brand-button-level-deep: var(--brand-level-pearl-deep, var(--brand-border-strong));
+    --brand-button-level-halo: var(--brand-level-pearl-halo, var(--brand-border-strong));
+    --brand-button-level-text: var(--brand-level-pearl-text, var(--brand-text));
+    --brand-button-sheen: color-mix(in srgb, white 70%, transparent);
+    --brand-button-rim: white;
+    --brand-button-depth-line: var(--brand-border);
+    --brand-button-line: var(--brand-border);
+  }
+  .brand-button[data-tone="level"][data-level="obsidian"] {
+    --brand-button-level-highlight: var(--brand-level-obsidian-highlight, color-mix(in srgb, var(--brand-text) 82%, white));
+    --brand-button-level-base: var(--brand-level-obsidian-base, var(--brand-text));
+    --brand-button-level-deep: var(--brand-level-obsidian-deep, black);
+    --brand-button-level-halo: var(--brand-level-obsidian-halo, black);
+    --brand-button-level-text: var(--brand-level-obsidian-text, var(--brand-canvas));
+    --brand-button-sheen: color-mix(in srgb, white 14%, transparent);
+    --brand-button-rim: color-mix(in srgb, white 22%, transparent);
+  }
+
+  /* Brand primary depth can be tuned as a whole by the brand's shadow tokens. */
+  .brand-button:is([data-tone="brand"], :not([data-tone])) {
+    --brand-button-depth-shadow: var(--brand-shadow-action-depth,
+      0 2px 3px color-mix(in srgb, var(--brand-button-contact) 35%, transparent),
+      0 12px 28px -8px color-mix(in srgb, var(--brand-button-halo) 50%, transparent));
+    --brand-button-depth-shadow-hover: var(--brand-shadow-action-depth-hover,
+      0 2px 3px color-mix(in srgb, var(--brand-button-contact) 35%, transparent),
+      0 12px 28px -8px color-mix(in srgb, var(--brand-button-halo) 68%, transparent));
+  }
+
+  /* Appearance: depth. */
+  .brand-button[data-appearance="depth"],
+  .brand-button[data-tone="level"]:not([data-appearance]),
+  :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]) {
+    --brand-button-depth-fill:
+      radial-gradient(65% 30% at 50% 100%, var(--brand-button-glow), transparent),
+      linear-gradient(var(--brand-button-from), var(--brand-button-to));
+    --brand-button-bg: var(--brand-button-depth-fill);
+    --brand-button-bg-hover: var(--brand-button-depth-fill);
+    --brand-button-fg: var(--brand-button-depth-on);
+    --brand-button-border: transparent;
+    --brand-button-shadow: var(--brand-button-depth-shadow);
+    --brand-button-shadow-hover: var(--brand-button-depth-shadow-hover);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .brand-button[data-appearance="depth"]::after,
+  .brand-button[data-tone="level"]:not([data-appearance])::after,
+  :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"])::after {
+    position: absolute;
+    z-index: -1;
+    inset: 1px;
+    border-radius: inherit;
+    background: radial-gradient(150% 100% at 50% 0%, var(--brand-button-sheen) 0%, color-mix(in srgb, var(--brand-button-sheen) 25%, transparent) 99%, transparent 100%) top / 100% 50% no-repeat;
+    box-shadow: inset 0 1.5px 0 var(--brand-button-rim);
+    content: "";
+    pointer-events: none;
+  }
+  .brand-button[data-appearance="depth"]:hover:not(:disabled, [aria-disabled="true"]),
+  .brand-button[data-tone="level"]:not([data-appearance]):hover:not(:disabled, [aria-disabled="true"]),
+  :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]):hover:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(1.04);
+    transform: none;
+  }
+  .brand-button[data-appearance="depth"]:active:not(:disabled, [aria-disabled="true"]),
+  .brand-button[data-tone="level"]:not([data-appearance]):active:not(:disabled, [aria-disabled="true"]),
+  :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]):active:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(0.95);
+  }
+  .brand-button[data-appearance="depth"]:is(:disabled, [aria-disabled="true"]),
+  .brand-button[data-tone="level"]:not([data-appearance]):is(:disabled, [aria-disabled="true"]),
+  :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]):is(:disabled, [aria-disabled="true"]) {
+    box-shadow: none;
+    filter: grayscale(0.7);
+    opacity: 0.5;
+  }
+  .brand-button[data-appearance="depth"]:focus-visible,
+  .brand-button[data-tone="level"]:not([data-appearance]):focus-visible,
+  :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]):focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+
+  /* Appearance: outline (quiet bordered action). */
+  .brand-button[data-appearance="outline"] {
+    --brand-button-bg: transparent;
+    --brand-button-bg-hover: transparent;
+    --brand-button-fg: var(--brand-button-ink);
+    --brand-button-fg-hover: var(--brand-button-ink-hover);
+    --brand-button-border: color-mix(in srgb, var(--brand-button-ink) 45%, var(--brand-border));
+    --brand-button-border-hover: var(--brand-button-ink-hover);
+  }
+  .brand-button[data-tone="neutral"][data-appearance="outline"] {
+    --brand-button-border: var(--brand-border-strong);
+  }
+
+  /* Appearance: ghost (text-weight action). Legacy tone="quiet" maps here. */
+  .brand-button[data-appearance="ghost"],
+  .brand-button[data-tone="quiet"]:not([data-appearance]) {
+    --brand-button-bg: transparent;
+    --brand-button-bg-hover: var(--brand-button-ghost-hover);
+    --brand-button-fg: var(--brand-button-ink);
+    --brand-button-border: transparent;
+  }
+  .brand-button[data-appearance="outline"][aria-pressed="true"],
+  .brand-button[data-appearance="ghost"][aria-pressed="true"],
+  .brand-button[data-tone="quiet"]:not([data-appearance])[aria-pressed="true"] {
+    --brand-button-bg: var(--brand-button-ghost-hover);
+    --brand-button-border: var(--brand-button-ink);
+    --brand-button-shadow: none;
+    filter: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-button { transition-duration: 0ms; }
+    .brand-button:is(:hover, :active):not(:disabled, [aria-disabled="true"]) { transform: none; }
+    .brand-button[data-appearance="depth"]:is(:hover, :active):not(:disabled, [aria-disabled="true"]),
+    .brand-button[data-tone="level"]:not([data-appearance]):is(:hover, :active):not(:disabled, [aria-disabled="true"]),
+    :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]):is(:hover, :active):not(:disabled, [aria-disabled="true"]) { transform: none; }
+    .brand-button__spinner { animation: none; }
+  }
+
+  @media (forced-colors: active) {
+    .brand-button { border-color: ButtonText; background: ButtonFace; color: ButtonText; box-shadow: none; forced-color-adjust: none; }
+    .brand-button::after { display: none; }
+    .brand-button:focus-visible { outline-color: Highlight; }
+    .brand-button:is(:disabled, [aria-disabled="true"]) { border-color: GrayText; color: GrayText; }
+  }
+}

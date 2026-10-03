@@ -1,0 +1,92 @@
+---
+/**
+ * Every page: the docs brand on <html>, self-hosted fonts, tokens, motion utilities, the header,
+ * a skip link and the footer. Product name from project.json (lib/site.ts), never typed here.
+ */
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/hanken-grotesk";
+import "@brandcloud/tokens/css";
+import "@brandcloud/tokens/themes.css";
+import "@brandcloud/motion/motion.css";
+import "../styles/site.css";
+import Navbar from "@brandcloud/astro/components/Navbar.astro";
+import Footer from "@brandcloud/astro/components/Footer.astro";
+import Logo from "../components/Logo.astro";
+import { PRODUCT, nav, footerColumns, M1_STUDIO, KIKO, REPO_URL } from "../lib/site";
+import { metadata } from "@brandcloud/tokens";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Section of the site for aria-current in the header. */
+  current?: string;
+  /** Hide the site header and footer (recipe pages render their own fictional business chrome). */
+  bare?: boolean;
+  /** Brand on <html>. Recipes use the example brands. */
+  brand?: string;
+}
+const { title, description, current, bare = false, brand = "docs" } = Astro.props;
+const fullTitle = title === PRODUCT ? title : `${title} | ${PRODUCT}`;
+const links = nav.map((l) => ({ ...l, current: current ? l.href === current : false }));
+const columns = [
+  ...footerColumns,
+  {
+    heading: "Elsewhere",
+    links: [
+      { label: "Source code on GitHub", href: REPO_URL },
+      { label: `Done for you: ${M1_STUDIO.name}`, href: M1_STUDIO.href },
+      { label: `Looking for a website chatbot? See ${KIKO.name}`, href: KIKO.href },
+    ],
+  },
+];
+const appearance = metadata.brands.find((b) => b.name === brand)?.appearance ?? "solid";
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+---
+<!doctype html>
+<html lang="en-GB" data-brand={brand} data-theme="light" data-button-appearance={appearance}>
+  <head>
+    <meta charset="utf-8" />
+    <!-- Cascade layer order for the whole site, declared before any stylesheet loads. -->
+    <style is:inline>@layer tokens, theme, base, components, brand-motion, utilities;</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // Remember the reduce-motion choice from the motion page across pages, before first paint.
+      try { if (localStorage.getItem("motion") === "reduce") document.documentElement.dataset.motion = "reduce"; } catch {}
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="s-skip" href="#main">Skip to content</a>
+    {!bare && (
+      <Navbar brandName={PRODUCT} links={links} cta={{ label: "Build your brand", short: "Build your brand", href: "/brand-builder/" }} tone="default">
+        <Logo slot="brand" />
+      </Navbar>
+    )}
+    <slot name="top" />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <slot name="bottom" />
+    {!bare && (
+      <Footer
+        brandName={PRODUCT}
+        tagline="Brand themes, components and checks for pages that look made by people. Open source under the MIT licence."
+        columns={columns}
+        legal={["Free and open source. Pro opens with the first public release.", "Example businesses on this site are fictional."]}
+      >
+        <Logo slot="brand" />
+      </Footer>
+    )}
+  </body>
+</html>
+
+<style>
+  main:focus { outline: none; }
+</style>

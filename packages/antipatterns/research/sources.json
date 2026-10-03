@@ -1,0 +1,487 @@
+{
+  "S01": {
+    "title": "Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500)",
+    "author": "Alan West / DEV Community",
+    "published": "2026-03-25",
+    "accessed": "2026-10-01",
+    "url": "https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p",
+    "patterns": [
+      "purple-gradient",
+      "inter-font",
+      "rounded-everything",
+      "icon-card-row"
+    ]
+  },
+  "S02": {
+    "title": "7 Signs a UI Has Been Vibe Coded (And How to Avoid Them)",
+    "author": "Jeff Humble / The Fountain Institute",
+    "published": "24 Apr (year not shown; footer 2026)",
+    "accessed": "2026-10-01",
+    "url": "https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui",
+    "patterns": [
+      "dark-neon",
+      "glow-blobs",
+      "emoji-icons",
+      "purple-gradient",
+      "card-overload",
+      "colored-border-card",
+      "status-dots"
+    ]
+  },
+  "S03": {
+    "title": "7 Tells that a UI is AI-Generated",
+    "author": "Jeff Humble / The Fountain Institute (newsletter)",
+    "published": "about Apr 2026 (\"6 months ago\")",
+    "accessed": "2026-10-01",
+    "url": "https://pages.thefountaininstitute.com/posts/7-tells-that-a-ui-is-ai-generated",
+    "patterns": [
+      "glow-blobs",
+      "dark-neon"
+    ]
+  },
+  "S04": {
+    "title": "Scoring Show HN submissions for AI design patterns",
+    "author": "Adrian Krebs / adriankrebs.ch",
+    "published": "2026-04-20",
+    "accessed": "2026-10-01",
+    "url": "https://www.adriankrebs.ch/blog/design-slop/",
+    "patterns": [
+      "inter-font",
+      "serif-italic-accent",
+      "purple-gradient",
+      "dark-neon",
+      "glow-shadows",
+      "eyebrow-pill",
+      "uppercase-kicker",
+      "colored-border-card",
+      "icon-card-row",
+      "numbered-steps",
+      "stat-strip",
+      "emoji-icons",
+      "shadcn-default",
+      "glassmorphism",
+      "centered-hero"
+    ]
+  },
+  "S05": {
+    "title": "Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments)",
+    "author": "Hacker News, submitted by hubraumhugo",
+    "published": "about Apr 2026 (\"5 months ago\")",
+    "accessed": "2026-10-01",
+    "url": "https://news.ycombinator.com/item?id=47864393",
+    "patterns": [
+      "purple-gradient",
+      "glow-blobs",
+      "emoji-icons",
+      "icon-card-row",
+      "colored-border-card",
+      "numbered-steps",
+      "em-dashes"
+    ]
+  },
+  "S06": {
+    "title": "AI Design Slop: 16 Patterns That Out Your App as Vibe-Coded",
+    "author": "Developers Digest (no byline)",
+    "published": "2026-04-22 (updated 2026-09-28)",
+    "accessed": "2026-10-01",
+    "url": "https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it",
+    "patterns": [
+      "shadcn-default",
+      "glassmorphism",
+      "colored-border-card",
+      "em-dashes",
+      "plus all S04 patterns"
+    ]
+  },
+  "S07": {
+    "title": "How to tell if a website is vibe coded (7 signs)",
+    "author": "Josh / VibeZero (vendor)",
+    "published": "2026-07-08 (updated 2026-09-29)",
+    "accessed": "2026-10-01",
+    "url": "https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded",
+    "patterns": [
+      "dark-neon",
+      "purple-gradient",
+      "inter-font",
+      "lucide-icons",
+      "shadcn-default",
+      "rounded-everything",
+      "builder-fingerprints"
+    ]
+  },
+  "S08": {
+    "title": "How to Keep Your Website From Looking Like Every Other Vibe Coded Website",
+    "author": "John Davenport / CodeMySpec (vendor)",
+    "published": "2026-07-26",
+    "accessed": "2026-10-01",
+    "url": "https://codemyspec.com/blog/vibe-coded-websites-look-the-same",
+    "patterns": [
+      "centered-hero",
+      "inter-font",
+      "eyebrow-pill",
+      "icon-card-row",
+      "shadcn-default",
+      "slate-zinc-greys",
+      "purple-gradient"
+    ]
+  },
+  "S09": {
+    "title": "Is That Vibe Coded? (free AI website detector)",
+    "author": "isthatvibecoded.com (vendor tool)",
+    "published": "undated",
+    "accessed": "2026-10-01",
+    "url": "https://isthatvibecoded.com/",
+    "patterns": [
+      "purple-gradient",
+      "glassmorphism",
+      "gradient-text",
+      "sparkles",
+      "emoji-icons",
+      "shadcn-default",
+      "lucide-icons",
+      "vague-copy"
+    ]
+  },
+  "S10": {
+    "title": "Why Do A Lot Of AI-Generated Websites Have Purple Vibes?",
+    "author": "Faturoti Kayode / AI in a Nutshell (newsletters.ai)",
+    "published": "2025-10-29",
+    "accessed": "2026-10-01",
+    "url": "https://newsletters.ai/p/ai-vs-purple",
+    "patterns": [
+      "purple-gradient"
+    ]
+  },
+  "S11": {
+    "title": "AI Purple Problem: Make Your UI Unmistakable",
+    "author": "Jainil Prajapati / DEV Community",
+    "published": "2025-10-08",
+    "accessed": "2026-10-01",
+    "url": "https://dev.to/jaainil/ai-purple-problem-make-your-ui-unmistakable-3ono",
+    "patterns": [
+      "dark-neon",
+      "purple-gradient",
+      "gradient-text"
+    ]
+  },
+  "S12": {
+    "title": "Why Does Every AI-Generated Website Look the Same? (Fifty Shades of Indigo)",
+    "author": "Paco Valdez / Paco's AI Lab (Substack)",
+    "published": "2025-11-10",
+    "accessed": "2026-10-01",
+    "url": "https://pacovaldez.substack.com/p/why-does-every-ai-generated-website",
+    "patterns": [
+      "purple-gradient"
+    ]
+  },
+  "S13": {
+    "title": "Why Do Most AI-Generated Websites Look the Same?",
+    "author": "Benedykt Michalski / Shuffle (vendor)",
+    "published": "2026-01-29",
+    "accessed": "2026-10-01",
+    "url": "https://shuffle.dev/blog/2026/01/why-do-most-ai-generated-websites-look-the-same/",
+    "patterns": [
+      "stock-section-order",
+      "icon-card-row"
+    ]
+  },
+  "S14": {
+    "title": "Improving frontend design through Skills",
+    "author": "Prithvi Rajasekaran, Justin Wei, Alexander Bricken / Anthropic (claude.com blog)",
+    "published": "2025-11-12",
+    "accessed": "2026-10-01",
+    "url": "https://claude.com/blog/improving-frontend-design-through-skills",
+    "patterns": [
+      "inter-font",
+      "purple-gradient",
+      "stock-section-order"
+    ]
+  },
+  "S15": {
+    "title": "AI Slop Fonts and Gradients: The Tells That Give Away AI Design",
+    "author": "925studios (vendor)",
+    "published": "2026-06-14 (body date)",
+    "accessed": "2026-10-01",
+    "url": "https://www.925studios.co/blog/ai-slop-design-tells",
+    "patterns": [
+      "purple-gradient",
+      "inter-font",
+      "icon-card-row",
+      "rounded-everything",
+      "glow-blobs",
+      "three-word-tagline"
+    ]
+  },
+  "S16": {
+    "title": "Why Your AI Keeps Building the Same Purple Gradient Website",
+    "author": "prg.sh (likely Pragnesh Gajjar)",
+    "published": "2025-10-26",
+    "accessed": "2026-10-01",
+    "url": "https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website",
+    "patterns": [
+      "inter-font",
+      "purple-gradient",
+      "centered-hero",
+      "icon-card-row",
+      "rounded-everything"
+    ]
+  },
+  "S19": {
+    "title": "How to Avoid Building Apps That Look Vibe Coded",
+    "author": "VibeMole (vendor)",
+    "published": "2026-07-01",
+    "accessed": "2026-10-01",
+    "url": "https://vibemole.com/resources/avoid-vibecoded-app-design",
+    "patterns": [
+      "card-overload",
+      "icon-card-row",
+      "stock-section-order",
+      "purple-gradient",
+      "glow-blobs",
+      "gradient-text",
+      "gradient-border",
+      "glassmorphism",
+      "eyebrow-pill",
+      "lucide-icons",
+      "colored-border-card",
+      "animated-gradient",
+      "fake-dashboard",
+      "fake-testimonials",
+      "fake-stats",
+      "fake-logos",
+      "buzzwords",
+      "shadcn-default"
+    ]
+  },
+  "S20": {
+    "title": "vibecoded-design-tells (Reddit-mined ranking)",
+    "author": "JCarterJohnson / GitHub",
+    "published": "undated (data 2020 to 2026)",
+    "accessed": "2026-10-01",
+    "url": "https://github.com/JCarterJohnson/vibecoded-design-tells",
+    "patterns": [
+      "shadcn-default",
+      "purple-gradient",
+      "gradient-text",
+      "dark-neon",
+      "emoji-icons",
+      "centered-hero",
+      "icon-card-row; counter-evidence for bento-grid",
+      "glassmorphism",
+      "glow-blobs"
+    ]
+  },
+  "S21": {
+    "title": "AI slop: 8 signs a website was generated by AI.",
+    "author": "Mathieu Thiry / TeneX Studio (vendor)",
+    "published": "2026-07-14",
+    "accessed": "2026-10-01",
+    "url": "https://tenex.studio/en/blog/ai-slop-ui-8-signes/",
+    "patterns": [
+      "em-dashes",
+      "eyebrow-pill",
+      "uppercase-kicker",
+      "gradient-text",
+      "animated-gradient",
+      "serif-italic-accent",
+      "numbered-steps",
+      "icon-card-row",
+      "fake-stats",
+      "fake-testimonials"
+    ]
+  },
+  "S22": {
+    "title": "How to tell if a website is AI-generated: 10 signs to check",
+    "author": "Slopdar (footer credits Mukund) (vendor tool)",
+    "published": "undated (2026)",
+    "accessed": "2026-10-01",
+    "url": "https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated",
+    "patterns": [
+      "shadcn-default",
+      "lucide-icons",
+      "buzzwords",
+      "em-dashes",
+      "three-word-tagline",
+      "stock-section-order",
+      "bento-grid",
+      "purple-gradient",
+      "glow-blobs",
+      "glassmorphism",
+      "inter-font",
+      "placeholder-leftovers"
+    ]
+  },
+  "S23": {
+    "title": "How to Tell If a Website Was Vibe Coded (A Developer's Checklist)",
+    "author": "aliakram / HustleToAI",
+    "published": "2026-08-16",
+    "accessed": "2026-10-01",
+    "url": "https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120",
+    "patterns": [
+      "purple-gradient",
+      "glassmorphism",
+      "fake-testimonials",
+      "icon-card-row",
+      "emoji-icons",
+      "glow-shadows",
+      "placeholder-leftovers",
+      "stale-copyright",
+      "rounded-everything"
+    ]
+  },
+  "S24": {
+    "title": "I Analyzed 100 Vibe-Coded Websites and Found These Common Mistakes",
+    "author": "Sergey (kaplich) / DEV Community (vendor)",
+    "published": "2025-08-06",
+    "accessed": "2026-10-01",
+    "url": "https://dev.to/kaplich/i-analyzed-100-vibe-coded-websites-and-found-these-common-mistakes-5275",
+    "patterns": [
+      "placeholder-leftovers",
+      "stale-copyright"
+    ]
+  },
+  "S25": {
+    "title": "AI Design Already Has a Cliché. You're Probably Shipping It.",
+    "author": "Alan Frigo / The AI Cliff (Substack)",
+    "published": "2026-04-22",
+    "accessed": "2026-10-01",
+    "url": "https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre",
+    "patterns": [
+      "serif-italic-accent",
+      "inter-font",
+      "uppercase-kicker",
+      "dark-neon",
+      "eyebrow-pill",
+      "card-overload"
+    ]
+  },
+  "S26": {
+    "title": "10 Signs a Website Was Designed by AI",
+    "author": "NewWebsite.ai (vendor)",
+    "published": "2026-05-11",
+    "accessed": "2026-10-01",
+    "url": "https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai",
+    "patterns": [
+      "floating-chips",
+      "eyebrow-pill",
+      "gradient-text",
+      "stat-strip",
+      "glow-blobs",
+      "glassmorphism",
+      "fake-dashboard",
+      "fade-up-scroll",
+      "vague-copy"
+    ]
+  },
+  "S27": {
+    "title": "The Proliferation and Problem of the Sparkles Icon",
+    "author": "Kate Kaplan / Nielsen Norman Group",
+    "published": "2024-09-20 (STALE?)",
+    "accessed": "2026-10-01",
+    "url": "https://www.nngroup.com/articles/ai-sparkles-icon-problem/",
+    "patterns": [
+      "sparkles"
+    ]
+  },
+  "S28": {
+    "title": "Linear design: The SaaS design trend that's boring and bettering UI",
+    "author": "Daniel Schwarz / LogRocket Blog",
+    "published": "2025-06-07 (update of an early-2024 piece)",
+    "accessed": "2026-10-01",
+    "url": "https://blog.logrocket.com/ux-design/linear-design/",
+    "patterns": [
+      "dark-neon",
+      "purple-gradient",
+      "glassmorphism"
+    ]
+  },
+  "S29": {
+    "title": "Why SaaS Websites Look The Same & How To Break the Mold",
+    "author": "Max Brown / Overpass Studio (vendor)",
+    "published": "2025-12-17 (updated 2026-05-12)",
+    "accessed": "2026-10-01",
+    "url": "https://www.overpass.studio/blog/why-saas-websites-look-the-same",
+    "patterns": [
+      "dark-neon",
+      "fake-dashboard",
+      "centered-hero",
+      "three-word-tagline"
+    ]
+  },
+  "S30": {
+    "title": "Why AI Websites All Look the Same (And When It Matters)",
+    "author": "Anastasia Axelrod / AXE-WEB (vendor)",
+    "published": "2025-12-09",
+    "accessed": "2026-10-01",
+    "url": "https://axe-web.com/insights/ai-website-design-sameness/",
+    "patterns": [
+      "purple-gradient",
+      "rounded-everything"
+    ]
+  },
+  "S31": {
+    "title": "Everything built with shadcn/ui looks the same, and how to break out",
+    "author": "Laith Aljunaidy / ux-skill (vendor)",
+    "published": "2026-05-29",
+    "accessed": "2026-10-01",
+    "url": "https://uxskill.laithjunaidy.com/blog/shadcn-ui-looks-generic.html",
+    "patterns": [
+      "shadcn-default",
+      "slate-zinc-greys",
+      "purple-gradient",
+      "inter-font",
+      "rounded-everything"
+    ]
+  },
+  "S32": {
+    "title": "The AI Purple Problem: Why Every AI Brand Looks the Same",
+    "author": "Michal (Hyzo) / Indie Hackers",
+    "published": "2026-07-12",
+    "accessed": "2026-10-01",
+    "url": "https://www.indiehackers.com/post/the-ai-purple-problem-why-every-ai-brand-looks-the-same-6cb0aa2a02",
+    "patterns": [
+      "purple-gradient"
+    ]
+  },
+  "S34": {
+    "title": "Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them",
+    "author": "Jason Zhou / Superdesign (vendor)",
+    "published": "2026-07-13",
+    "accessed": "2026-10-01",
+    "url": "https://superdesign.dev/blog/fix-generic-ai-landing-page",
+    "patterns": [
+      "madlib-headline",
+      "centered-hero",
+      "glow-blobs",
+      "icon-card-row",
+      "emoji-icons",
+      "purple-gradient",
+      "stock-section-order",
+      "vague-copy"
+    ]
+  },
+  "S36": {
+    "title": "awesome-shadcn (component registry list)",
+    "author": "carve-studio / GitHub",
+    "published": "undated",
+    "accessed": "2026-10-01",
+    "url": "https://github.com/carve-studio/awesome-shadcn",
+    "patterns": [
+      "eyebrow-pill",
+      "gradient-text",
+      "grid-dot-bg",
+      "fade-up-scroll",
+      "shadcn-default"
+    ]
+  },
+  "S37": {
+    "title": "The Purple Spell of AI Interface Design: A Tweet Unveils a Technological Phenomenon",
+    "author": "AIbase",
+    "published": "2025-08-08",
+    "accessed": "2026-10-01",
+    "url": "https://www.aibase.com/news/20365",
+    "patterns": [
+      "purple-gradient"
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+---
+import Guide from "../../../layouts/Guide.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import { ratio, fmt } from "../../../lib/contrast";
+
+const ex = {
+  body: ratio("docs", "light", "text", "canvas"),
+  muted: ratio("docs", "light", "text-muted", "canvas"),
+  subtle: ratio("docs", "light", "text-subtle", "canvas"),
+  link: ratio("docs", "light", "accent", "canvas"),
+  solid: ratio("docs", "light", "accent-text", "accent"),
+  depthTop: ratio("docs", "light", "action-depth-text", "action-depth-from"),
+  depthWorst: ratio("docs", "light", "action-depth-text", "action-depth-fill@44px"),
+  border: ratio("docs", "light", "border-strong", "canvas"),
+};
+const contents = [
+  { id: "rule", label: "The rule in one paragraph" },
+  { id: "three", label: "Three colours to choose" },
+  { id: "checks", label: "What the builder checks" },
+  { id: "example", label: "A worked example" },
+  { id: "fails", label: "When a check fails" },
+  { id: "beyond", label: "Beyond contrast" },
+];
+---
+<Guide
+  title="How to pick brand colours that pass accessibility"
+  description="A plain-English guide to WCAG 2.2 AA contrast for brand colours: what the numbers mean, what the brand builder checks and how to fix a colour that fails."
+  lede={"Your brand colours have to work as text, as buttons and as backgrounds, for people with low vision as well as everyone else. This guide explains the " +
+    "numbers and how to get every check to pass."}
+  updated="2 October 2026"
+  contents={contents}
+>
+  <h2 id="rule">The rule in one paragraph</h2>
+  <p>WCAG 2.2 is the accessibility standard most organisations work to, and level AA is the usual target. For colour it comes down to contrast: how different two colours look in
+    brightness. Contrast is written as a ratio from 1:1 (no difference) to 21:1 (black on white). Normal text needs at least 4.5:1 against its background. Large text (about 24px, or
+    19px bold) and the edges of controls such as inputs and focus rings need at least 3:1.</p>
+
+  <h2 id="three">Three colours to choose</h2>
+  <p>The <a href="/brand-builder/">brand builder</a> asks for three colours and works out the rest:</p>
+  <ul>
+    <li><strong>Accent:</strong> your brand colour, used for buttons, links and highlights.</li>
+    <li><strong>Ink:</strong> the colour of your text. If it is too light to pass, it is made darker until it does.</li>
+    <li><strong>Paper:</strong> the page background. Most brands pick a warm or cool off-white rather than pure white.</li>
+  </ul>
+  <p>From those it builds every shade the components use, for light and dark mode: muted text, borders, button states, dark sections and the five offer level colours.</p>
+
+  <h2 id="checks">What the builder checks</h2>
+  <p>Every pair of colours that carries text is checked, in light and dark mode. The ones that must pass include:</p>
+  <ul>
+    <li>body, muted and subtle text on the page and on cards;</li>
+    <li>the accent used as link text on the page;</li>
+    <li>every button label on its button, including the depth button at its darkest point;</li>
+    <li>text on dark sections, warning text, and labels on each offer level colour.</li>
+  </ul>
+  <p>Status colours, the focus ring and the strong border are shown as advisories: worth fixing, but they do not block the brand. The checks in the builder are the same code the kit's
+    build runs, so a brand that passes in the builder will build.</p>
+
+  <h2 id="example">A worked example</h2>
+  <p>This site's own brand starts from a burnt orange accent, a near-black ink and a warm paper. The build measured:</p>
+  <div class="s-table-wrap" tabindex="0">
+    <table class="s-table">
+      <caption class="s-sr">Contrast measured for this site's brand, light mode</caption>
+      <thead><tr><th scope="col">Pair</th><th scope="col">Ratio</th><th scope="col">Needs</th><th scope="col">Result</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Body text on the page</th><td class="s-num">{fmt(ex.body.ratio)}</td><td>4.5:1</td><td>Pass</td></tr>
+        <tr><th scope="row">Muted text on the page</th><td class="s-num">{fmt(ex.muted.ratio)}</td><td>4.5:1</td><td>Pass</td></tr>
+        <tr><th scope="row">Subtle text on the page</th><td class="s-num">{fmt(ex.subtle.ratio)}</td><td>4.5:1</td><td>Pass, just</td></tr>
+        <tr><th scope="row">Orange links on the page</th><td class="s-num">{fmt(ex.link.ratio)}</td><td>4.5:1</td><td>Pass</td></tr>
+        <tr><th scope="row">White label on a solid orange button</th><td class="s-num">{fmt(ex.solid.ratio)}</td><td>4.5:1</td><td>Pass</td></tr>
+        <tr><th scope="row">White label on the depth button, top colour</th><td class="s-num">{fmt(ex.depthTop.ratio)}</td><td>4.5:1</td><td>Pass</td></tr>
+        <tr><th scope="row">White label on the depth button, darkest point at 44px</th><td class="s-num">{fmt(ex.depthWorst.ratio)}</td><td>4.5:1</td><td>Pass</td></tr>
+        <tr><th scope="row">Strong border on the page (advisory)</th><td class="s-num">{fmt(ex.border.ratio)}</td><td>3:1</td><td>Below, advisory only</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Two things to notice. The subtle text only just passes, which is normal: it is the lightest text a brand is allowed. And the depth button is measured where its label is hardest to
+    read, because the light glow along the bottom edge makes that part brighter than the top.</p>
+
+  <h2 id="fails">When a check fails</h2>
+  <ul>
+    <li><strong>A light accent, such as yellow or sky blue, fails as link text.</strong> Pick a deeper shade of the same colour for the accent and keep the bright one for decoration, or
+      ask a developer to set a separate link colour in the brand file.</li>
+    <li><strong>The button label fails.</strong> A mid-tone accent is the hardest case: too dark for black text, too light for white. Move the accent a step darker or lighter.</li>
+    <li><strong>Dark mode fails but light passes.</strong> Check the dark preview: an accent that works on cream can be too dark on near-black. The builder lightens it for dark mode,
+      but a very deep accent may still need a change.</li>
+    <li><strong>The paper is too dark.</strong> Body text needs room. A paper darker than a light grey leaves little range for muted text.</li>
+  </ul>
+
+  <h2 id="beyond">Beyond contrast</h2>
+  <p>Contrast is the part a tool can measure. A few more habits keep colour accessible:</p>
+  <ul>
+    <li>Never use colour as the only sign of something. A required field gets a word as well as a red border; a price tier gets a name as well as a colour.</li>
+    <li>Keep focus rings visible on every background, including dark sections.</li>
+    <li>Check the brand at phone size in bright light. Low contrast that looks elegant on a desk monitor disappears outdoors.</li>
+  </ul>
+  <p class="g-cta"><Button href="/brand-builder/">Open the brand builder</Button></p>
+
+  <Fragment slot="after">
+    <CtaBand
+      copy={{
+        heading: "Try your own colours",
+        body: "Upload your logo or type your colours in and see every check, with its ratio, in light and dark.",
+        primary: { label: "Open the brand builder", href: "/brand-builder/" },
+        secondary: { label: "For developers: theming", href: "/developers/theming/" },
+      }}
+    />
+  </Fragment>
+</Guide>

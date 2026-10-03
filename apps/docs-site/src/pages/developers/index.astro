@@ -1,0 +1,80 @@
+---
+import Dev from "../../layouts/Dev.astro";
+import Code from "../../components/Code.astro";
+import Icon from "@brandcloud/astro/components/Icon.astro";
+import tokensPkg from "@brandcloud/tokens/package.json";
+import uiPkg from "@brandcloud/ui/package.json";
+import astroPkg from "@brandcloud/astro/package.json";
+import motionPkg from "@brandcloud/motion/package.json";
+import apPkg from "@brandcloud/antipatterns/package.json";
+import { PRODUCT, pkg, tgz, PACK_STEPS, NPM_NOTE } from "../../lib/site";
+
+const short = (name: string) => name.split("/")[1];
+const packages = [tokensPkg, uiPkg, astroPkg, motionPkg, apPkg].map((p) => ({ name: pkg(short(p.name)), version: p.version, description: p.description }));
+const sections = [
+  { href: "/developers/getting-started/", title: "Getting started", text: "Install for Astro, React and Next, add Tailwind v4 and connect stock shadcn/ui components." },
+  { href: "/developers/theming/", title: "Theming", text: "Make a brand from four inputs, switch brands and modes with two attributes, and use the depth and level tokens." },
+  { href: "/developers/components/", title: "Components", text: "Every public Astro and React component, live, with its props and its hover, focus, pressed, loading, disabled and invalid states." },
+  { href: "/developers/motion/", title: "Motion", text: "Every timing and spring preset, the CSS utilities, the character presets and the spring drivers, with a reduce motion switch." },
+  { href: "/developers/anti-ai/", title: "Anti-AI guide", text: "Each visual rule with its bad and good example, and how to run the detector in CI." },
+  { href: "/developers/showcase/", title: "Showcase", text: "Three example brands on one page, switched with one attribute." },
+];
+---
+<Dev title="For developers" description={`Install and use ${PRODUCT}: tokens and brand themes, React primitives, zero-JS Astro components, motion and the anti-AI detector.`}
+  lede={`${PRODUCT} is five packages that share one set of tokens. Use the parts you need: a static Astro site can ship with no React at all.`}>
+  <section class="dv-section" aria-labelledby="pk-title">
+    <h2 id="pk-title">The packages</h2>
+    <div class="s-table-wrap" tabindex="0">
+      <table class="s-table">
+        <caption class="s-sr">Packages and what they do</caption>
+        <thead><tr><th scope="col">Package</th><th scope="col">Version</th><th scope="col">What it is</th></tr></thead>
+        <tbody>
+          {packages.map((p) => <tr><th scope="row"><code>{p.name}</code></th><td class="s-num">{p.version}</td><td>{p.description}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p class="s-muted s-small">Versions are pre-release until 1.0.0. {NPM_NOTE}</p>
+  </section>
+
+  <section class="dv-section" aria-labelledby="quick-title">
+    <h2 id="quick-title">The shortest path</h2>
+    <p>An Astro site with one brand, one section and a button. No client JavaScript.</p>
+    <Code title="Terminal: get the packages" code={PACK_STEPS} />
+    <Code title="Terminal: in your project, next to that folder" code={`pnpm add ${tgz("astro")} ${tgz("tokens")} astro`} />
+    <Code title="src/pages/index.astro" code={`---
+import "${pkg("tokens")}/css";
+import "${pkg("tokens")}/brands/harbour.css";
+import Hero from "${pkg("astro")}/components/Hero.astro";
+---
+<html lang="en-GB" data-brand="harbour" data-theme="light">
+  <body>
+    <Hero variant="editorial" copy={{
+      heading: "Physio in Merewick that gets you back to running",
+      primary: { label: "Book an assessment", href: "/book/" },
+    }} />
+  </body>
+</html>`} />
+  </section>
+
+  <section class="dv-section" aria-labelledby="docs-title">
+    <h2 id="docs-title">In these docs</h2>
+    <ul class="dvx">
+      {sections.map((s) => (
+        <li>
+          <a href={s.href}><span class="dvx__t">{s.title}<Icon name="arrow-right" size={16} /></span></a>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Dev>
+
+<style>
+  .dvx { display: grid; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
+  .dvx li { display: grid; gap: 0.3rem 2rem; padding-block: 1.1rem; border-block-end: 1px solid var(--brand-border); }
+  @media (min-width: 48rem) { .dvx li { grid-template-columns: 14rem minmax(0, 1fr); } }
+  .dvx a { font-weight: 650; text-decoration: none; color: var(--brand-text); }
+  .dvx__t { display: inline-flex; gap: 0.4rem; align-items: center; }
+  .dvx a:hover .dvx__t { color: var(--brand-accent); text-decoration: underline; }
+  .dvx p { color: var(--brand-text-muted); }
+</style>

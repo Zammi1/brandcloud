@@ -1,0 +1,48 @@
+@layer components {
+  .brand-popover {
+    z-index: var(--brand-layer-popover, 55);
+  }
+
+  .brand-popover__content {
+    box-sizing: border-box;
+    min-inline-size: var(--brand-popover-min-inline-size, 12rem);
+    max-inline-size: min(24rem, calc(100vw - 1.5rem));
+    max-block-size: min(30rem, calc(100vh - 1.5rem));
+    overflow: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--brand-border);
+    border-radius: var(--brand-radius-md);
+    padding: 1rem;
+    background: var(--brand-surface-raised, var(--brand-surface));
+    color: var(--brand-text);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    box-shadow: var(--brand-shadow-panel);
+    overflow-wrap: anywhere;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .brand-popover__content {
+      transition: opacity var(--brand-duration-fast) ease-out;
+    }
+
+    .brand-popover__content[data-starting-style],
+    .brand-popover__content[data-ending-style] {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-popover__content {
+      transition: none;
+      opacity: 1;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .brand-popover__content {
+      border-color: CanvasText;
+      box-shadow: none;
+    }
+  }
+}

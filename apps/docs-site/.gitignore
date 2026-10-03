@@ -1,0 +1,6 @@
+dist
+.astro
+node_modules
+# Copied from packages/antipatterns at build time by scripts/sync-assets.mjs
+public/pairs
+shots

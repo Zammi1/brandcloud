@@ -1,0 +1,33 @@
+---
+/** A props table generated from the package source (lib/props.ts). */
+import type { PropTable } from "../lib/props";
+interface Props { table: PropTable; label: string }
+const { table, label } = Astro.props;
+---
+{table.rows.length > 0 ? (
+  <div class="s-table-wrap pt" tabindex="0">
+    <table class="s-table">
+      <caption class="s-sr">Props of {label}</caption>
+      <thead><tr><th scope="col">Prop</th><th scope="col">Type</th><th scope="col">Default</th><th scope="col">What it does</th></tr></thead>
+      <tbody>
+        {table.rows.map((r) => (
+          <tr>
+            <th scope="row"><code>{r.name}</code>{!r.optional && <span class="pt__req"> required</span>}</th>
+            <td><code class="pt__type">{r.type}</code></td>
+            <td>{r.default ? <code>{r.default}</code> : <span class="s-muted">none</span>}</td>
+            <td>{r.doc ?? ""}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+) : null}
+{table.extends.length > 0 && <p class="pt__extends">Also accepts: {table.extends.map((e, i) => <>{i > 0 && ", "}<code>{e}</code></>)}</p>}
+
+<style>
+  .pt .s-table { min-width: 44rem; font-size: 0.9rem; }
+  .pt code { background: none; padding: 0; color: var(--brand-text); }
+  .pt__type { white-space: normal; overflow-wrap: anywhere; }
+  .pt__req { color: var(--brand-danger); font-size: 0.8125rem; font-weight: 600; }
+  .pt__extends { margin-block-start: 0.6rem; color: var(--brand-text-muted); font-size: 0.875rem; overflow-wrap: anywhere; }
+</style>

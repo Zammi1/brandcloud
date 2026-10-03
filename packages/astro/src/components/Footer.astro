@@ -1,0 +1,96 @@
+---
+/**
+ * Site footer.
+ *   columns  brand and tagline, then columns of links, then contact, then the legal row
+ *   simple   one row: brand, links, legal
+ * Default tone ink. Long emails wrap at "@" instead of overflowing on phones.
+ */
+import "../styles/base.css";
+import Container from "./Container.astro";
+import type { FooterColumn, NavLink } from "../copy-types.js";
+interface Props {
+  brandName: string;
+  tagline?: string;
+  columns?: FooterColumn[];
+  /** Links for the "simple" variant. */
+  links?: NavLink[];
+  contact?: { heading: string; phone?: { display: string; href: string }; email?: string; address?: string };
+  /** Legal lines, e.g. "© 2026 Example Ltd" and "Company number 01234567". */
+  legal?: string[];
+  variant?: "columns" | "simple";
+  tone?: "default" | "muted" | "ink";
+  class?: string;
+}
+const { brandName, tagline, columns = [], links = [], contact, legal = [], variant = "columns", tone = "ink", class: className } = Astro.props;
+const splitEmail = (email: string) => {
+  const at = email.indexOf("@");
+  return at > 0 ? [email.slice(0, at), email.slice(at)] : [email, ""];
+};
+---
+<footer class:list={["ba", "ba-footer", className]} data-surface={tone} data-variant={variant}>
+  <Container>
+    {variant === "columns" ? (
+      <div class="ba-footer__top" style={`--ba-footer-cols:${columns.length + (contact ? 1 : 0)}`}>
+        <div class="ba-footer__brand">
+          <slot name="brand" />
+          <p class="ba-footer__name">{brandName}</p>
+          {tagline && <p class="ba-footer__tagline">{tagline}</p>}
+        </div>
+        {columns.map((col) => (
+          <nav class="ba-footer__col" aria-label={col.heading}>
+            <h2 class="ba-footer__heading">{col.heading}</h2>
+            <ul>{col.links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}</ul>
+          </nav>
+        ))}
+        {contact && (
+          <div class="ba-footer__col">
+            <h2 class="ba-footer__heading">{contact.heading}</h2>
+            <ul>
+              {contact.phone && <li><a href={contact.phone.href}>{contact.phone.display}</a></li>}
+              {contact.email && <li><a href={`mailto:${contact.email}`}>{splitEmail(contact.email)[0]}<wbr />{splitEmail(contact.email)[1]}</a></li>}
+              {contact.address && <li class="ba-footer__address">{contact.address}</li>}
+            </ul>
+          </div>
+        )}
+      </div>
+    ) : (
+      <div class="ba-footer__row">
+        <div class="ba-footer__brand"><slot name="brand" /><p class="ba-footer__name">{brandName}</p></div>
+        {links.length > 0 && (
+          <nav aria-label={brandName}>
+            <ul class="ba-footer__inline">{links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+          </nav>
+        )}
+      </div>
+    )}
+    {legal.length > 0 && (
+      <div class="ba-footer__legal">
+        {legal.map((line) => <p>{line}</p>)}
+      </div>
+    )}
+  </Container>
+</footer>
+
+<style is:global>
+@layer components {
+  .ba-footer { padding-block: clamp(3rem, 6vw, 5rem) clamp(2rem, 4vw, 3rem); font-size: 0.9375rem; }
+  .ba-footer a { color: var(--brand-text); text-decoration: none; overflow-wrap: anywhere; }
+  .ba-footer a:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+  .ba-footer ul { margin: 0; padding: 0; list-style: none; }
+  .ba-footer__top { display: grid; gap: 2.5rem 2rem; padding-bottom: clamp(2.5rem, 5vw, 4rem); border-bottom: 1px solid var(--brand-border); }
+  @media (min-width: 40rem) { .ba-footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .ba-footer__top { grid-template-columns: minmax(0, 1.5fr) repeat(var(--ba-footer-cols, 3), minmax(0, 1fr)); } }
+  .ba-footer__brand { display: grid; gap: 0.75rem; align-content: start; }
+  .ba-footer__brand :where(img, svg) { display: block; height: 2.5rem; width: auto; max-width: 14rem; }
+  .ba-footer__name { margin: 0; font-family: var(--ba-font-display); font-size: 1.25rem; font-weight: 600; line-height: 1.25; }
+  .ba-footer__tagline { margin: 0; max-width: 24rem; color: var(--brand-text-muted); line-height: 1.5; }
+  .ba-footer__heading { margin: 0 0 0.5rem; color: var(--brand-text-muted); font-family: var(--ba-font-body); font-size: 0.875rem; font-weight: 600; letter-spacing: 0; }
+  .ba-footer__col li a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .ba-footer__address { padding-top: 0.5rem; color: var(--brand-text-muted); line-height: 1.5; }
+  .ba-footer__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--brand-border); }
+  .ba-footer__inline { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+  .ba-footer__inline a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .ba-footer__legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem; padding-top: 1.75rem; color: var(--brand-text-muted); font-size: 0.875rem; }
+  .ba-footer__legal p { margin: 0; }
+}
+</style>

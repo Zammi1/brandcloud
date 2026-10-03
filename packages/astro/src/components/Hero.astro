@@ -1,0 +1,143 @@
+---
+/**
+ * Hero. Three layouts so two sites never share one look (outreach template lesson):
+ *   split      copy beside a real photo (falls back to "editorial" without media)
+ *   field      a solid field (ink or brand tone), copy left, key facts in a quiet column
+ *   editorial  light page, a short brand rule, a large left headline, lede and actions in two columns
+ * No decorative blobs, grids or glows behind the hero, no centred giant headline, no eyebrow.
+ * The actions carry data-sticky-hide, so a StickyBar waits until they scroll away.
+ * Copy: HeroCopy (heading, lede, primary, secondary, note). Secondary buttons follow one rule:
+ * ink on light surfaces, neutral (pearl) on dark or brand surfaces, whatsapp for a WhatsApp link.
+ */
+import "../styles/base.css";
+import Button from "./Button.astro";
+import Container from "./Container.astro";
+import Heading from "./Heading.astro";
+import type { CtaLink, HeroCopy, ImageRef } from "../copy-types.js";
+
+export interface HeroFact { label: string; value: string }
+interface Props {
+  copy: HeroCopy;
+  variant?: "split" | "field" | "editorial";
+  /** Surface. Defaults: split/editorial = default, field = ink. */
+  tone?: "default" | "muted" | "raised" | "ink" | "brand";
+  media?: ImageRef;
+  mediaCaption?: string;
+  /** Portrait photos get a narrower column. Detected from width/height when given. */
+  portrait?: boolean;
+  facts?: HeroFact[];
+  headingLevel?: "h1" | "h2";
+  id?: string;
+  class?: string;
+}
+const { copy, variant: askedVariant = "split", tone: askedTone, media, mediaCaption, portrait: askedPortrait, facts = [], headingLevel = "h1", id, class: className } = Astro.props;
+const hasMedia = Boolean(media) || Astro.slots.has("media");
+const variant = askedVariant === "split" && !hasMedia ? "editorial" : askedVariant;
+const tone = askedTone ?? (variant === "field" ? "ink" : "default");
+const dark = tone === "ink" || tone === "brand";
+const portrait = askedPortrait ?? (media?.width && media?.height ? media.height / media.width > 1.1 : false);
+const titleId = id ? `${id}-title` : "ba-hero-title";
+const primaryTone = tone === "brand" ? "neutral" : "brand";
+const secondaryTone = dark ? "neutral" : "ink";
+// On a brand field the primary is pearl, so the secondary steps back to an outline.
+const secondaryAppearance = tone === "brand" ? ("outline" as const) : undefined;
+const linkProps = (link: CtaLink) => ({ href: link.href, external: link.external, channel: link.channel });
+---
+<section id={id} class:list={["ba", "ba-hero", className]} data-surface={tone} data-variant={variant} data-portrait={portrait ? "" : undefined} aria-labelledby={titleId}>
+  <Container>
+    <div class="ba-hero__grid" data-facts={variant === "field" && facts.length >= 2 ? "" : undefined}>
+      <div class="ba-hero__copy">
+        {variant === "editorial" && <span class="ba-hero__rule" aria-hidden="true"></span>}
+        <Heading as={headingLevel} size={variant === "editorial" ? "display" : "h1"} id={titleId}>{copy.heading}</Heading>
+        <div class="ba-hero__body">
+          {copy.lede && <p class="ba-lead ba-hero__lede">{copy.lede}</p>}
+          <div class="ba-hero__actions" data-sticky-hide>
+            <div class="ba-actions" data-stack="sm">
+              <Button {...linkProps(copy.primary)} tone={primaryTone} size="lg">{copy.primary.label}</Button>
+              {copy.secondary && <Button {...linkProps(copy.secondary)} tone={copy.secondary.channel === "whatsapp" ? "whatsapp" : secondaryTone} appearance={copy.secondary.channel === "whatsapp" ? undefined : secondaryAppearance} size="lg">{copy.secondary.label}</Button>}
+            </div>
+            {copy.note && <p class="ba-hero__note">{copy.note}</p>}
+          </div>
+        </div>
+        {variant !== "field" && facts.length > 0 && (
+          <ul class="ba-hero__facts-inline">
+            {facts.map((f) => <li><span class="ba-sr-only">{f.label}: </span>{f.value}</li>)}
+          </ul>
+        )}
+        {variant === "field" && facts.length === 1 && (
+          <p class="ba-hero__note">{facts[0].label}: {facts[0].value}</p>
+        )}
+      </div>
+      {variant === "split" && (
+        <figure class="ba-hero__media">
+          <slot name="media">
+            {media && (
+              <img
+                src={media.src}
+                srcset={media.srcset}
+                sizes={media.sizes ?? "(min-width: 48rem) 45vw, 92vw"}
+                width={media.width}
+                height={media.height}
+                alt={media.alt}
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+            )}
+          </slot>
+          {mediaCaption && <figcaption>{mediaCaption}</figcaption>}
+        </figure>
+      )}
+      {variant === "field" && facts.length >= 2 && (
+        <dl class="ba-hero__facts">
+          {facts.map((f) => (
+            <div>
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </div>
+  </Container>
+</section>
+
+<style is:global>
+@layer components {
+  .ba-hero { padding-block: clamp(3rem, 7vw, 6.5rem); }
+  .ba-hero[data-variant="field"] { padding-block: clamp(3.5rem, 9vw, 8rem); }
+  .ba-hero__grid { display: grid; gap: clamp(2.5rem, 5vw, 4rem); align-items: center; }
+  .ba-hero__copy { display: grid; gap: 1.5rem; max-width: 46rem; min-width: 0; }
+  .ba-hero__body { display: grid; gap: 2rem; }
+  .ba-hero__note { margin: 0.875rem 0 0; color: var(--brand-text-muted); font-size: 0.9375rem; line-height: 1.5; }
+  .ba-hero__facts-inline {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 0; padding: 0; list-style: none;
+    color: var(--brand-text-muted); font-size: 0.9375rem;
+  }
+
+  .ba-hero__media { margin: 0; min-width: 0; }
+  .ba-hero__media img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--brand-radius-panel, 1rem); }
+  .ba-hero[data-portrait] .ba-hero__media img { aspect-ratio: 4 / 5; object-position: top; }
+  .ba-hero__media figcaption { margin-top: 0.75rem; color: var(--brand-text-muted); font-size: 0.875rem; }
+
+  .ba-hero__facts { display: grid; gap: 1.5rem; margin: 0; padding-top: 1.5rem; border-top: 1px solid var(--brand-border); }
+  .ba-hero__facts dt { color: var(--brand-text-muted); font-size: 0.875rem; }
+  .ba-hero__facts dd { margin: 0.25rem 0 0; font-size: 1.125rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+
+  /* editorial: a short solid brand rule, a very large headline, then lede | actions */
+  .ba-hero__rule { display: block; width: 4.5rem; height: 0.375rem; border-radius: 999px; background: var(--brand-accent); }
+  .ba-hero[data-variant="editorial"] .ba-hero__copy { max-width: none; gap: 2rem; }
+  .ba-hero[data-variant="editorial"] .ba-heading { max-width: 18ch; }
+
+  @media (min-width: 48rem) {
+    .ba-hero[data-variant="split"] .ba-hero__grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+    .ba-hero[data-variant="split"][data-portrait] .ba-hero__grid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr); }
+    .ba-hero[data-variant="editorial"] .ba-hero__body { grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 4rem; padding-top: 2rem; border-top: 1px solid var(--brand-border); }
+    .ba-hero[data-variant="editorial"] .ba-hero__actions { justify-self: end; }
+  }
+  @media (min-width: 64rem) {
+    .ba-hero__grid[data-facts] { grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.6fr); align-items: end; }
+    .ba-hero__grid[data-facts] .ba-hero__facts { padding: 0 0 0 2rem; border-top: 0; border-left: 1px solid var(--brand-border); }
+  }
+}
+</style>

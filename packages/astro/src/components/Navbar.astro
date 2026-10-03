@@ -1,0 +1,153 @@
+---
+/**
+ * Site header with an accessible mobile menu.
+ * The mobile menu is a native <details>/<summary> disclosure, so it opens and closes with no
+ * JavaScript. A small progressive script adds: Escape to close (focus returns to the toggle),
+ * close on link click, close on outside click, close when the viewport grows past the breakpoint.
+ *   layout  split (brand left, links centred, actions right) | left (brand and links left)
+ *   tone    default | raised | ink
+ * The business name stays visible as text next to any logo (template lesson: logos don't
+ * always spell the name). Pass the logo in the "brand" slot and the name in `brandName`.
+ */
+import "../styles/base.css";
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
+import type { CtaLink, NavLink } from "../copy-types.js";
+interface Props {
+  brandName: string;
+  brandHref?: string;
+  /** Hide the text name visually (keep it for screen readers) when the logo spells it. */
+  brandNameHidden?: boolean;
+  links: NavLink[];
+  cta?: CtaLink;
+  /** A quiet channel link, e.g. WhatsApp or phone. */
+  secondary?: CtaLink;
+  layout?: "split" | "left";
+  tone?: "default" | "raised" | "ink";
+  sticky?: boolean;
+  /** Accessible names. Generic defaults; pass your own words if you prefer. */
+  navLabel?: string;
+  menuLabel?: string;
+  class?: string;
+}
+const {
+  brandName, brandHref = "/", brandNameHidden = false, links, cta, secondary,
+  layout = "split", tone = "default", sticky = true, navLabel = "Main", menuLabel = "Menu", class: className,
+} = Astro.props;
+const external = (l: CtaLink) => (l.external ? { target: "_blank", rel: "noopener" } : {});
+---
+<header class:list={["ba", "ba-nav", className]} data-surface={tone} data-layout={layout} data-sticky={sticky ? "" : undefined} data-ba-nav>
+  <div class="ba-container ba-nav__bar">
+    <a class="ba-nav__brand" href={brandHref}>
+      <slot name="brand" />
+      <span class:list={["ba-nav__name", brandNameHidden && "ba-sr-only"]}>{brandName}</span>
+    </a>
+    <nav class="ba-nav__links" aria-label={navLabel}>
+      <ul>
+        {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="ba-nav__actions">
+      {secondary && (
+        <a class="ba-nav__secondary" href={secondary.href} {...external(secondary)}>
+          {secondary.channel && <Icon name={secondary.channel} size={20} />}
+          <span class="ba-nav__secondary-text">{secondary.short ?? secondary.label}</span>
+        </a>
+      )}
+      {cta && <Button class="ba-nav__cta" href={cta.href} external={cta.external} size="sm">{cta.short ?? cta.label}</Button>}
+      <details class="ba-nav__menu" data-ba-nav-menu>
+        <summary class="ba-nav__toggle">
+          <span class="ba-sr-only">{menuLabel}</span>
+          <span class="ba-nav__icon" aria-hidden="true"><i></i><i></i></span>
+        </summary>
+        <div class="ba-nav__panel">
+          <nav class="ba-container" aria-label={`${navLabel} (${menuLabel.toLowerCase()})`}>
+            <ul>
+              {links.map((l) => <li><a href={l.href} aria-current={l.current ? "page" : undefined}>{l.label}</a></li>)}
+            </ul>
+            {(cta || secondary) && (
+              <div class="ba-nav__panel-actions">
+                {cta && <Button href={cta.href} external={cta.external} size="lg" block>{cta.label}</Button>}
+                {secondary && <Button href={secondary.href} external={secondary.external} channel={secondary.channel} tone={secondary.channel === "whatsapp" ? "whatsapp" : "neutral"} size="lg" block>{secondary.label}</Button>}
+              </div>
+            )}
+          </nav>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Progressive enhancement only: the <details> menu already works without this.
+  const BREAKPOINT = "(min-width: 60rem)";
+  for (const menu of document.querySelectorAll<HTMLDetailsElement>("[data-ba-nav-menu]")) {
+    if (menu.dataset.baReady) continue;
+    menu.dataset.baReady = "1";
+    const toggle = menu.querySelector("summary");
+    const close = (focus = false) => {
+      if (!menu.open) return;
+      menu.open = false;
+      if (focus) toggle?.focus();
+    };
+    menu.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close(true);
+    });
+    menu.addEventListener("click", (event) => {
+      if ((event.target as Element).closest(".ba-nav__panel a")) close();
+    });
+    document.addEventListener("click", (event) => {
+      if (!menu.contains(event.target as Node)) close();
+    });
+    window.matchMedia(BREAKPOINT).addEventListener("change", (event) => {
+      if (event.matches) close();
+    });
+  }
+</script>
+
+<style is:global>
+@layer components {
+  .ba-nav { position: relative; z-index: 40; border-bottom: 1px solid var(--brand-border); }
+  .ba-nav[data-sticky] { position: sticky; top: 0; }
+  .ba-nav__bar { display: flex; align-items: center; gap: 1.5rem; min-height: 4.25rem; }
+  .ba-nav__brand { display: inline-flex; align-items: center; gap: 0.75rem; min-height: 2.75rem; min-width: 0; color: var(--brand-text); text-decoration: none; }
+  .ba-nav__brand :where(img, svg) { display: block; height: 2rem; width: auto; max-width: min(10rem, calc(100vw - 9rem)); }
+  .ba-nav__name { font-family: var(--ba-font-display); font-size: 1.0625rem; font-weight: 600; line-height: 1.1; overflow-wrap: anywhere; }
+  .ba-nav__links { display: none; }
+  .ba-nav__links ul, .ba-nav__panel ul { margin: 0; padding: 0; list-style: none; }
+  .ba-nav__links ul { display: flex; gap: 0.25rem; }
+  .ba-nav__links a { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 0.75rem; color: var(--brand-text); font-size: 0.9375rem; text-decoration: none; text-underline-offset: 0.4em; text-decoration-thickness: 1px; }
+  .ba-nav__links a:hover, .ba-nav__links a[aria-current="page"] { text-decoration-line: underline; }
+  .ba-nav__actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+  .ba-nav__secondary { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; min-width: 2.75rem; justify-content: center; padding: 0 0.5rem; color: var(--brand-text); font-size: 0.9375rem; font-weight: 600; text-decoration: none; }
+  .ba-nav__secondary svg { color: var(--brand-whatsapp-hover, var(--brand-status-success)); }
+  .ba-nav[data-surface="ink"] .ba-nav__secondary svg { color: currentColor; }
+  .ba-nav__secondary:hover .ba-nav__secondary-text { text-decoration: underline; text-underline-offset: 0.4em; }
+  .ba-nav__secondary-text { display: none; }
+  .ba-nav__cta { display: none; }
+
+  .ba-nav__menu { position: static; }
+  .ba-nav__toggle { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 1px solid var(--brand-border-strong); border-radius: var(--brand-radius-sm, 0.5rem); color: var(--brand-text); cursor: pointer; list-style: none; }
+  .ba-nav__toggle::-webkit-details-marker { display: none; }
+  .ba-nav__icon { position: relative; display: block; width: 1.125rem; height: 0.625rem; }
+  .ba-nav__icon i { position: absolute; left: 0; right: 0; height: 1.75px; border-radius: 2px; background: currentColor; transition: transform 0.2s ease, top 0.2s ease; }
+  .ba-nav__icon i:first-child { top: 0; }
+  .ba-nav__icon i:last-child { top: 0.5rem; }
+  .ba-nav__menu[open] .ba-nav__icon i:first-child { top: 0.25rem; transform: rotate(45deg); }
+  .ba-nav__menu[open] .ba-nav__icon i:last-child { top: 0.25rem; transform: rotate(-45deg); }
+  .ba-nav__panel { position: absolute; left: 0; right: 0; top: 100%; max-height: calc(100dvh - 4.25rem); overflow-y: auto; border-block: 1px solid var(--brand-border); background: var(--brand-canvas); box-shadow: var(--brand-shadow-panel, none); }
+  .ba-nav__panel li a { display: flex; align-items: center; min-height: 3.5rem; border-bottom: 1px solid var(--brand-border); color: var(--brand-text); font-family: var(--ba-font-display); font-size: 1.375rem; font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
+  .ba-nav__panel li a[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 1px; }
+  .ba-nav__panel-actions { display: grid; gap: 0.625rem; padding: 1.25rem 0 1.75rem; }
+
+  @media (min-width: 30rem) { .ba-nav__cta { display: inline-flex; } }
+  @media (min-width: 60rem) {
+    .ba-nav__links { display: block; }
+    .ba-nav[data-layout="split"] .ba-nav__links { margin-inline: auto; }
+    .ba-nav[data-layout="split"] .ba-nav__actions { margin-left: 0; }
+    .ba-nav__menu { display: none; }
+  }
+  @media (min-width: 68rem) { .ba-nav__secondary-text { display: inline; } }
+  @media (prefers-reduced-motion: reduce) { .ba-nav__icon i { transition: none; } }
+}
+</style>

@@ -1,0 +1,13 @@
+{
+  "$comment": "The docs site's own brand, generated with make-brand.",
+  "name": "docs",
+  "label": "Docs",
+  "accent": "#b8430d",
+  "ink": "#17140f",
+  "paper": "#f6f1e8",
+  "fonts": {
+    "body": "'Hanken Grotesk Variable', 'Hanken Fallback', Arial, sans-serif",
+    "display": "'Bricolage Grotesque Variable', 'Bricolage Fallback', Georgia, serif"
+  },
+  "appearance": "depth"
+}

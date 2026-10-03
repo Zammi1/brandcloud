@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-IMG-02: faint graph-paper grid faded with a radial mask behind the hero -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerline: hero (AP-IMG-02 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.hero { position: relative; isolation: isolate; }
+/* ANTIPATTERN AP-IMG-02 */
+.hero::before { content: ""; position: absolute; inset: 0 -200px; z-index: -1;
+  background-image: linear-gradient(#d6d1c6 1px, transparent 1px), linear-gradient(90deg, #d6d1c6 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 70%); mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 70%); }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Ledgerline <small>Bookkeeping for trades, Easthope</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Services</a><a href="#">Prices</a><a href="#">About</a><a class="btn btn-ink btn-sm" href="#">Send us your books</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <h1>Bookkeeping for builders, electricians and plumbers in Wessex.</h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">Photograph your receipts and send them on WhatsApp. We do the rest and tell you what you owe before HMRC does.</p>
+      <div class="actions"><a class="btn btn-depth" href="#">Send us your books</a><a class="textlink" href="#">See prices</a></div>
+    </div>
+    <dl class="facts">
+      <div><dt>Clients</dt><dd>62 trades businesses, Shoreham to Bognor</dd></div>
+      <div><dt>Reply time</dt><dd>One working day on WhatsApp</dd></div>
+      <div><dt>From</dt><dd>&pound;95 a month, fixed</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Ledgerline Bookkeeping Ltd</span><span>18 Bridge Street, Easthope EP11 1NX</span></footer></div>
+
+</body>
+</html>

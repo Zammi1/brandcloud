@@ -1,0 +1,9 @@
+@layer components {
+  .brand-separator { flex: none; border: 0; background: var(--brand-border); }
+  .brand-separator[data-orientation="horizontal"] { inline-size: 100%; block-size: 1px; }
+  .brand-separator[data-orientation="vertical"] { inline-size: 1px; align-self: stretch; min-block-size: 1em; }
+
+  @media (forced-colors: active) {
+    .brand-separator { background: CanvasText; }
+  }
+}

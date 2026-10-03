@@ -1,0 +1,44 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import RecipeGallery from "../../components/RecipeGallery.astro";
+import { recipes } from "../../lib/recipes";
+---
+<Base title="Page recipes"
+  description="Four complete pages built from the free components, each for a made-up business in its own brand: a campaign, an offer, an event and a local service." current="/recipes/">
+  <Container>
+    <header class="s-pagehead" data-split>
+      <h1>Page recipes you can start from</h1>
+      <div class="s-stack">
+        <p class="s-lead">Each recipe is a whole page, built only from the free components, for a business that does not exist. Open one, then swap in your words, photos and brand.</p>
+        <p class="s-pagehead-note">Every business on these pages is fictional. Prices and dates are examples.</p>
+      </div>
+    </header>
+  </Container>
+  <Section space="tight">
+    <RecipeGallery headingLevel="h2" />
+  </Section>
+  <Section tone="raised" aria-labelledby="parts-title">
+    <div class="s-sechead" data-split>
+      <h2 id="parts-title">What each recipe is made of</h2>
+      <p class="s-lead">The same free sections, arranged differently. That is how four pages end up looking like four businesses.</p>
+    </div>
+    <ul class="s-rows" data-cols="2">
+      {recipes.map((r) => (
+        <li>
+          <h3><a href={`/recipes/${r.slug}/`}>{r.kind}</a></h3>
+          <div class="rp-row">
+            <p>{r.uses.join(", ")}.</p>
+            <a class="s-textlink" href={`/recipes/${r.slug}/source/`}>For developers: see the source</a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Section>
+</Base>
+
+<style>
+  .rp-row { display: grid; gap: 0.6rem; justify-items: start; }
+  .s-rows h3 a { color: inherit; }
+</style>

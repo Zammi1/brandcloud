@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI design antipatterns: bad vs good gallery</title>
+<style>
+@font-face { font-family: "Hanken Grotesk"; src: url("patterns/_shared/fonts/HankenGrotesk-Variable.woff2") format("woff2"); font-weight: 100 900; }
+:root { --ink: #0b0b0c; --ink-2: #2b2a27; --muted: #5a564e; --line: #d6d1c6; --paper: #f3f1ec; --card: #fbfaf7; --accent: #1d4ed8; --bad: #9f1d1d; --good: #1d5e3a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+.top { padding: 48px 0 28px; border-bottom: 1px solid var(--ink); }
+h1 { font-size: 44px; line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 14px; font-weight: 620; max-width: 22ch; }
+.top p { max-width: 70ch; color: var(--ink-2); margin: 0 0 10px; }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--line); padding: 12px 0; }
+.bar .wrap { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 14.5px; }
+.bar label { font-weight: 600; }
+.bar select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+.cat { padding: 40px 0 8px; }
+.cat h2 { font-size: 30px; letter-spacing: -0.015em; margin: 0 0 8px; font-weight: 620; }
+.count { color: var(--muted); font-weight: 450; font-size: 18px; }
+.note { color: var(--ink-2); max-width: 80ch; margin: 0 0 16px; }
+.rule { border-top: 1px solid var(--ink); padding: 22px 0 34px; }
+.rule-head { display: flex; justify-content: space-between; gap: 20px; align-items: baseline; }
+.rule h3 { font-size: 22px; margin: 2px 0 14px; letter-spacing: -0.01em; font-weight: 620; }
+.rid { margin: 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.types { font-size: 14px; color: var(--muted); margin: 0; }
+.sev { display: inline-block; margin-left: 8px; font-size: 12.5px; padding: 1px 7px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink-2); }
+.sev-high { border-color: var(--bad); color: var(--bad); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.side { margin: 0; }
+.side figcaption { font-size: 14px; margin-bottom: 6px; display: flex; gap: 12px; }
+.bad figcaption strong { color: var(--bad); } .good figcaption strong { color: var(--good); }
+.side img { width: 100%; height: 330px; object-fit: cover; object-position: top; display: block; border: 1px solid var(--line); background: #fff; }
+.meta { margin: 18px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 28px; }
+.meta div { min-width: 0; }
+.meta dt { font-size: 13px; color: var(--muted); }
+.meta dd { margin: 2px 0 0; font-size: 14.5px; color: var(--ink-2); overflow-wrap: anywhere; }
+.meta code { font-size: 12.5px; }
+.muted { color: var(--muted); }
+.warn { border: 1px solid var(--bad); color: var(--bad); padding: 12px 16px; border-radius: 4px; max-width: 80ch; }
+.score { font-weight: 600; color: var(--ink); }
+.noimg { width: 220px; height: 140px; display: grid; place-items: center; border: 1px dashed var(--line); color: var(--muted); font-size: 13px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+td, th { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.num { font-variant-numeric: tabular-nums; }
+.hidden { display: none; }
+footer { padding: 40px 0 60px; color: var(--muted); font-size: 14px; }
+@media (max-width: 900px) { .pair { grid-template-columns: 1fr; } .meta { grid-template-columns: 1fr; } .side img { height: 240px; } h1 { font-size: 34px; } }
+</style>
+</head>
+<body>
+<div class="wrap top">
+  <h1>AI design antipatterns: bad vs good</h1>
+  <p>41 tells of generated web design, each with a bad page, the same content fixed, screenshots and a detector rule. Run <code>node detect.mjs &lt;url or file&gt;</code> before shipping UI, then compare the section you built with the pairs below.</p>
+  <p class="small">Generated 2026-10-02 from rules.json v1.0.0. Screenshots at 1440 wide; the 390 link shows mobile.</p>
+</div>
+<nav class="bar" aria-label="Filter">
+  <div class="wrap">
+    <label for="type">Section type</label>
+    <select id="type"><option value="">All</option><option>page</option><option>hero</option><option>headings</option><option>features</option><option>process</option><option>pricing</option><option>proof</option><option>cards</option><option>lists</option><option>forms</option><option>actions</option><option>sections</option><option>footer</option></select>
+    <a href="#cat-GRAD">Colour and gradient</a><a href="#cat-LAY">Layout</a><a href="#cat-TYPE">Typography</a><a href="#cat-COMP">Components</a><a href="#cat-IMG">Imagery and decoration</a><a href="#cat-MOT">Motion</a><a href="#cat-TRUST">Trust and fake proof</a>
+  </div>
+</nav>
+<main class="wrap">
+<section class="cat" id="cat-GRAD"><h2>Colour and gradient <span class="count">8</span></h2><p class="note">Gradients are allowed when they model light on a physical object. Gradients used as decoration with no light logic are the AI tell. Allowed: Single hue family, small hue spread (under about 20 degrees), e.g. #3b82f6 to #1d4ed8; Lighter at the top, deeper at the bottom, small angle (180deg or close to it); Thin white sheen or inset top highlight; Soft same-hue shadow or halo underneath with a vertical offset; Used on actions (buttons), offer level tiles and occasionally one brand-colour section.</p>
+<article class="rule" id="AP-GRAD-01" data-types="actions pricing">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-01 <span class="sev sev-high">high</span></p>
+      <h3>Hue-shifting 'AI' gradient</h3>
+    </div>
+    <p class="types">actions, pricing</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-01/bad.html">open</a> <a href="patterns/AP-GRAD-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-01/shots/bad-1440.png" alt="Hue-shifting 'AI' gradient: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-01/good.html">open</a> <a href="patterns/AP-GRAD-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-01/shots/good-1440.png" alt="Hue-shifting 'AI' gradient: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Gradients that travel across hues (indigo to violet, purple to pink, blue to cyan to pink) on buttons, backgrounds or badges.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Indigo and violet gradients are the default accent of Tailwind demos and the training data behind most generators, so they became the signature colour of generated sites. There is no light source that produces them, so they read as decoration.</dd></div>
+    <div><dt>Fix</dt><dd>Use a single-hue tonal gradient that models light: lighter top, deeper bottom, thin sheen, same-hue shadow (e.g. #3b82f6 to #1d4ed8). Take it from tokens (action-depth-*, level-*), never hard-coded hex.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>gradientHueShift</code> {&quot;minSaturation&quot;:0.25,&quot;maxHueSpread&quot;:30,&quot;aiBand&quot;:[235,340],&quot;aiBandMinSpread&quot;:10}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p" title="Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500) (2026-03-25)">S01</a> <a href="https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui" title="7 Signs a UI Has Been Vibe Coded (And How to Avoid Them) (24 Apr (year not shown; footer 2026))">S02</a> <a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://news.ycombinator.com/item?id=47864393" title="Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments) (about Apr 2026 (&quot;5 months ago&quot;))">S05</a> <a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://codemyspec.com/blog/vibe-coded-websites-look-the-same" title="How to Keep Your Website From Looking Like Every Other Vibe Coded Website (2026-07-26)">S08</a> <a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://newsletters.ai/p/ai-vs-purple" title="Why Do A Lot Of AI-Generated Websites Have Purple Vibes? (2025-10-29)">S10</a> <a href="https://dev.to/jaainil/ai-purple-problem-make-your-ui-unmistakable-3ono" title="AI Purple Problem: Make Your UI Unmistakable (2025-10-08)">S11</a> <a href="https://pacovaldez.substack.com/p/why-does-every-ai-generated-website" title="Why Does Every AI-Generated Website Look the Same? (Fifty Shades of Indigo) (2025-11-10)">S12</a> <a href="https://claude.com/blog/improving-frontend-design-through-skills" title="Improving frontend design through Skills (2025-11-12)">S14</a> <a href="https://www.925studios.co/blog/ai-slop-design-tells" title="AI Slop Fonts and Gradients: The Tells That Give Away AI Design (2026-06-14 (body date))">S15</a> <a href="https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website" title="Why Your AI Keeps Building the Same Purple Gradient Website (2025-10-26)">S16</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a> <a href="https://blog.logrocket.com/ux-design/linear-design/" title="Linear design: The SaaS design trend that's boring and bettering UI (2025-06-07 (update of an early-2024 piece))">S28</a> <a href="https://axe-web.com/insights/ai-website-design-sameness/" title="Why AI Websites All Look the Same (And When It Matters) (2025-12-09)">S30</a> <a href="https://uxskill.laithjunaidy.com/blog/shadcn-ui-looks-generic.html" title="Everything built with shadcn/ui looks the same, and how to break out (2026-05-29)">S31</a> <a href="https://www.indiehackers.com/post/the-ai-purple-problem-why-every-ai-brand-looks-the-same-6cb0aa2a02" title="The AI Purple Problem: Why Every AI Brand Looks the Same (2026-07-12)">S32</a> <a href="https://superdesign.dev/blog/fix-generic-ai-landing-page" title="Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them (2026-07-13)">S34</a> <a href="https://www.aibase.com/news/20365" title="The Purple Spell of AI Interface Design: A Tweet Unveils a Technological Phenomenon (2025-08-08)">S37</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-02" data-types="hero headings">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-02 <span class="sev sev-high">high</span></p>
+      <h3>Gradient text and gradient accent words</h3>
+    </div>
+    <p class="types">hero, headings</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-02/bad.html">open</a> <a href="patterns/AP-GRAD-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-02/shots/bad-1440.png" alt="Gradient text and gradient accent words: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-02/good.html">open</a> <a href="patterns/AP-GRAD-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-02/shots/good-1440.png" alt="Gradient text and gradient accent words: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Headline words filled with a gradient via background-clip: text.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>The single most repeated hero treatment in generated landing pages: one or two words of the H1 clipped to an indigo or purple gradient.</dd></div>
+    <div><dt>Fix</dt><dd>Solid ink headline. Let the wording and the size carry the emphasis. If a word must stand out, change the sentence, not the paint.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>gradientText</code> {}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://dev.to/jaainil/ai-purple-problem-make-your-ui-unmistakable-3ono" title="AI Purple Problem: Make Your UI Unmistakable (2025-10-08)">S11</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://github.com/carve-studio/awesome-shadcn" title="awesome-shadcn (component registry list) (undated)">S36</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-03" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-03 <span class="sev sev-high">high</span></p>
+      <h3>Blurred glow blobs behind the hero</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-03/bad.html">open</a> <a href="patterns/AP-GRAD-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-03/shots/bad-1440.png" alt="Blurred glow blobs behind the hero: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-03/good.html">open</a> <a href="patterns/AP-GRAD-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-03/shots/good-1440.png" alt="Blurred glow blobs behind the hero: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Large absolutely positioned circles with heavy blur or soft radial gradients floating behind content.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Generators add 'depth' by dropping two or three blurred coloured orbs behind the hero. They carry no information and are the same on every page.</dd></div>
+    <div><dt>Fix</dt><dd>Remove the blobs. Create depth with real content: a photograph of the work, a tonal brand section, or a clear contrast step between paper and ink.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>glowBlob</code> {&quot;minBlurPx&quot;:24,&quot;minSizePx&quot;:120}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui" title="7 Signs a UI Has Been Vibe Coded (And How to Avoid Them) (24 Apr (year not shown; footer 2026))">S02</a> <a href="https://pages.thefountaininstitute.com/posts/7-tells-that-a-ui-is-ai-generated" title="7 Tells that a UI is AI-Generated (about Apr 2026 (&quot;6 months ago&quot;))">S03</a> <a href="https://news.ycombinator.com/item?id=47864393" title="Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments) (about Apr 2026 (&quot;5 months ago&quot;))">S05</a> <a href="https://www.925studios.co/blog/ai-slop-design-tells" title="AI Slop Fonts and Gradients: The Tells That Give Away AI Design (2026-06-14 (body date))">S15</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://superdesign.dev/blog/fix-generic-ai-landing-page" title="Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them (2026-07-13)">S34</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-04" data-types="sections">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-04 <span class="sev sev-medium">medium</span></p>
+      <h3>Mesh, aurora or rainbow backgrounds</h3>
+    </div>
+    <p class="types">sections</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-04/bad.html">open</a> <a href="patterns/AP-GRAD-04/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-04/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-04/shots/bad-1440.png" alt="Mesh, aurora or rainbow backgrounds: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-04/good.html">open</a> <a href="patterns/AP-GRAD-04/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-04/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-04/shots/good-1440.png" alt="Mesh, aurora or rainbow backgrounds: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Section backgrounds built from several layered radial gradients or a conic gradient in different hues.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Mesh and aurora backgrounds are a stock generator move to make an empty section feel designed.</dd></div>
+    <div><dt>Fix</dt><dd>One brand colour section with a single-hue tonal gradient (e.g. deep navy top to slightly deeper bottom), or a flat colour. Never more than one hue family.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>meshBackground</code> {&quot;minLayers&quot;:2,&quot;minWidthRatio&quot;:0.5,&quot;minHeightPx&quot;:240}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-05" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-05 <span class="sev sev-medium">medium</span></p>
+      <h3>Coloured glows on everything</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-05/bad.html">open</a> <a href="patterns/AP-GRAD-05/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-05/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-05/shots/bad-1440.png" alt="Coloured glows on everything: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-05/good.html">open</a> <a href="patterns/AP-GRAD-05/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-05/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-05/shots/good-1440.png" alt="Coloured glows on everything: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Centred, saturated box-shadow or text-shadow glows on buttons, cards, icons and headings.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Neon glow shadows are the generator's way of signalling 'premium' or 'AI'. On real objects light casts a shadow below, not a halo all round.</dd></div>
+    <div><dt>Fix</dt><dd>Neutral or same-hue shadows with a vertical offset (light from above). At most one soft halo, on the primary action.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>glowEverywhere</code> {&quot;minCount&quot;:2,&quot;minBlurPx&quot;:12,&quot;minSaturation&quot;:0.35}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-06" data-types="pricing cards">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-06 <span class="sev sev-medium">medium</span></p>
+      <h3>Gradient borders on cards</h3>
+    </div>
+    <p class="types">pricing, cards</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-06/bad.html">open</a> <a href="patterns/AP-GRAD-06/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-06/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-06/shots/bad-1440.png" alt="Gradient borders on cards: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-06/good.html">open</a> <a href="patterns/AP-GRAD-06/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-06/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-06/shots/good-1440.png" alt="Gradient borders on cards: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Cards outlined with gradient borders via border-image, mask-composite or the padding-box / border-box background trick.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>A favourite 'shimmer card' pattern from component galleries; repeated on every card it becomes noise.</dd></div>
+    <div><dt>Fix</dt><dd>Plain hairline borders in a neutral line colour, or separate content with spacing and rules instead of boxes.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>gradientBorder</code> {&quot;minCount&quot;:2}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-07" data-types="cards">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-07 <span class="sev sev-medium">medium</span></p>
+      <h3>Glassmorphism on text containers</h3>
+    </div>
+    <p class="types">cards</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-07/bad.html">open</a> <a href="patterns/AP-GRAD-07/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-07/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-07/shots/bad-1440.png" alt="Glassmorphism on text containers: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-07/good.html">open</a> <a href="patterns/AP-GRAD-07/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-07/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-07/shots/good-1440.png" alt="Glassmorphism on text containers: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Semi-transparent panels with backdrop-filter: blur() holding body text.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Frosted glass cards over gradient blobs are a 2021 Dribbble trend that generators still reach for. Text over a blurred, moving background loses contrast.</dd></div>
+    <div><dt>Fix</dt><dd>Solid surfaces for anything with text. Contrast checked against the actual background (WCAG 2.2 AA).</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>glassText</code> {&quot;minTextChars&quot;:20,&quot;maxBgAlpha&quot;:0.9}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it" title="AI Design Slop: 16 Patterns That Out Your App as Vibe-Coded (2026-04-22 (updated 2026-09-28))">S06</a> <a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a> <a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://blog.logrocket.com/ux-design/linear-design/" title="Linear design: The SaaS design trend that's boring and bettering UI (2025-06-07 (update of an early-2024 piece))">S28</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-GRAD-08" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-GRAD-08 <span class="sev sev-medium">medium</span></p>
+      <h3>Dark mode with neon accents</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-GRAD-08/bad.html">open</a> <a href="patterns/AP-GRAD-08/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-08/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-GRAD-08/shots/bad-1440.png" alt="Dark mode with neon accents: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-GRAD-08/good.html">open</a> <a href="patterns/AP-GRAD-08/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-GRAD-08/shots/good-1440.png"><img loading="lazy" src="patterns/AP-GRAD-08/shots/good-1440.png" alt="Dark mode with neon accents: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Near-black page with neon cyan, magenta, lime or violet text, borders and glows.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>The 'Linear look' gone generic: dark by default with saturated neon accents is one of the most cited vibe-coded tells.</dd></div>
+    <div><dt>Fix</dt><dd>If the brand is dark, use a calm dark (ink or deep navy) with off-white text and one brand accent used sparingly. No neon text, no glow.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>darkNeon</code> {&quot;maxBgLuminance&quot;:0.06,&quot;minNeon&quot;:2}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui" title="7 Signs a UI Has Been Vibe Coded (And How to Avoid Them) (24 Apr (year not shown; footer 2026))">S02</a> <a href="https://pages.thefountaininstitute.com/posts/7-tells-that-a-ui-is-ai-generated" title="7 Tells that a UI is AI-Generated (about Apr 2026 (&quot;6 months ago&quot;))">S03</a> <a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://dev.to/jaainil/ai-purple-problem-make-your-ui-unmistakable-3ono" title="AI Purple Problem: Make Your UI Unmistakable (2025-10-08)">S11</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre" title="AI Design Already Has a Cliché. You're Probably Shipping It. (2026-04-22)">S25</a> <a href="https://blog.logrocket.com/ux-design/linear-design/" title="Linear design: The SaaS design trend that's boring and bettering UI (2025-06-07 (update of an early-2024 piece))">S28</a> <a href="https://www.overpass.studio/blog/why-saas-websites-look-the-same" title="Why SaaS Websites Look The Same &amp; How To Break the Mold (2025-12-17 (updated 2026-05-12))">S29</a></dd></div>
+  </dl>
+</article></section>
+<section class="cat" id="cat-LAY"><h2>Layout <span class="count">6</span></h2>
+<article class="rule" id="AP-LAY-01" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-LAY-01 <span class="sev sev-medium">medium</span></p>
+      <h3>Everything centred</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-LAY-01/bad.html">open</a> <a href="patterns/AP-LAY-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-LAY-01/shots/bad-1440.png" alt="Everything centred: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-LAY-01/good.html">open</a> <a href="patterns/AP-LAY-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-LAY-01/shots/good-1440.png" alt="Everything centred: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Every heading, paragraph and list centre-aligned down the whole page.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Centring is the safest default for a model that does not know the content. Long centred text is harder to read and makes every section look the same.</dd></div>
+    <div><dt>Fix</dt><dd>Left-align text on a grid. Use asymmetry (wide headline column, narrower body column) and centre only short, standalone moments.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>allCentred</code> {&quot;minBlocks&quot;:6,&quot;ratio&quot;:0.7}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://codemyspec.com/blog/vibe-coded-websites-look-the-same" title="How to Keep Your Website From Looking Like Every Other Vibe Coded Website (2026-07-26)">S08</a> <a href="https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website" title="Why Your AI Keeps Building the Same Purple Gradient Website (2025-10-26)">S16</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://www.overpass.studio/blog/why-saas-websites-look-the-same" title="Why SaaS Websites Look The Same &amp; How To Break the Mold (2025-12-17 (updated 2026-05-12))">S29</a> <a href="https://superdesign.dev/blog/fix-generic-ai-landing-page" title="Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them (2026-07-13)">S34</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-LAY-02" data-types="features">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-LAY-02 <span class="sev sev-high">high</span></p>
+      <h3>Walls of identical icon cards</h3>
+    </div>
+    <p class="types">features</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-LAY-02/bad.html">open</a> <a href="patterns/AP-LAY-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-LAY-02/shots/bad-1440.png" alt="Walls of identical icon cards: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-LAY-02/good.html">open</a> <a href="patterns/AP-LAY-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-LAY-02/shots/good-1440.png" alt="Walls of identical icon cards: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Three, six or nine cards of identical size, each icon + short heading + one-line blurb.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>The 3-up feature row is the most common generated section. Equal weight for every item says the author did not decide what matters.</dd></div>
+    <div><dt>Fix</dt><dd>Rank the points. Lead with the one that matters most, give it room and a specific example; list the rest as plain rows. Drop the decorative icons.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>identicalCards</code> {&quot;minCards&quot;:3,&quot;sizeTolerance&quot;:0.08}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p" title="Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500) (2026-03-25)">S01</a> <a href="https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui" title="7 Signs a UI Has Been Vibe Coded (And How to Avoid Them) (24 Apr (year not shown; footer 2026))">S02</a> <a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://news.ycombinator.com/item?id=47864393" title="Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments) (about Apr 2026 (&quot;5 months ago&quot;))">S05</a> <a href="https://codemyspec.com/blog/vibe-coded-websites-look-the-same" title="How to Keep Your Website From Looking Like Every Other Vibe Coded Website (2026-07-26)">S08</a> <a href="https://shuffle.dev/blog/2026/01/why-do-most-ai-generated-websites-look-the-same/" title="Why Do Most AI-Generated Websites Look the Same? (2026-01-29)">S13</a> <a href="https://www.925studios.co/blog/ai-slop-design-tells" title="AI Slop Fonts and Gradients: The Tells That Give Away AI Design (2026-06-14 (body date))">S15</a> <a href="https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website" title="Why Your AI Keeps Building the Same Purple Gradient Website (2025-10-26)">S16</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a> <a href="https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre" title="AI Design Already Has a Cliché. You're Probably Shipping It. (2026-04-22)">S25</a> <a href="https://superdesign.dev/blog/fix-generic-ai-landing-page" title="Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them (2026-07-13)">S34</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-LAY-03" data-types="features">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-LAY-03 <span class="sev sev-low">low</span></p>
+      <h3>Bento grid of rounded tiles</h3>
+    </div>
+    <p class="types">features</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-LAY-03/bad.html">open</a> <a href="patterns/AP-LAY-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-LAY-03/shots/bad-1440.png" alt="Bento grid of rounded tiles: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-LAY-03/good.html">open</a> <a href="patterns/AP-LAY-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-LAY-03/shots/good-1440.png" alt="Bento grid of rounded tiles: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A grid of rounded tiles of mixed spans, each holding a feature blurb or a fake widget.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Bento grids became the default 'features' layout after Apple keynotes and component libraries. Generators fill them with filler tiles because the format demands a tile count, not content. Counter-evidence: a Reddit-mined ranking puts bento grids near the bottom of complaints, so this is a weak tell on its own.</dd></div>
+    <div><dt>Fix</dt><dd>Lay out what you actually have. Real content of different kinds deserves different treatments, not equal tiles.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>bentoGrid</code> {&quot;minTiles&quot;:4,&quot;minRadiusPx&quot;:12}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-LAY-04" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-LAY-04 <span class="sev sev-medium">medium</span></p>
+      <h3>The template section order</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-LAY-04/bad.html">open</a> <a href="patterns/AP-LAY-04/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-04/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-LAY-04/shots/bad-1440.png" alt="The template section order: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-LAY-04/good.html">open</a> <a href="patterns/AP-LAY-04/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-04/shots/good-1440.png"><img loading="lazy" src="patterns/AP-LAY-04/shots/good-1440.png" alt="The template section order: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Hero, logo strip, features, testimonials, pricing, FAQ, closing CTA, in that order.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Every generated SaaS page uses the same skeleton, so a visitor can predict the next section before scrolling.</dd></div>
+    <div><dt>Fix</dt><dd>Order sections by the visitor's questions for this business (what is it, is it for me, proof, price, how to start). Merge or drop sections that have nothing specific to say.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>templateOrder</code> {&quot;minMatches&quot;:5}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://shuffle.dev/blog/2026/01/why-do-most-ai-generated-websites-look-the-same/" title="Why Do Most AI-Generated Websites Look the Same? (2026-01-29)">S13</a> <a href="https://claude.com/blog/improving-frontend-design-through-skills" title="Improving frontend design through Skills (2025-11-12)">S14</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://superdesign.dev/blog/fix-generic-ai-landing-page" title="Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them (2026-07-13)">S34</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-LAY-05" data-types="cards forms">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-LAY-05 <span class="sev sev-low">low</span></p>
+      <h3>Same large radius on every box</h3>
+    </div>
+    <p class="types">cards, forms</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-LAY-05/bad.html">open</a> <a href="patterns/AP-LAY-05/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-05/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-LAY-05/shots/bad-1440.png" alt="Same large radius on every box: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-LAY-05/good.html">open</a> <a href="patterns/AP-LAY-05/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-05/shots/good-1440.png"><img loading="lazy" src="patterns/AP-LAY-05/shots/good-1440.png" alt="Same large radius on every box: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Every card, image, input and panel uses the same big rounded corner (rounded-2xl / rounded-3xl).</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>One radius everywhere is a utility-class default, not a design decision. It flattens hierarchy and gives the soft 'template' look.</dd></div>
+    <div><dt>Fix</dt><dd>A small radius scale with roles (e.g. 4px controls, 8px cards, 0 for full-bleed media). Fewer boxes overall.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>uniformRadius</code> {&quot;minBoxes&quot;:6,&quot;minRadiusPx&quot;:16,&quot;ratio&quot;:0.85}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p" title="Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500) (2026-03-25)">S01</a> <a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://www.925studios.co/blog/ai-slop-design-tells" title="AI Slop Fonts and Gradients: The Tells That Give Away AI Design (2026-06-14 (body date))">S15</a> <a href="https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website" title="Why Your AI Keeps Building the Same Purple Gradient Website (2025-10-26)">S16</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a> <a href="https://axe-web.com/insights/ai-website-design-sameness/" title="Why AI Websites All Look the Same (And When It Matters) (2025-12-09)">S30</a> <a href="https://uxskill.laithjunaidy.com/blog/shadcn-ui-looks-generic.html" title="Everything built with shadcn/ui looks the same, and how to break out (2026-05-29)">S31</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-LAY-06" data-types="process">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-LAY-06 <span class="sev sev-low">low</span></p>
+      <h3>01 / 02 / 03 numbered steps</h3>
+    </div>
+    <p class="types">process</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-LAY-06/bad.html">open</a> <a href="patterns/AP-LAY-06/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-06/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-LAY-06/shots/bad-1440.png" alt="01 / 02 / 03 numbered steps: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-LAY-06/good.html">open</a> <a href="patterns/AP-LAY-06/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-LAY-06/shots/good-1440.png"><img loading="lazy" src="patterns/AP-LAY-06/shots/good-1440.png" alt="01 / 02 / 03 numbered steps: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Three or four 'How it works' columns, each topped by a big zero-padded number.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Zero-padded step numbers are a stock generator section. Most processes are not three equal steps.</dd></div>
+    <div><dt>Fix</dt><dd>Describe the real process with real timings in sentences or a plain ordered list. Only number things the reader needs to do in order.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>numberedSteps</code> {&quot;minSteps&quot;:3,&quot;minFontPx&quot;:20}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://news.ycombinator.com/item?id=47864393" title="Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments) (about Apr 2026 (&quot;5 months ago&quot;))">S05</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a></dd></div>
+  </dl>
+</article></section>
+<section class="cat" id="cat-TYPE"><h2>Typography <span class="count">3</span></h2>
+<article class="rule" id="AP-TYPE-01" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TYPE-01 <span class="sev sev-medium">medium</span></p>
+      <h3>Untouched default type and greys</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TYPE-01/bad.html">open</a> <a href="patterns/AP-TYPE-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TYPE-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TYPE-01/shots/bad-1440.png" alt="Untouched default type and greys: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TYPE-01/good.html">open</a> <a href="patterns/AP-TYPE-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TYPE-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TYPE-01/shots/good-1440.png" alt="Untouched default type and greys: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Inter, Geist or the system stack with Tailwind slate / gray / zinc text colours on pure white.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>These are the defaults of Tailwind, shadcn and every generator. Nothing in the type says who the business is.</dd></div>
+    <div><dt>Fix</dt><dd>Choose a typeface with character for the brand, a warm or brand-tinted neutral scale and an off-white or brand canvas.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>defaultTypeStack</code> {&quot;minGreyRatio&quot;:0.5}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p" title="Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500) (2026-03-25)">S01</a> <a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://codemyspec.com/blog/vibe-coded-websites-look-the-same" title="How to Keep Your Website From Looking Like Every Other Vibe Coded Website (2026-07-26)">S08</a> <a href="https://claude.com/blog/improving-frontend-design-through-skills" title="Improving frontend design through Skills (2025-11-12)">S14</a> <a href="https://www.925studios.co/blog/ai-slop-design-tells" title="AI Slop Fonts and Gradients: The Tells That Give Away AI Design (2026-06-14 (body date))">S15</a> <a href="https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website" title="Why Your AI Keeps Building the Same Purple Gradient Website (2025-10-26)">S16</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre" title="AI Design Already Has a Cliché. You're Probably Shipping It. (2026-04-22)">S25</a> <a href="https://uxskill.laithjunaidy.com/blog/shadcn-ui-looks-generic.html" title="Everything built with shadcn/ui looks the same, and how to break out (2026-05-29)">S31</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-TYPE-02" data-types="headings">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TYPE-02 <span class="sev sev-medium">medium</span></p>
+      <h3>Mono or tracked caps kicker above headings</h3>
+    </div>
+    <p class="types">headings</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TYPE-02/bad.html">open</a> <a href="patterns/AP-TYPE-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TYPE-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TYPE-02/shots/bad-1440.png" alt="Mono or tracked caps kicker above headings: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TYPE-02/good.html">open</a> <a href="patterns/AP-TYPE-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TYPE-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TYPE-02/shots/good-1440.png" alt="Mono or tracked caps kicker above headings: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A small monospace or wide-tracked uppercase label sitting on top of each section heading ('FEATURES', '// HOW IT WORKS').</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Kickers on every section are a generator habit borrowed from developer-tool sites. They repeat the heading and add a third type style for no reason.</dd></div>
+    <div><dt>Fix</dt><dd>Delete the kicker and make the heading say the specific thing. If navigation context is needed, use a breadcrumb or the section's own wording.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>monoCapsKicker</code> {&quot;maxChars&quot;:48,&quot;minTrackingEm&quot;:0.05}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre" title="AI Design Already Has a Cliché. You're Probably Shipping It. (2026-04-22)">S25</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-TYPE-03" data-types="hero headings">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TYPE-03 <span class="sev sev-medium">medium</span></p>
+      <h3>Accent words in headlines (colour or italic serif)</h3>
+    </div>
+    <p class="types">hero, headings</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TYPE-03/bad.html">open</a> <a href="patterns/AP-TYPE-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TYPE-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TYPE-03/shots/bad-1440.png" alt="Accent words in headlines (colour or italic serif): bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TYPE-03/good.html">open</a> <a href="patterns/AP-TYPE-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TYPE-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TYPE-03/shots/good-1440.png" alt="Accent words in headlines (colour or italic serif): fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Headlines with one phrase in the brand colour, a muted grey second half ('Ship faster. Without the chaos.') or one italic serif word in a sans headline.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Two-tone headlines are the non-gradient version of gradient text. The 2026 variant is a single Fraunces or Instrument Serif italic word inside an Inter headline.</dd></div>
+    <div><dt>Fix</dt><dd>One colour and one typeface per headline. Emphasis comes from the words, the size and the line break.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>accentWordHeadline</code> {&quot;minColourDistance&quot;:60}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre" title="AI Design Already Has a Cliché. You're Probably Shipping It. (2026-04-22)">S25</a></dd></div>
+  </dl>
+</article></section>
+<section class="cat" id="cat-COMP"><h2>Components <span class="count">7</span></h2>
+<article class="rule" id="AP-COMP-01" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-01 <span class="sev sev-high">high</span></p>
+      <h3>Eyebrow pill above the H1</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-01/bad.html">open</a> <a href="patterns/AP-COMP-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-01/shots/bad-1440.png" alt="Eyebrow pill above the H1: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-01/good.html">open</a> <a href="patterns/AP-COMP-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-01/shots/good-1440.png" alt="Eyebrow pill above the H1: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A rounded-full badge above the hero headline ('New: AI-powered insights', with a sparkle or arrow).</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Shipped by default in most hero templates. It is usually invented news to fill the space above the headline.</dd></div>
+    <div><dt>Fix</dt><dd>Remove it. If there is real news, put it in the headline or as a plain dated line near the action.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>eyebrowPill</code> {&quot;maxChars&quot;:70,&quot;lookback&quot;:2}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://codemyspec.com/blog/vibe-coded-websites-look-the-same" title="How to Keep Your Website From Looking Like Every Other Vibe Coded Website (2026-07-26)">S08</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre" title="AI Design Already Has a Cliché. You're Probably Shipping It. (2026-04-22)">S25</a> <a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://github.com/carve-studio/awesome-shadcn" title="awesome-shadcn (component registry list) (undated)">S36</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-COMP-02" data-types="features lists">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-02 <span class="sev sev-medium">medium</span></p>
+      <h3>Chip walls</h3>
+    </div>
+    <p class="types">features, lists</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-02/bad.html">open</a> <a href="patterns/AP-COMP-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-02/shots/bad-1440.png" alt="Chip walls: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-02/good.html">open</a> <a href="patterns/AP-COMP-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-02/shots/good-1440.png" alt="Chip walls: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Rows of pill-shaped tags listing services, technologies or industries.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>A cheap way to look comprehensive. Six or more equal pills say nothing about what matters.</dd></div>
+    <div><dt>Fix</dt><dd>A short sentence or a plain list with a line of detail per item. Group and rank.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>chipWall</code> {&quot;minChips&quot;:6,&quot;maxChipHeightPx&quot;:44}</dd></div>
+    <div><dt>Sources</dt><dd><span class="muted">none in the article research</span></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-COMP-03" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-03 <span class="sev sev-medium">medium</span></p>
+      <h3>Floating chips around the hero visual</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-03/bad.html">open</a> <a href="patterns/AP-COMP-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-03/shots/bad-1440.png" alt="Floating chips around the hero visual: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-03/good.html">open</a> <a href="patterns/AP-COMP-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-03/shots/good-1440.png" alt="Floating chips around the hero visual: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Small absolutely positioned cards ('+38% conversions', 'Payment received') stuck over the corners of a hero image.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Fake notifications floating over a mockup are a stock hero composition. The numbers are invented and the cards hide the image.</dd></div>
+    <div><dt>Fix</dt><dd>Show the image unobstructed. Put one real, sourced fact in the caption.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>floatingChips</code> {&quot;minChips&quot;:2,&quot;maxChipWidthPx&quot;:340,&quot;maxChipHeightPx&quot;:140}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-COMP-04" data-types="features lists">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-04 <span class="sev sev-medium">medium</span></p>
+      <h3>Icons in tinted rounded squares</h3>
+    </div>
+    <p class="types">features, lists</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-04/bad.html">open</a> <a href="patterns/AP-COMP-04/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-04/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-04/shots/bad-1440.png" alt="Icons in tinted rounded squares: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-04/good.html">open</a> <a href="patterns/AP-COMP-04/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-04/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-04/shots/good-1440.png" alt="Icons in tinted rounded squares: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Line icons (usually Lucide) centred in a pale tinted rounded square, repeated on every card.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>The shadcn / Tailwind UI feature card signature. The icon is chosen to match a word, not to inform.</dd></div>
+    <div><dt>Fix</dt><dd>Drop decorative icons. Use numbers, photographs, or icons only where they carry meaning (status, file type, action).</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>tintedIconSquares</code> {&quot;minCount&quot;:3,&quot;minSizePx&quot;:28,&quot;maxSizePx&quot;:72}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-COMP-05" data-types="lists">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-05 <span class="sev sev-medium">medium</span></p>
+      <h3>Emoji bullets and emoji headings</h3>
+    </div>
+    <p class="types">lists</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-05/bad.html">open</a> <a href="patterns/AP-COMP-05/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-05/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-05/shots/bad-1440.png" alt="Emoji bullets and emoji headings: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-05/good.html">open</a> <a href="patterns/AP-COMP-05/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-05/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-05/shots/good-1440.png" alt="Emoji bullets and emoji headings: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Lists and headings that start with emoji (rocket, lightning, check, fire) as icons.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Chat models use emoji as visual bullets and generated pages inherit the habit. On a business site it reads as unedited model output.</dd></div>
+    <div><dt>Fix</dt><dd>Plain bullets or numbered rows. Use real icons only with a purpose and a text label.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>emojiBullets</code> {&quot;minCount&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui" title="7 Signs a UI Has Been Vibe Coded (And How to Avoid Them) (24 Apr (year not shown; footer 2026))">S02</a> <a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://news.ycombinator.com/item?id=47864393" title="Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments) (about Apr 2026 (&quot;5 months ago&quot;))">S05</a> <a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a> <a href="https://superdesign.dev/blog/fix-generic-ai-landing-page" title="Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them (2026-07-13)">S34</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-COMP-06" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-06 <span class="sev sev-medium">medium</span></p>
+      <h3>Component library defaults left untouched</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-06/bad.html">open</a> <a href="patterns/AP-COMP-06/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-06/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-06/shots/bad-1440.png" alt="Component library defaults left untouched: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-06/good.html">open</a> <a href="patterns/AP-COMP-06/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-06/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-06/shots/good-1440.png" alt="Component library defaults left untouched: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>shadcn/ui default theme variables, slate-900 6px-radius buttons and grey-bordered cards exactly as installed.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>A component kit is a starting point. Shipping its default theme means the site looks like thousands of others built from it.</dd></div>
+    <div><dt>Fix</dt><dd>Theme the kit with brand tokens: colour, type, radius scale, shadows, button family (depth / solid / ink).</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>shadcnDefaults</code> {&quot;minVarMatches&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it" title="AI Design Slop: 16 Patterns That Out Your App as Vibe-Coded (2026-04-22 (updated 2026-09-28))">S06</a> <a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://codemyspec.com/blog/vibe-coded-websites-look-the-same" title="How to Keep Your Website From Looking Like Every Other Vibe Coded Website (2026-07-26)">S08</a> <a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://github.com/JCarterJohnson/vibecoded-design-tells" title="vibecoded-design-tells (Reddit-mined ranking) (undated (data 2020 to 2026))">S20</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://uxskill.laithjunaidy.com/blog/shadcn-ui-looks-generic.html" title="Everything built with shadcn/ui looks the same, and how to break out (2026-05-29)">S31</a> <a href="https://github.com/carve-studio/awesome-shadcn" title="awesome-shadcn (component registry list) (undated)">S36</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-COMP-07" data-types="cards">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-COMP-07 <span class="sev sev-medium">medium</span></p>
+      <h3>Cards with a coloured side or top stripe</h3>
+    </div>
+    <p class="types">cards</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-COMP-07/bad.html">open</a> <a href="patterns/AP-COMP-07/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-07/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-COMP-07/shots/bad-1440.png" alt="Cards with a coloured side or top stripe: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-COMP-07/good.html">open</a> <a href="patterns/AP-COMP-07/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-COMP-07/shots/good-1440.png"><img loading="lazy" src="patterns/AP-COMP-07/shots/good-1440.png" alt="Cards with a coloured side or top stripe: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Cards with a thick coloured left or top border, often a different colour per card.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Called out by several reviewers as being 'almost as reliable a sign of AI-generated design as em dashes for text'.</dd></div>
+    <div><dt>Fix</dt><dd>Separate items with spacing and hairlines. Use colour only where it encodes something (status), with a text label.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>stripeCards</code> {&quot;minCount&quot;:3,&quot;minStripePx&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui" title="7 Signs a UI Has Been Vibe Coded (And How to Avoid Them) (24 Apr (year not shown; footer 2026))">S02</a> <a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://news.ycombinator.com/item?id=47864393" title="Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments) (about Apr 2026 (&quot;5 months ago&quot;))">S05</a> <a href="https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it" title="AI Design Slop: 16 Patterns That Out Your App as Vibe-Coded (2026-04-22 (updated 2026-09-28))">S06</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a></dd></div>
+  </dl>
+</article></section>
+<section class="cat" id="cat-IMG"><h2>Imagery and decoration <span class="count">3</span></h2>
+<article class="rule" id="AP-IMG-01" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-IMG-01 <span class="sev sev-high">high</span></p>
+      <h3>Fake UI built from divs</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-IMG-01/bad.html">open</a> <a href="patterns/AP-IMG-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-IMG-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-IMG-01/shots/bad-1440.png" alt="Fake UI built from divs: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-IMG-01/good.html">open</a> <a href="patterns/AP-IMG-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-IMG-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-IMG-01/shots/good-1440.png" alt="Fake UI built from divs: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A pretend app window (traffic-light dots, skeleton bars, fake chart columns) drawn in HTML as the hero visual.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Generators cannot show the real product so they draw a plausible one. Visitors learn nothing and it signals there is no product to show.</dd></div>
+    <div><dt>Fix</dt><dd>A real screenshot or photo of the real thing, with a caption saying what it is. If nothing exists yet, show the outcome in words or a real example.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>fakeUi</code> {&quot;minSkeletonBars&quot;:6,&quot;minChartBars&quot;:5}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://www.overpass.studio/blog/why-saas-websites-look-the-same" title="Why SaaS Websites Look The Same &amp; How To Break the Mold (2025-12-17 (updated 2026-05-12))">S29</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-IMG-02" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-IMG-02 <span class="sev sev-medium">medium</span></p>
+      <h3>Decorative grid or dot pattern behind the hero</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-IMG-02/bad.html">open</a> <a href="patterns/AP-IMG-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-IMG-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-IMG-02/shots/bad-1440.png" alt="Decorative grid or dot pattern behind the hero: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-IMG-02/good.html">open</a> <a href="patterns/AP-IMG-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-IMG-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-IMG-02/shots/good-1440.png" alt="Decorative grid or dot pattern behind the hero: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Faint graph-paper lines or dot grids, often faded out with a radial mask, behind the headline.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>A default 'technical' texture from component galleries. It fills space without saying anything.</dd></div>
+    <div><dt>Fix</dt><dd>Plain canvas, or a real image. Texture only if it belongs to the brand (e.g. a material the business works with).</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>gridDotBackdrop</code> {&quot;maxTilePx&quot;:96,&quot;minWidthRatio&quot;:0.4}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://github.com/carve-studio/awesome-shadcn" title="awesome-shadcn (component registry list) (undated)">S36</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-IMG-03" data-types="actions">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-IMG-03 <span class="sev sev-low">low</span></p>
+      <h3>Sparkles as the 'AI' signifier</h3>
+    </div>
+    <p class="types">actions</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-IMG-03/bad.html">open</a> <a href="patterns/AP-IMG-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-IMG-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-IMG-03/shots/bad-1440.png" alt="Sparkles as the 'AI' signifier: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-IMG-03/good.html">open</a> <a href="patterns/AP-IMG-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-IMG-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-IMG-03/shots/good-1440.png" alt="Sparkles as the 'AI' signifier: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>The sparkles emoji or icon on buttons, badges and headings.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Sparkles became the universal 'AI feature' icon, so it marks the page as AI-made even when the product is not AI.</dd></div>
+    <div><dt>Fix</dt><dd>Remove it. Say what the feature does in words.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>sparkles</code> {}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://isthatvibecoded.com/" title="Is That Vibe Coded? (free AI website detector) (undated)">S09</a> <a href="https://www.nngroup.com/articles/ai-sparkles-icon-problem/" title="The Proliferation and Problem of the Sparkles Icon (2024-09-20 (STALE?))">S27</a></dd></div>
+  </dl>
+</article></section>
+<section class="cat" id="cat-MOT"><h2>Motion <span class="count">9</span></h2><p class="note">Screenshots cannot show motion. Open the html files: the bad pages move, the good pages do not. The detector proves it with getAnimations(), computed delays and pointer and scroll probes.</p>
+<article class="rule" id="AP-MOT-01" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-01 <span class="sev sev-medium">medium</span></p>
+      <h3>Everything fades up on scroll</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-01/bad.html">open</a> <a href="patterns/AP-MOT-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-01/shots/bad-1440.png" alt="Everything fades up on scroll: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-01/good.html">open</a> <a href="patterns/AP-MOT-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-01/shots/good-1440.png" alt="Everything fades up on scroll: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Every block starts invisible and slides up as it enters the viewport (AOS, framer-motion whileInView, .reveal classes).</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Generators wrap every section in the same entrance animation. Content hides from people who scroll fast, print or use reduced motion.</dd></div>
+    <div><dt>Fix</dt><dd>Content visible by default. Motion only where it explains a change (a state, an order, a reveal the user asked for), and none under prefers-reduced-motion.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>fadeUpEverything</code> {&quot;minCount&quot;:4}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://github.com/carve-studio/awesome-shadcn" title="awesome-shadcn (component registry list) (undated)">S36</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-02" data-types="lists">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-02 <span class="sev sev-low">low</span></p>
+      <h3>Staggered entrance on every card</h3>
+    </div>
+    <p class="types">lists</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-02/bad.html">open</a> <a href="patterns/AP-MOT-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-02/shots/bad-1440.png" alt="Staggered entrance on every card: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-02/good.html">open</a> <a href="patterns/AP-MOT-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-02/shots/good-1440.png" alt="Staggered entrance on every card: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Sibling cards animate in one after another with incrementing delays (0.1s, 0.2s, 0.3s).</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>The stagger is the default 'polish' a model adds to any repeated element. It slows reading and repeats on every list.</dd></div>
+    <div><dt>Fix</dt><dd>Show lists at once. If an order matters, show the order with numbers, not timing.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>staggerSiblings</code> {&quot;minSiblings&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a> <a href="https://github.com/carve-studio/awesome-shadcn" title="awesome-shadcn (component registry list) (undated)">S36</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-03" data-types="cards">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-03 <span class="sev sev-low">low</span></p>
+      <h3>Hover lift and scale on every card</h3>
+    </div>
+    <p class="types">cards</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-03/bad.html">open</a> <a href="patterns/AP-MOT-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-03/shots/bad-1440.png" alt="Hover lift and scale on every card: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-03/good.html">open</a> <a href="patterns/AP-MOT-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-03/shots/good-1440.png" alt="Hover lift and scale on every card: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Cards that jump up or grow on hover even though they are not links.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>hover:-translate-y-1 hover:scale-105 is pasted onto every card. Motion on non-interactive things signals a click that does nothing.</dd></div>
+    <div><dt>Fix</dt><dd>Hover feedback only on interactive elements, and keep it calm (colour, underline, a 1px press).</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>hoverLift</code> {&quot;minCount&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><span class="muted">none in the article research</span></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-04" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-04 <span class="sev sev-medium">medium</span></p>
+      <h3>Endless floating and pulsing decoration</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-04/bad.html">open</a> <a href="patterns/AP-MOT-04/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-04/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-04/shots/bad-1440.png" alt="Endless floating and pulsing decoration: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-04/good.html">open</a> <a href="patterns/AP-MOT-04/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-04/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-04/shots/good-1440.png" alt="Endless floating and pulsing decoration: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Infinite float, bob, pulse or shimmer animations on badges, blobs, icons and buttons.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Looping motion is added to make static generated pages feel alive. It pulls the eye away from the content and ignores reduced motion.</dd></div>
+    <div><dt>Fix</dt><dd>No looping decoration. Loops only for real progress (a spinner while something loads) and stopped under prefers-reduced-motion.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>infiniteDecor</code> {&quot;minCount&quot;:2}. Ignores spinners and targets under 16px. Calibration: hand-designed product sites (Basecamp, Linear) also loop decoration, so treat a single hit as a prompt to check reduced-motion handling.</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-05" data-types="proof">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-05 <span class="sev sev-high">high</span></p>
+      <h3>Infinite logo marquee</h3>
+    </div>
+    <p class="types">proof</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-05/bad.html">open</a> <a href="patterns/AP-MOT-05/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-05/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-05/shots/bad-1440.png" alt="Infinite logo marquee: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-05/good.html">open</a> <a href="patterns/AP-MOT-05/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-05/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-05/shots/good-1440.png" alt="Infinite logo marquee: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A strip of client logos scrolling sideways forever, often duplicated to loop.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>The marquee makes a short or invented logo list look long. It is the most copied social-proof component in generated pages.</dd></div>
+    <div><dt>Fix</dt><dd>A static, short list of real clients you have permission to name, ideally each with what you did for them.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>logoMarquee</code> {&quot;minItems&quot;:4}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-06" data-types="page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-06 <span class="sev sev-medium">medium</span></p>
+      <h3>Cursor-following glow or spotlight</h3>
+    </div>
+    <p class="types">page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-06/bad.html">open</a> <a href="patterns/AP-MOT-06/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-06/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-06/shots/bad-1440.png" alt="Cursor-following glow or spotlight: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-06/good.html">open</a> <a href="patterns/AP-MOT-06/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-06/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-06/shots/good-1440.png" alt="Cursor-following glow or spotlight: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A radial glow that follows the pointer across the page or across cards.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Spotlight cards and cursor glows are copied from a handful of developer sites. They add work for the GPU and nothing for the reader.</dd></div>
+    <div><dt>Fix</dt><dd>Remove it. Use standard hover and focus-visible states.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>cursorGlow</code> {}</dd></div>
+    <div><dt>Sources</dt><dd><span class="muted">none in the article research</span></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-07" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-07 <span class="sev sev-medium">medium</span></p>
+      <h3>Typewriter or rotating-word headline</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-07/bad.html">open</a> <a href="patterns/AP-MOT-07/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-07/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-07/shots/bad-1440.png" alt="Typewriter or rotating-word headline: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-07/good.html">open</a> <a href="patterns/AP-MOT-07/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-07/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-07/shots/good-1440.png" alt="Typewriter or rotating-word headline: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>The H1 types itself out, or a word in it cycles through options with a blinking caret.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>A stock trick to make a generic headline feel dynamic. Screen readers and slow readers get a moving target.</dd></div>
+    <div><dt>Fix</dt><dd>One fixed headline that says the specific thing. If there are several audiences, write for the main one and route the rest.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>typewriter</code> {&quot;observeMs&quot;:1200}</dd></div>
+    <div><dt>Sources</dt><dd><span class="muted">none in the article research</span></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-08" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-08 <span class="sev sev-medium">medium</span></p>
+      <h3>Parallax-scrolling decorative shapes</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-08/bad.html">open</a> <a href="patterns/AP-MOT-08/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-08/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-08/shots/bad-1440.png" alt="Parallax-scrolling decorative shapes: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-08/good.html">open</a> <a href="patterns/AP-MOT-08/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-08/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-08/shots/good-1440.png" alt="Parallax-scrolling decorative shapes: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Blobs, orbs or shapes that move at a different speed from the page as you scroll.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Scroll-linked parallax on decoration is a generator flourish that costs performance and can trigger motion sickness.</dd></div>
+    <div><dt>Fix</dt><dd>Static layout. If scroll-linked motion is needed for a story, tie it to content and respect prefers-reduced-motion.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>parallaxDecor</code> {&quot;scrollPx&quot;:400,&quot;minShiftPx&quot;:20}</dd></div>
+    <div><dt>Sources</dt><dd><span class="muted">none in the article research</span></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-MOT-09" data-types="hero">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-MOT-09 <span class="sev sev-high">high</span></p>
+      <h3>Purposeless spinning hero object</h3>
+    </div>
+    <p class="types">hero</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-MOT-09/bad.html">open</a> <a href="patterns/AP-MOT-09/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-09/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-MOT-09/shots/bad-1440.png" alt="Purposeless spinning hero object: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-MOT-09/good.html">open</a> <a href="patterns/AP-MOT-09/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-MOT-09/shots/good-1440.png"><img loading="lazy" src="patterns/AP-MOT-09/shots/good-1440.png" alt="Purposeless spinning hero object: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A large orb, globe, cube or 3D shape rotating forever in the hero.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>A spinning shape is the generator's stand-in for 'technology'. It does not show the product or the work.</dd></div>
+    <div><dt>Fix</dt><dd>Show the actual work, team or result. A still photograph beats an abstract shape.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>spinningHero</code> {&quot;minSizePx&quot;:160}</dd></div>
+    <div><dt>Sources</dt><dd><span class="muted">none in the article research</span></dd></div>
+  </dl>
+</article></section>
+<section class="cat" id="cat-TRUST"><h2>Trust and fake proof <span class="count">5</span></h2>
+<article class="rule" id="AP-TRUST-01" data-types="proof">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TRUST-01 <span class="sev sev-high">high</span></p>
+      <h3>'Trusted by' strip of placeholder logos</h3>
+    </div>
+    <p class="types">proof</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TRUST-01/bad.html">open</a> <a href="patterns/AP-TRUST-01/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-01/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TRUST-01/shots/bad-1440.png" alt="'Trusted by' strip of placeholder logos: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TRUST-01/good.html">open</a> <a href="patterns/AP-TRUST-01/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-01/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TRUST-01/shots/good-1440.png" alt="'Trusted by' strip of placeholder logos: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A 'Trusted by teams at' row of company names typed out as text wordmarks, often Acme, Globex, Initech or invented brands, usually greyed out.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Generators always add a logo strip and fill it with placeholders. Visitors recognise the names, and fake proof costs more trust than none.</dd></div>
+    <div><dt>Fix</dt><dd>Only real clients you may name. One named client with what you did beats twelve grey logos.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>trustedByLogos</code> {&quot;minItems&quot;:4}. Real logo strips that use the clients' own logo files (img or svg) are not flagged; typed wordmarks and known placeholder names are.</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-TRUST-02" data-types="proof">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TRUST-02 <span class="sev sev-high">high</span></p>
+      <h3>Inflated stat band</h3>
+    </div>
+    <p class="types">proof</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TRUST-02/bad.html">open</a> <a href="patterns/AP-TRUST-02/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-02/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TRUST-02/shots/bad-1440.png" alt="Inflated stat band: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TRUST-02/good.html">open</a> <a href="patterns/AP-TRUST-02/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-02/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TRUST-02/shots/good-1440.png" alt="Inflated stat band: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>A row of big round numbers ('10x', '99.9%', '50K+', '24/7') with one-word captions.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Generated pages invent metrics to fill the stats section. Round numbers with no source or date are read as made up.</dd></div>
+    <div><dt>Fix</dt><dd>One specific, sourced figure in a sentence with its context and date ('41 kitchens fitted in 2025, all in Wessex').</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>inflatedStats</code> {&quot;minStats&quot;:3,&quot;minFontPx&quot;:28}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.adriankrebs.ch/blog/design-slop/" title="Scoring Show HN submissions for AI design patterns (2026-04-20)">S04</a> <a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai" title="10 Signs a Website Was Designed by AI (2026-05-11)">S26</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-TRUST-03" data-types="hero proof">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TRUST-03 <span class="sev sev-medium">medium</span></p>
+      <h3>Avatar stack with 'Loved by 10,000+'</h3>
+    </div>
+    <p class="types">hero, proof</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TRUST-03/bad.html">open</a> <a href="patterns/AP-TRUST-03/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-03/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TRUST-03/shots/bad-1440.png" alt="Avatar stack with 'Loved by 10,000+': bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TRUST-03/good.html">open</a> <a href="patterns/AP-TRUST-03/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-03/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TRUST-03/shots/good-1440.png" alt="Avatar stack with 'Loved by 10,000+': fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Overlapping circular avatars next to a star row and a user count.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Standard hero social proof in generated templates, usually stock faces and a made-up count.</dd></div>
+    <div><dt>Fix</dt><dd>A named review with a link to where it was posted, or the real review score from a platform with its count and date.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>avatarStack</code> {&quot;minAvatars&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-TRUST-04" data-types="proof">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TRUST-04 <span class="sev sev-high">high</span></p>
+      <h3>Placeholder testimonials</h3>
+    </div>
+    <p class="types">proof</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TRUST-04/bad.html">open</a> <a href="patterns/AP-TRUST-04/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-04/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TRUST-04/shots/bad-1440.png" alt="Placeholder testimonials: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TRUST-04/good.html">open</a> <a href="patterns/AP-TRUST-04/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-04/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TRUST-04/shots/good-1440.png" alt="Placeholder testimonials: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Five-star quote cards from 'Sarah Johnson, CEO at TechCorp' with generic praise.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Models generate the same handful of names and job titles. Generic praise with no detail reads as invented.</dd></div>
+    <div><dt>Fix</dt><dd>Real quotes with permission: full name or first name and town, the job done, and one specific detail from their experience.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>placeholderTestimonials</code> {&quot;minFiveStarCards&quot;:3}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://vibemole.com/resources/avoid-vibecoded-app-design" title="How to Avoid Building Apps That Look Vibe Coded (2026-07-01)">S19</a> <a href="https://tenex.studio/en/blog/ai-slop-ui-8-signes/" title="AI slop: 8 signs a website was generated by AI. (2026-07-14)">S21</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a></dd></div>
+  </dl>
+</article>
+
+<article class="rule" id="AP-TRUST-05" data-types="footer page">
+  <header class="rule-head">
+    <div>
+      <p class="rid">AP-TRUST-05 <span class="sev sev-high">high</span></p>
+      <h3>Template and builder leftovers</h3>
+    </div>
+    <p class="types">footer, page</p>
+  </header>
+  <div class="pair">
+    <figure class="side bad">
+      <figcaption><strong>Bad</strong> <a href="patterns/AP-TRUST-05/bad.html">open</a> <a href="patterns/AP-TRUST-05/shots/bad-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-05/shots/bad-1440.png"><img loading="lazy" src="patterns/AP-TRUST-05/shots/bad-1440.png" alt="Template and builder leftovers: bad example at 1440 wide"></a>
+    </figure>
+    <figure class="side good">
+      <figcaption><strong>Good</strong> <a href="patterns/AP-TRUST-05/good.html">open</a> <a href="patterns/AP-TRUST-05/shots/good-390.png">390</a></figcaption>
+      <a href="patterns/AP-TRUST-05/shots/good-1440.png"><img loading="lazy" src="patterns/AP-TRUST-05/shots/good-1440.png" alt="Template and builder leftovers: fixed example at 1440 wide"></a>
+    </figure>
+  </div>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Stale copyright years, 'Edit with Lovable' badges, lorem ipsum, '[Your Company]', example.com links, default favicons.</dd></div>
+    <div><dt>Why it reads as AI</dt><dd>Leftovers show nobody read the page before it shipped, which undoes any other trust signal.</dd></div>
+    <div><dt>Fix</dt><dd>Search the build for placeholders before launch. Copyright year from the build date, real company details, builder badges removed.</dd></div>
+    <div><dt>Detection</dt><dd>DOM check <code>templateLeftovers</code> {&quot;maxCopyrightAgeYears&quot;:1}</dd></div>
+    <div><dt>Sources</dt><dd><a href="https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded" title="How to tell if a website is vibe coded (7 signs) (2026-07-08 (updated 2026-09-29))">S07</a> <a href="https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated" title="How to tell if a website is AI-generated: 10 signs to check (undated (2026))">S22</a> <a href="https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120" title="How to Tell If a Website Was Vibe Coded (A Developer's Checklist) (2026-08-16)">S23</a> <a href="https://dev.to/kaplich/i-analyzed-100-vibe-coded-websites-and-found-these-common-mistakes-5275" title="I Analyzed 100 Vibe-Coded Websites and Found These Common Mistakes (2025-08-06)">S24</a></dd></div>
+  </dl>
+</article></section>
+<section class="cat"><h2>More motion rules from @brandcloud/motion <span class="count">16</span></h2><p class="note">Documented only: no bad/good pair and no detector check yet. Ids AP-MOT-01 to 09 are shared with @brandcloud/motion and detected here.</p><ul><li><strong>AP-MOT-20</strong> No reduced-motion handling <span class="muted">(high)</span></li><li><strong>AP-MOT-21</strong> Animating layout properties <span class="muted">(medium)</span></li><li><strong>AP-MOT-22</strong> transition: all <span class="muted">(low)</span></li><li><strong>AP-MOT-23</strong> Slow interface motion <span class="muted">(medium)</span></li><li><strong>AP-MOT-24</strong> Bouncy overshoot on everything <span class="muted">(low)</span></li><li><strong>AP-MOT-25</strong> Scroll hijacking and smooth-scroll libraries <span class="muted">(high)</span></li><li><strong>AP-MOT-26</strong> Choreographed hero intro <span class="muted">(medium)</span></li><li><strong>AP-MOT-27</strong> Animated gradient or mesh background <span class="muted">(high)</span></li><li><strong>AP-MOT-28</strong> Every number counts up <span class="muted">(low)</span></li><li><strong>AP-MOT-29</strong> Cursor-tilt and magnetic elements <span class="muted">(medium)</span></li><li><strong>AP-MOT-30</strong> Animation loops running off screen <span class="muted">(medium)</span></li><li><strong>AP-MOT-31</strong> Letter-by-letter or blur-in headline <span class="muted">(medium)</span></li><li><strong>AP-MOT-32</strong> Preloader or splash animation <span class="muted">(high)</span></li><li><strong>AP-MOT-33</strong> Auto-playing motion with no pause <span class="muted">(high)</span></li><li><strong>AP-MOT-34</strong> Meaning only available on hover <span class="muted">(medium)</span></li><li><strong>AP-MOT-35</strong> Blur and glass entrances <span class="muted">(low)</span></li></ul></section>
+</main>
+<footer class="wrap">Anti-AI design rules. Synthetic pairs use five invented businesses; names and figures are fictional.</footer>
+<script>
+const sel = document.getElementById('type');
+sel.addEventListener('change', () => {
+  const t = sel.value;
+  document.querySelectorAll('.rule').forEach((el) => el.classList.toggle('hidden', !!t && !el.dataset.types.split(' ').includes(t)));
+  document.querySelectorAll('.cat').forEach((c) => { const rs = c.querySelectorAll('.rule'); if (rs.length) c.classList.toggle('hidden', [...rs].every((r) => r.classList.contains('hidden'))); });
+});
+</script>
+</body>
+</html>

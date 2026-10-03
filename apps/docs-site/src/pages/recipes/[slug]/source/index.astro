@@ -1,0 +1,36 @@
+---
+/* The source of each recipe page, shown as code for developers. Read from the .astro files at build time. */
+import Base from "../../../../layouts/Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import { recipes } from "../../../../lib/recipes";
+
+const sources = import.meta.glob("../../*/index.astro", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
+export function getStaticPaths() {
+  return [{ params: { slug: "campaign" } }, { params: { slug: "offer" } }, { params: { slug: "event" } }, { params: { slug: "local-service" } }];
+}
+const { slug } = Astro.params;
+const recipe = recipes.find((r) => r.slug === slug)!;
+const code = sources[`../../${slug}/index.astro`];
+if (!code) throw new Error(`No source for recipe ${slug}`);
+const lines = code.split("\n").length;
+---
+<Base title={`Source: ${recipe.kind}`} description={`The Astro source of the ${recipe.kind.toLowerCase()} recipe, built from free components.`} current="/recipes/">
+  <Container>
+    <header class="s-pagehead" data-split>
+      <h1>{recipe.kind}: the source</h1>
+      <div class="s-stack">
+        <p class="s-lead">The whole page in {lines} lines of Astro. Every section is a free component; the copy is passed in as plain objects.</p>
+        <p class="s-pagehead-note"><a href={`/recipes/${slug}/`}>Back to the live page</a> or <a href="/developers/getting-started/">set up the kit</a>.</p>
+      </div>
+    </header>
+    <div class="src">
+      <p class="s-code-title">src/pages/recipes/{slug}/index.astro</p>
+      <pre class="s-code" tabindex="0"><code>{code}</code></pre>
+    </div>
+  </Container>
+</Base>
+
+<style>
+  .src { padding-block: 2.5rem 5rem; }
+  .src .s-code { max-height: none; font-size: 0.8125rem; }
+</style>

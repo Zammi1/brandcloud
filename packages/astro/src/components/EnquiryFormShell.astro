@@ -1,0 +1,192 @@
+---
+/**
+ * Enquiry form shell. Presentation and progressive enhancement only: there is no backend here.
+ * The form posts natively to `action` (your endpoint) and works with no JavaScript, using the
+ * browser's own validation. A small script, when present, adds inline error messages tied to
+ * each field (aria-invalid + aria-describedby), moves focus to the first problem, and marks
+ * the submit button busy. In mode="preview" it never sends: it shows `previewMessage` instead.
+ * Consent is explicit and unticked by default, never bundled with the enquiry. A hidden
+ * honeypot field catches simple bots. Layouts: stacked | grid | panel.
+ */
+import "../styles/base.css";
+import Button from "./Button.astro";
+interface Labels {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  submit: string;
+  optional: string;
+}
+type Field = "name" | "email" | "phone" | "message";
+interface Props {
+  action?: string;
+  method?: "post" | "get";
+  mode?: "live" | "preview";
+  previewMessage?: string;
+  heading?: string;
+  intro?: string;
+  labels?: Partial<Labels>;
+  fields?: Field[];
+  required?: Field[];
+  interest?: { label: string; options: string[]; placeholder?: string; name?: string };
+  consent?: { label: string; required?: boolean; name?: string };
+  hidden?: Record<string, string>;
+  honeypot?: boolean;
+  layout?: "stacked" | "grid" | "panel";
+  headingLevel?: "h2" | "h3";
+  id?: string;
+  class?: string;
+}
+const {
+  action, method = "post", mode = "live", previewMessage, heading, intro, labels: labelProps = {},
+  fields = ["name", "email", "phone", "message"], required = ["name", "email"], interest, consent, hidden = {},
+  honeypot = true, layout = "stacked", headingLevel: H = "h3", id = "enquiry", class: className,
+} = Astro.props;
+if (mode === "live" && !action) throw new Error("EnquiryFormShell: live mode needs an `action` URL (this component has no backend).");
+if (mode === "preview" && !previewMessage) throw new Error("EnquiryFormShell: preview mode needs a `previewMessage` to show instead of sending.");
+const labels: Labels = { name: "Your name", email: "Email", phone: "Phone", message: "Message", submit: "Send message", optional: "optional", ...labelProps };
+const types: Record<Field, { type: "text" | "email" | "tel" | "textarea"; autocomplete: string; inputmode?: "email" | "tel" }> = {
+  name: { type: "text", autocomplete: "name" },
+  email: { type: "email", autocomplete: "email", inputmode: "email" },
+  phone: { type: "tel", autocomplete: "tel", inputmode: "tel" },
+  message: { type: "textarea", autocomplete: "off" },
+};
+const fid = (f: string) => `${id}-${f}`;
+const titleId = heading ? `${id}-title` : undefined;
+const statusId = `${id}-status`;
+---
+<div class:list={["ba", "ba-form", className]} data-layout={layout} data-surface={layout === "panel" ? "raised" : undefined} data-sticky-hide>
+  {heading && <H id={titleId} class="ba-form__title">{heading}</H>}
+  {intro && <p class="ba-form__intro">{intro}</p>}
+  <form
+    id={id}
+    class="ba-form__form"
+    action={action}
+    method={method}
+    aria-labelledby={titleId}
+    data-ba-form
+    data-mode={mode}
+    data-preview-message={mode === "preview" ? previewMessage : undefined}
+  >
+    {Object.entries(hidden).map(([name, value]) => <input type="hidden" name={name} value={value} />)}
+    {fields.filter((f) => f !== "message").map((f) => (
+      <div class="ba-field" data-field={f}>
+        <label for={fid(f)}>{labels[f]}{!required.includes(f) && <span class="ba-field__optional"> ({labels.optional})</span>}</label>
+        <input class="ba-input" id={fid(f)} name={f} type={types[f].type as "text" | "email" | "tel"} autocomplete={types[f].autocomplete as "name" | "email" | "tel"} inputmode={types[f].inputmode} required={required.includes(f)} />
+        <p class="ba-field__error" id={`${fid(f)}-error`} hidden></p>
+      </div>
+    ))}
+    {interest && (
+      <div class="ba-field" data-field="interest">
+        <label for={fid("interest")}>{interest.label}<span class="ba-field__optional"> ({labels.optional})</span></label>
+        <select class="ba-input" id={fid("interest")} name={interest.name ?? "interest"}>
+          <option value="">{interest.placeholder ?? ""}</option>
+          {interest.options.map((o) => <option value={o}>{o}</option>)}
+        </select>
+      </div>
+    )}
+    <slot />
+    {fields.includes("message") && (
+      <div class="ba-field" data-field="message">
+        <label for={fid("message")}>{labels.message}{!required.includes("message") && <span class="ba-field__optional"> ({labels.optional})</span>}</label>
+        <textarea class="ba-input" id={fid("message")} name="message" rows="4" required={required.includes("message")}></textarea>
+        <p class="ba-field__error" id={`${fid("message")}-error`} hidden></p>
+      </div>
+    )}
+    {consent && (
+      <div class="ba-field" data-field="consent">
+        <label class="ba-check">
+          <input type="checkbox" name={consent.name ?? "consent"} value="yes" required={consent.required} />
+          <span>{consent.label}</span>
+        </label>
+        <p class="ba-field__error" id={`${fid(consent.name ?? "consent")}-error`} hidden></p>
+      </div>
+    )}
+    {honeypot && (
+      <div class="ba-form__hp" aria-hidden="true">
+        <label>Leave this empty<input type="text" name="company_website" tabindex="-1" autocomplete="off" /></label>
+      </div>
+    )}
+    <div class="ba-form__submit">
+      <Button type="submit" size="lg" block>{labels.submit}</Button>
+    </div>
+    <p class="ba-form__status" id={statusId} role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[data-ba-form]")) {
+    if (form.dataset.baReady) continue;
+    form.dataset.baReady = "1";
+    form.noValidate = true;
+    const status = form.querySelector<HTMLElement>(".ba-form__status");
+    const controls = () => Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>("input:not([type=hidden]), textarea, select")).filter((el) => el.name !== "company_website");
+    const show = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+      const error = form.querySelector<HTMLElement>(`#${CSS.escape(`${el.id || `${form.id}-${el.name}`}-error`)}`) ?? el.closest(".ba-field")?.querySelector<HTMLElement>(".ba-field__error") ?? null;
+      const bad = !el.validity.valid;
+      el.toggleAttribute("aria-invalid", bad);
+      if (bad) el.setAttribute("aria-invalid", "true");
+      if (error) {
+        error.textContent = bad ? el.validationMessage : "";
+        error.hidden = !bad;
+        if (bad) el.setAttribute("aria-describedby", error.id);
+        else el.removeAttribute("aria-describedby");
+      }
+      return bad;
+    };
+    form.addEventListener("input", (event) => {
+      const el = event.target as HTMLInputElement;
+      if (el.getAttribute("aria-invalid") === "true") show(el);
+    });
+    form.addEventListener("submit", (event) => {
+      const invalid = controls().filter((el) => show(el));
+      if (invalid.length) {
+        event.preventDefault();
+        invalid[0].focus();
+        return;
+      }
+      if (form.dataset.mode === "preview") {
+        event.preventDefault();
+        if (status) status.textContent = form.dataset.previewMessage ?? "";
+        return;
+      }
+      form.querySelector("button[type=submit]")?.setAttribute("aria-busy", "true");
+    });
+  }
+</script>
+
+<style is:global>
+@layer components {
+  .ba-form { display: grid; gap: 1rem; color: var(--brand-text); }
+  .ba-form[data-layout="panel"] { padding: clamp(1.5rem, 4vw, 2.5rem); border: 1px solid var(--brand-border); border-radius: var(--brand-radius-feature, 1.25rem); box-shadow: var(--brand-shadow-panel, none); }
+  .ba-form__title { margin: 0; font-family: var(--ba-font-display); font-size: var(--ba-fs-h3); font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; }
+  .ba-form__intro { margin: 0; color: var(--brand-text-muted); }
+  .ba-form__form { display: grid; gap: 1.125rem; margin-top: 0.5rem; }
+  @media (min-width: 40rem) {
+    .ba-form[data-layout="grid"] .ba-form__form { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1rem; }
+    .ba-form[data-layout="grid"] :is([data-field="message"], [data-field="consent"], .ba-form__submit, .ba-form__status) { grid-column: 1 / -1; }
+  }
+  .ba-field { display: grid; gap: 0.5rem; align-content: start; min-width: 0; }
+  .ba-field > label:not(.ba-check) { font-size: 0.9375rem; font-weight: 600; }
+  .ba-field__optional { color: var(--brand-text-muted); font-weight: 400; }
+  .ba-input {
+    width: 100%; min-height: 3.25rem; padding: 0.75rem 0.875rem;
+    border: 1px solid var(--brand-border-strong); border-radius: var(--brand-radius-sm, 0.5rem);
+    background: var(--brand-surface-raised); color: var(--brand-text); font: inherit; font-size: 1rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  textarea.ba-input { min-height: 7.25rem; resize: vertical; line-height: 1.5; }
+  .ba-input:hover { border-color: var(--brand-text-muted); }
+  .ba-input:focus { outline: none; border-color: var(--brand-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-accent) 22%, transparent); }
+  .ba-input:focus-visible { outline: none; }
+  .ba-input[aria-invalid="true"] { border-color: var(--brand-danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-danger) 14%, transparent); }
+  select.ba-input { appearance: none; padding-right: 2.75rem; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: right 1.25rem center, right 0.9rem center; background-size: 0.35rem 0.35rem; background-repeat: no-repeat; }
+  .ba-field__error { margin: 0; color: var(--brand-danger); font-size: 0.875rem; font-weight: 600; }
+  .ba-check { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); gap: 0.75rem; align-items: start; font-size: 0.9375rem; line-height: 1.5; cursor: pointer; }
+  .ba-check input { width: 1.375rem; height: 1.375rem; margin: 0.0625rem 0 0; accent-color: var(--brand-accent); cursor: pointer; }
+  .ba-form__hp { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .ba-form__submit { padding-top: 0.25rem; }
+  .ba-form__status { min-height: 1.5em; margin: 0; font-size: 0.9375rem; font-weight: 600; }
+}
+</style>

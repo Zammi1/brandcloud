@@ -1,0 +1,22 @@
+name: Feature or component proposal
+description: Suggest a component, token, rule or improvement.
+labels: [proposal]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the page or job, not only the component.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would help?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: It works with tokens only (no hard-coded colours) and meets WCAG 2.2 AA.
+        - label: It avoids the tells in packages/antipatterns/rules.json.

@@ -1,0 +1,94 @@
+---
+import "@fontsource-variable/schibsted-grotesk";
+import "@fontsource-variable/source-serif-4";
+import Dev from "../../../layouts/Dev.astro";
+import Code from "../../../components/Code.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import { metadata } from "@brandcloud/tokens";
+
+const examples = ["harbour", "orchard", "marigold"].map((name) => metadata.brands.find((b) => b.name === name)!);
+---
+<Dev title="Showcase" description="Three example brands on one page, each set with a single data-brand attribute, rendered with the same components."
+  lede="Harbour, Orchard and Marigold are fictional example brands, each generated from four inputs. Below, the same components render three times; only the data-brand attribute changes.">
+  <section class="dv-section" aria-labelledby="switch-title">
+    <h2 id="switch-title">Switch one panel</h2>
+    <fieldset class="sc-switch">
+      <legend>Brand for the panel below</legend>
+      {examples.map((b, i) => (
+        <label><input type="radio" name="sc-brand" value={b.name} checked={i === 0} /> {b.label}</label>
+      ))}
+    </fieldset>
+    <div class="sc-panel" id="sc-live" data-brand="harbour" data-theme="light" data-button-appearance="depth" aria-live="polite">
+      <Heading as="h3" size="h2">Book a repair before the weekend</Heading>
+      <p class="sc-lede">The same heading, text and buttons. The brand file decides the colours, the fonts and whether buttons are depth or solid.</p>
+      <div class="s-cluster">
+        <Button>Book a repair</Button>
+        <Button tone="ink">See prices</Button>
+        <Button tone="neutral" appearance="outline">Call us</Button>
+      </div>
+      <p class="sc-now">Showing <strong data-sc-label>Harbour</strong>.</p>
+    </div>
+    <Code title="HTML" code={`<div data-brand="orchard" data-theme="light">...</div>`} />
+  </section>
+
+  <section class="dv-section" aria-labelledby="side-title">
+    <h2 id="side-title">All three, side by side</h2>
+    <div class="sc-three">
+      {examples.map((b) => (
+        <div class="sc-brand" data-brand={b.name} data-theme="light" data-button-appearance={b.appearance}>
+          <Heading as="h3" size="h3">Opening late on Thursdays</Heading>
+          <p class="sc-brand__name">Brand <code>{b.name}</code>, default button {b.appearance}</p>
+          <p class="sc-lede">Evening appointments every Thursday until 8pm, booked online.</p>
+          <div class="s-cluster">
+            <Button size="sm">Book a slot</Button>
+            <Button size="sm" tone="ink">Opening times</Button>
+          </div>
+          <div class="sc-dark" data-theme="dark">
+            <p>The same brand in its dark palette.</p>
+            <Button size="sm">Book a slot</Button>
+          </div>
+          <Faq headingLevel="h3" variant="stacked" items={[{ question: "Can I book by phone?", answer: "Yes, during opening hours." }]} />
+        </div>
+      ))}
+    </div>
+  </section>
+</Dev>
+
+<script>
+  const panel = document.getElementById("sc-live");
+  const label = panel?.querySelector<HTMLElement>("[data-sc-label]");
+  for (const input of document.querySelectorAll<HTMLInputElement>("input[name=sc-brand]")) {
+    input.addEventListener("change", () => {
+      if (!panel || !input.checked) return;
+      panel.dataset.brand = input.value;
+      panel.dataset.buttonAppearance = input.value === "marigold" ? "solid" : "depth";
+      if (label) label.textContent = input.parentElement?.textContent?.trim() ?? input.value;
+    });
+  }
+</script>
+
+<style>
+  .sc-switch { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 0; padding: 0; border: 0; }
+  .sc-switch legend { font-weight: 650; margin-block-end: 0.5rem; padding: 0; inline-size: 100%; }
+  .sc-switch label { display: inline-flex; gap: 0.45rem; align-items: center; }
+  .sc-switch input { inline-size: 1.1rem; block-size: 1.1rem; accent-color: var(--brand-accent); }
+  .sc-panel, .sc-brand {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    border: 1px solid var(--brand-border);
+    border-radius: var(--brand-radius-panel);
+    background: var(--brand-canvas);
+    color: var(--brand-text);
+    font-family: var(--brand-font-body);
+  }
+  .sc-panel :global(h3), .sc-brand :global(h3) { font-family: var(--brand-font-display); }
+  .sc-lede { color: var(--brand-text-muted); max-width: 36em; }
+  .sc-now { color: var(--brand-text-subtle); font-size: 0.875rem; }
+  .sc-three { display: grid; gap: 1.25rem; }
+  @media (min-width: 72rem) { .sc-three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .sc-brand__name { font-size: 0.8125rem; color: var(--brand-text-muted); }
+  .sc-dark { display: grid; gap: 0.75rem; justify-items: start; padding: 1rem; border-radius: var(--brand-radius-card); background: var(--brand-canvas); color: var(--brand-text); }
+</style>

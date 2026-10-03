@@ -1,0 +1,29 @@
+---
+/** The detector's score bands, straight from rules.json. */
+import { bandRanges } from "../lib/rules";
+---
+<ol class="sb" aria-label="Score bands">
+  {bandRanges.map((b, i) => (
+    <li data-band={i}>
+      <span class="sb__range s-num">{b.range}</span>
+      <span class="sb__label">{b.label}</span>
+      <span class="sb__meaning">{b.meaning}</span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .sb { display: grid; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
+  .sb li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 0.1rem 1rem;
+    padding-block: 0.7rem;
+    border-block-end: 1px solid var(--brand-border);
+  }
+  .sb__range { font-family: var(--brand-font-display); font-size: 1.125rem; font-weight: 600; grid-row: span 2; }
+  .sb__label { font-weight: 650; text-transform: none; }
+  .sb__label::first-letter { text-transform: uppercase; }
+  .sb__meaning { color: var(--brand-text-muted); font-size: 0.9375rem; }
+  .sb li[data-band="0"] .sb__range { color: var(--brand-status-success); }
+</style>

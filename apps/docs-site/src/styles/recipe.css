@@ -1,0 +1,22 @@
+/* Shared helpers for the recipe pages. Tokens only, so each page takes its own brand. */
+.r-sechead { display: grid; gap: 1rem 4rem; margin-block-end: clamp(2rem, 4vw, 3rem); }
+.r-sechead h2 { font-size: var(--brand-font-size-h2); max-width: 15em; }
+@media (min-width: 62rem) { .r-sechead[data-split] { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: end; } }
+.r-lead { color: var(--brand-text-muted); font-size: var(--brand-font-size-lead); line-height: 1.55; max-width: 36em; }
+.r-two { display: grid; gap: 2.5rem; }
+@media (min-width: 56rem) { .r-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem 5rem; align-items: start; } }
+.r-panel { padding: clamp(1.5rem, 3vw, 2.25rem); border: 1px solid var(--brand-border); border-radius: var(--brand-radius-panel); background: var(--brand-surface); }
+.r-price { font-family: var(--brand-font-display); font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem); line-height: 1; font-weight: 700; letter-spacing: var(--brand-letter-spacing-tight); }
+.r-price-note { color: var(--brand-text-muted); margin-block: 0.5rem 1.5rem; }
+.r-fine { color: var(--brand-text-subtle); font-size: 0.875rem; margin-block-start: 1rem; }
+.r-rows { display: grid; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
+.r-rows > li { display: grid; gap: 0.3rem 2.5rem; padding-block: 1.35rem; border-block-end: 1px solid var(--brand-border); }
+@media (min-width: 50rem) { .r-rows > li { grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 2fr) auto; align-items: baseline; } }
+.r-rows h3 { font-size: 1.25rem; line-height: 1.25; }
+.r-rows p { color: var(--brand-text-muted); }
+.r-rows .r-from { font-weight: 650; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+.r-ticks { display: grid; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+.r-ticks > li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); gap: 0.7rem; align-items: start; }
+.r-ticks > li > svg { margin-top: 0.3em; color: var(--brand-accent); }
+.r-ticks strong { display: block; }
+.r-ticks span { color: var(--brand-text-muted); }

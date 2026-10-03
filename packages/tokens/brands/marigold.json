@@ -1,0 +1,13 @@
+{
+  "$comment": "Example brand for demos, generated with make-brand from four inputs. Fictional.",
+  "name": "marigold",
+  "label": "Marigold",
+  "accent": "#8a4b00",
+  "ink": "#1d1606",
+  "paper": "#fbf6ea",
+  "fonts": {
+    "body": "'Hanken Grotesk Variable', Arial, sans-serif",
+    "display": "'Hanken Grotesk Variable', Arial, sans-serif"
+  },
+  "appearance": "solid"
+}

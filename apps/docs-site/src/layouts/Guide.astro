@@ -1,0 +1,39 @@
+---
+/** A plain-English guide: title band, a short contents list, and a measured column of prose. */
+import Base from "./Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+interface Props { title: string; description: string; lede: string; contents: { id: string; label: string }[]; updated: string }
+const { title, description, lede, contents, updated } = Astro.props;
+---
+<Base title={title} description={description} current="/guides/">
+  <Container>
+    <header class="s-pagehead" data-split>
+      <h1>{title}</h1>
+      <div class="s-stack">
+        <p class="s-lead">{lede}</p>
+        <p class="s-pagehead-note"><a href="/guides/">All guides</a>. Updated {updated}.</p>
+      </div>
+    </header>
+    <div class="g">
+      <nav class="g__toc" aria-label="On this page">
+        <p class="g__toc-title">On this page</p>
+        <ol>{contents.map((c) => <li><a href={`#${c.id}`}>{c.label}</a></li>)}</ol>
+      </nav>
+      <article class="g__body s-prose">
+        <slot />
+      </article>
+    </div>
+  </Container>
+  <slot name="after" />
+</Base>
+
+<style>
+  .g { display: grid; gap: 2rem 4rem; padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem); }
+  @media (min-width: 62rem) { .g { grid-template-columns: 15rem minmax(0, 1fr); } .g__toc { position: sticky; top: 6rem; align-self: start; } }
+  .g__toc-title { font-weight: 650; margin-block-end: 0.75rem; }
+  .g__toc ol { margin: 0; padding-inline-start: 1.2rem; display: grid; gap: 0.5rem; color: var(--brand-text-muted); font-size: 0.9375rem; }
+  .g__toc a { color: var(--brand-text); }
+  .g__body { max-width: 44rem; }
+  .g > * { min-inline-size: 0; }
+  .g__body :global(h2) { scroll-margin-top: 6rem; }
+</style>

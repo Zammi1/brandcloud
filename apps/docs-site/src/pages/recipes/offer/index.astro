@@ -1,0 +1,132 @@
+---
+/* Recipe: offer page. Bramble and Rye is a made-up business. Free components only. */
+import "@fontsource-variable/source-serif-4";
+import "../../../styles/recipe.css";
+import Base from "../../../layouts/Base.astro";
+import RecipeBar from "../../../components/RecipeBar.astro";
+import Navbar from "@brandcloud/astro/components/Navbar.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Footer from "@brandcloud/astro/components/Footer.astro";
+import Icon from "@brandcloud/astro/components/Icon.astro";
+
+const business = "Bramble and Rye";
+const flavours = [
+  { name: "Lemon and elderflower", note: "Sharp curd, soft sponge" },
+  { name: "Dark chocolate and cherry", note: "Rich, not too sweet" },
+  { name: "Carrot and walnut", note: "Spiced, with cream cheese" },
+  { name: "Raspberry and white chocolate", note: "A summer favourite" },
+  { name: "Salted caramel", note: "Brown butter sponge" },
+  { name: "Vanilla and strawberry", note: "The classic, done properly" },
+];
+---
+<Base title={`Recipe: offer page (${business}, fictional)`} description="An offer page recipe built from free components: a wedding cake tasting box from a made-up bakery." bare
+  brand="orchard">
+  <Fragment slot="top">
+    <RecipeBar slug="offer" />
+    <Navbar brandName={business} links={[{ label: "The box", href: "#box" }, { label: "How it works", href: "#how" }, { label: "Terms", href: "#terms" }]}
+      cta={{ label: "Order a box", href: "#order" }} />
+  </Fragment>
+
+  <Hero
+    variant="editorial"
+    copy={{
+      heading: "Taste six wedding cake flavours at home before you choose",
+      lede: "A tasting box with six slices, a card for your notes and a booked call with the baker. Order by Monday, taste it at the weekend.",
+      primary: { label: "Order a tasting box, £24", href: "#order" },
+      secondary: { label: "See what is inside", href: "#box" },
+      note: "The £24 comes off your cake if you book it within 60 days.",
+    }}
+  />
+
+  <Section tone="muted" id="box" aria-labelledby="box-title">
+    <div class="r-two">
+      <div class="s-stack">
+        <Heading as="h2" id="box-title">What is in the box</Heading>
+        <p class="r-lead">Six generous slices, each labelled, packed to travel and good for three days in the fridge.</p>
+        <ul class="r-ticks o-flavours">
+          {flavours.map((f) => <li><Icon name="check" /><div><strong>{f.name}</strong><span>{f.note}</span></div></li>)}
+        </ul>
+      </div>
+      <div class="r-panel" id="order">
+        <p class="o-label">Wedding cake tasting box</p>
+        <p class="r-price">£24</p>
+        <p class="r-price-note">Delivered across Wessex on Thursdays, or collect from the bakery.</p>
+        <ul class="r-ticks">
+          <li><Icon name="check" /><span>Six labelled slices for two people</span></li>
+          <li><Icon name="check" /><span>A tasting card to note what you liked</span></li>
+          <li><Icon name="check" /><span>A 20-minute call with the baker to plan the cake</span></li>
+        </ul>
+        <div class="o-actions">
+          <Button size="lg" block href="#order">Order for this Thursday</Button>
+        </div>
+        <p class="r-fine">Order by midnight on Monday for Thursday delivery. Recipe preview: this button does not take payment.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="how" aria-labelledby="offer-how-title">
+    <Steps
+      id="offer-how"
+      heading="From the box to a booked cake"
+      variant="list"
+      steps={[
+        { title: "Order by Monday", text: "Choose delivery or collection. You get a confirmation email straight away.", meta: "Takes two minutes" },
+        { title: "Taste at the weekend", text: "The box arrives on Thursday. Taste together and fill in the card.", meta: "Keeps for three days" },
+        { title: "Plan it on a call", text: "Talk through flavours, size and design with the baker. You get a written quote afterwards.", meta: "20 minutes" },
+        { title: "Book your cake", text: "Book within 60 days and the £24 is taken off the price.", meta: "Credited in full" },
+      ]}
+    />
+  </Section>
+
+  <Section tone="raised" id="terms" aria-labelledby="terms-title">
+    <div class="r-sechead" data-split>
+      <Heading as="h2" id="terms-title">The terms in plain words</Heading>
+      <p class="r-lead">No small print hidden in an email later. This is all of it.</p>
+    </div>
+    <ul class="r-rows">
+      <li><h3>Credit</h3><p>The £24 comes off any wedding cake booked within 60 days of your tasting.</p><span class="r-from">£24 back</span></li>
+      <li><h3>Allergies</h3><p>Every slice is labelled with its allergens. Gluten-free versions of four flavours are available on request.</p><span class="r-from">Ask first</span></li>
+      <li><h3>Cancelling</h3><p>Cancel before Tuesday and you pay nothing. After that the box is already being baked.</p><span class="r-from">Until Tuesday</span></li>
+    </ul>
+  </Section>
+
+  <Section aria-labelledby="offer-faq-title">
+    <Faq
+      id="offer-faq"
+      heading="Questions about the box"
+      variant="stacked"
+      items={[
+        { question: "Can we choose different flavours?", answer: "Yes. Swap up to two of the six for anything on the full menu when you order." },
+        { question: "Is it enough for two people?", answer: "Each slice is cut to share between two, with some left for a second taste." },
+        { question: "Do you make cakes for small weddings?", answer: "Yes, from two tiers for about forty guests." },
+      ]}
+    />
+  </Section>
+
+  <CtaBand
+    variant="card"
+    copy={{
+      heading: "Taste first, decide after",
+      body: "Order a box this week and plan your cake with the baker who will make it.",
+      primary: { label: "Order a tasting box, £24", href: "#order" },
+      secondary: { label: "Read the terms", href: "#terms" },
+    }}
+  />
+
+  <Fragment slot="bottom">
+    <Footer variant="simple" tone="muted" brandName={business} links={[{ label: "The box", href: "#box" }, { label: "Terms", href: "#terms" }, { label: "Order", href: "#order" }]}
+      legal={["Bramble and Rye is a made-up business for this recipe.", "Example page built with free components."]} />
+  </Fragment>
+</Base>
+
+<style>
+  .o-label { font-weight: 650; margin-block-end: 0.75rem; }
+  .o-actions { margin-block-start: 1.5rem; }
+  .o-flavours { margin-block-start: 1.5rem; }
+</style>

@@ -1,0 +1,13 @@
+{
+  "$comment": "Example brand for demos, generated with make-brand from four inputs. Fictional.",
+  "name": "harbour",
+  "label": "Harbour",
+  "accent": "#0b5a87",
+  "ink": "#0f1a24",
+  "paper": "#f2f5f7",
+  "fonts": {
+    "body": "'Schibsted Grotesk Variable', Arial, sans-serif",
+    "display": "'Schibsted Grotesk Variable', Arial, sans-serif"
+  },
+  "appearance": "depth"
+}

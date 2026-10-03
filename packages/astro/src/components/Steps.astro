@@ -1,0 +1,89 @@
+---
+/**
+ * How it works. An ordered list (real <ol>), numbered in text, never icon cards.
+ *   rail   steps across the page joined by a hairline (stacks with a vertical line on phones)
+ *   list   a vertical list with large numerals in a left column
+ *   split  the heading and intro sit in a sticky left column, steps on the right
+ * Pass `heading` to render the section heading inside the block (needed for "split").
+ */
+import "../styles/base.css";
+import Heading from "./Heading.astro";
+import type { StepItem } from "../copy-types.js";
+interface Props {
+  steps: StepItem[];
+  variant?: "rail" | "list" | "split";
+  heading?: string;
+  intro?: string;
+  headingLevel?: "h2" | "h3";
+  /** Text before the number for screen readers and sighted users, e.g. "Step". Empty for numerals only. */
+  stepLabel?: string;
+  id?: string;
+  class?: string;
+}
+const { steps, variant = "rail", heading, intro, headingLevel = "h2", stepLabel = "", id, class: className } = Astro.props;
+const itemLevel = headingLevel === "h2" ? "h3" : "h4";
+const I = itemLevel;
+const titleId = id ? `${id}-title` : undefined;
+---
+<div id={id} class:list={["ba", "ba-steps", className]} data-variant={variant} style={`--ba-steps:${steps.length}`}>
+  {heading && (
+    <header class="ba-steps__intro">
+      <Heading as={headingLevel} id={titleId}>{heading}</Heading>
+      {intro && <p class="ba-lead">{intro}</p>}
+    </header>
+  )}
+  <ol class="ba-steps__list" aria-labelledby={titleId}>
+    {steps.map((step, index) => (
+      <li class="ba-steps__item">
+        <span class="ba-steps__num ba-num" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <div class="ba-steps__body">
+          <I class="ba-steps__title">{stepLabel && <span class="ba-steps__label">{stepLabel} {index + 1}: </span>}{step.title}</I>
+          {step.text && <p class="ba-steps__text">{step.text}</p>}
+          {step.meta && <p class="ba-steps__meta">{step.meta}</p>}
+        </div>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style is:global>
+@layer components {
+  .ba-steps { display: grid; gap: clamp(2rem, 4vw, 3.5rem); }
+  .ba-steps__intro { display: grid; gap: 1.25rem; max-width: 46rem; }
+  .ba-steps__list { display: grid; margin: 0; padding: 0; list-style: none; counter-reset: none; }
+  .ba-steps__item { position: relative; display: grid; grid-template-columns: 3rem minmax(0, 1fr); column-gap: 1.25rem; padding-bottom: 2rem; }
+  .ba-steps__num {
+    display: grid; place-items: center; width: 3rem; height: 3rem;
+    border: 1px solid var(--brand-border-strong); border-radius: 50%;
+    background: var(--brand-canvas); color: var(--brand-text);
+    font-family: var(--ba-font-display); font-size: 1rem; font-weight: 600;
+    position: relative; z-index: 1;
+  }
+  .ba-steps__item:not(:last-child)::before { content: ""; position: absolute; left: 1.5rem; top: 3rem; bottom: 0; width: 1px; background: var(--brand-border-strong); }
+  .ba-steps__body { display: grid; gap: 0.5rem; align-content: start; padding-top: 0.625rem; }
+  .ba-steps__title { margin: 0; font-family: var(--ba-font-display); font-size: 1.375rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; }
+  .ba-steps__label { color: var(--brand-text-muted); font-weight: 500; }
+  .ba-steps__text { margin: 0; color: var(--brand-text-muted); line-height: 1.6; max-width: 36em; }
+  .ba-steps__meta { margin: 0.25rem 0 0; font-size: 0.875rem; font-weight: 600; }
+
+  /* rail: across the page from 60rem, a hairline joins the numbers */
+  @media (min-width: 60rem) {
+    .ba-steps[data-variant="rail"] .ba-steps__list { grid-template-columns: repeat(var(--ba-steps), minmax(0, 1fr)); column-gap: 2rem; }
+    .ba-steps[data-variant="rail"] .ba-steps__item { grid-template-columns: 1fr; row-gap: 1.25rem; padding-bottom: 0; }
+    .ba-steps[data-variant="rail"] .ba-steps__item:not(:last-child)::before { left: 3rem; right: -2rem; top: 1.5rem; bottom: auto; width: auto; height: 1px; }
+    .ba-steps[data-variant="rail"] .ba-steps__body { padding-top: 0; }
+  }
+
+  /* list: big numerals in their own column, hairlines between steps */
+  .ba-steps[data-variant="list"] .ba-steps__item { grid-template-columns: minmax(3.5rem, 7rem) minmax(0, 1fr); padding: 1.75rem 0; border-top: 1px solid var(--brand-border); }
+  .ba-steps[data-variant="list"] .ba-steps__item::before { display: none; }
+  .ba-steps[data-variant="list"] .ba-steps__num { width: auto; height: auto; place-items: start; border: 0; border-radius: 0; background: none; color: var(--brand-text-muted); font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem); line-height: 1; letter-spacing: -0.03em; }
+  .ba-steps[data-variant="list"] .ba-steps__body { padding-top: 0.25rem; }
+
+  /* split: intro sticky on the left */
+  @media (min-width: 60rem) {
+    .ba-steps[data-variant="split"] { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); column-gap: 5rem; align-items: start; }
+    .ba-steps[data-variant="split"] .ba-steps__intro { position: sticky; top: 6rem; }
+  }
+}
+</style>

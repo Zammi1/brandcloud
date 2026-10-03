@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-COMP-07: cards with a thick coloured left stripe -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northgate Physio: before you come (AP-COMP-07 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.notes { border-top: 1px solid var(--ink); }
+.note { padding: 22px 0; border-bottom: 1px solid var(--line); }
+.note p { color: var(--ink-2); margin-top: 6px; max-width: 56ch; }
+/* ANTIPATTERN AP-COMP-07 */
+.notes { border-top: 0; display: grid; gap: 16px; }
+.note { background: var(--card); border: 1px solid var(--line); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 24px; }
+.note:nth-child(2) { border-left-color: #10b981; }
+.note:nth-child(3) { border-left-color: #f59e0b; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Northgate Physio <small>Kingsport</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Treatments</a><a href="#">Prices</a><a href="#">Find us</a><a class="btn btn-ink btn-sm" href="#">Book online</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight">
+  <h1>Physiotherapy in Kingsport for backs, knees and running injuries.</h1>
+</section>
+<section class="wrap section split">
+  <h2>Before your first appointment</h2>
+  <div class="notes">
+    <div class="note"><h3>Wear shorts or loose trousers</h3><p>We need to see how the joint moves. There is a changing room if you are coming from work.</p></div>
+    <div class="note"><h3>Bring any scan reports</h3><p>MRI or X-ray letters help. We do not need the images themselves.</p></div>
+    <div class="note"><h3>Running late?</h3><p>Text 07700 900412 and we will keep your slot for up to 15 minutes.</p></div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Northgate Physiotherapy Ltd</span><span>41 Northgate Road, Kingsport KP2 0AB</span></footer></div>
+
+</body>
+</html>

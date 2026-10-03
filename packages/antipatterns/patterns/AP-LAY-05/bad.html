@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-LAY-05: the same large radius (rounded-3xl) on every card, input and panel -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbour &amp; Pine: recent kitchens (AP-LAY-05 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.work { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 72px; align-items: start; }
+.proj { padding: 22px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 5fr); gap: 20px; }
+.proj:first-child { border-top: 1px solid var(--ink); }
+.proj p { color: var(--ink-2); }
+.form { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-md); padding: 28px; display: grid; gap: 14px; }
+.form label { font-size: 14.5px; font-weight: 560; display: grid; gap: 6px; }
+.form input, .form textarea { font: inherit; padding: 12px 14px; border: 1px solid #bfb9ad; border-radius: var(--r-sm); background: #fff; color: var(--ink); }
+@media (max-width: 860px) { .work, .proj { grid-template-columns: 1fr; gap: 32px; } .proj { gap: 6px; } }
+/* ANTIPATTERN AP-LAY-05 */
+.proj, .proj:first-child { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 24px; margin-bottom: 16px; }
+.form { border-radius: 28px; }
+.form input, .form textarea { border-radius: 16px; }
+.btn { border-radius: 999px; }
+.btn-depth::before { border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Harbour &amp; Pine <small>Joinery, Merewick</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Kitchens</a><a href="#">Recent work</a><a href="#">Prices</a><a class="btn btn-ink btn-sm" href="#">Book a survey</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight"><h1>Three kitchens we finished this year.</h1></section>
+<section class="wrap work" style="padding-bottom:96px">
+  <div>
+    <div class="proj"><h3>Lowfield</h3><p>Painted shaker in a deep green, oak worktops, a larder cupboard built round the boiler. 9 weeks, &pound;21,400.</p></div>
+    <div class="proj"><h3>Fishbourne</h3><p>Solid oak with a hand-cut walnut inlay on the island. 10 weeks, &pound;27,900.</p></div>
+    <div class="proj"><h3>Merewick</h3><p>Small galley in a Victorian terrace, painted ivory, brass rails. 7 weeks, &pound;12,800.</p></div>
+  </div>
+  <form class="form" onsubmit="return false">
+    <h3>Ask about your kitchen</h3>
+    <label>Name<input name="name" autocomplete="name"></label>
+    <label>Postcode<input name="postcode" autocomplete="postal-code"></label>
+    <label>What would you like to change?<textarea name="msg" rows="3"></textarea></label>
+    <button class="btn btn-depth" type="submit">Send</button>
+  </form>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Harbour &amp; Pine Joinery Ltd</span><span>Unit 4, Quay Road, Merewick MW19 8TX</span></footer></div>
+
+</body>
+</html>

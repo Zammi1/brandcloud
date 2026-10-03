@@ -1,0 +1,35 @@
+---
+/**
+ * Heading with the marketing type scale. `as` is the outline rank; `size` is the look, so page
+ * authors pick rank and size independently. No eyebrow or kicker slot by design.
+ */
+import "../styles/base.css";
+interface Props {
+  as?: "h1" | "h2" | "h3" | "h4" | "p";
+  size?: "display" | "h1" | "h2" | "h3" | "h4";
+  id?: string;
+  class?: string;
+  balance?: boolean;
+}
+const { as: Tag = "h2", size, id, class: className, balance = true } = Astro.props;
+const look = size ?? (Tag === "p" ? "h3" : Tag);
+---
+<Tag id={id} class:list={["ba", "ba-heading", className]} data-size={look} data-balance={balance ? "" : undefined}><slot /></Tag>
+
+<style is:global>
+@layer components {
+  .ba-heading {
+    margin: 0;
+    color: var(--brand-text);
+    font-family: var(--ba-font-display);
+    font-weight: 600;
+    overflow-wrap: break-word;
+  }
+  .ba-heading[data-balance] { text-wrap: balance; }
+  .ba-heading[data-size="display"] { font-size: var(--ba-fs-display); line-height: 1; letter-spacing: -0.036em; }
+  .ba-heading[data-size="h1"] { font-size: var(--ba-fs-h1); line-height: 1.03; letter-spacing: -0.034em; }
+  .ba-heading[data-size="h2"] { font-size: var(--ba-fs-h2); line-height: 1.06; letter-spacing: -0.028em; }
+  .ba-heading[data-size="h3"] { font-size: var(--ba-fs-h3); line-height: 1.18; letter-spacing: -0.018em; }
+  .ba-heading[data-size="h4"] { font-size: 1.1875rem; line-height: 1.3; letter-spacing: -0.01em; }
+}
+</style>

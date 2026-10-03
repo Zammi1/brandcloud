@@ -1,0 +1,16 @@
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(body) {
+    margin: 0;
+    background: var(--brand-canvas);
+    color: var(--brand-text);
+    font-family: var(--brand-font-sans);
+  }
+
+  :where(button, a, input, textarea, select) { font: inherit; }
+
+  :where(:focus-visible) {
+    outline: 3px solid var(--brand-focus);
+    outline-offset: 3px;
+  }
+}

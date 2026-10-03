@@ -1,0 +1,77 @@
+@layer components {
+  .brand-page-header {
+    display: grid;
+    gap: var(--brand-spacing-2);
+    min-inline-size: 0;
+    padding-block: var(--brand-spacing-4) var(--brand-spacing-3);
+    color: var(--brand-text);
+    font-family: var(--brand-font-sans);
+  }
+  .brand-page-header__context {
+    display: flex;
+    min-inline-size: 0;
+    align-items: center;
+    gap: var(--brand-spacing-2);
+    color: var(--brand-text-muted);
+    font-size: 0.8125rem;
+  }
+  .brand-page-header__row {
+    display: flex;
+    min-block-size: 2.25rem;
+    min-inline-size: 0;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--brand-spacing-3) var(--brand-spacing-4);
+  }
+  .brand-page-header__titles {
+    display: grid;
+    flex: 1 1 18rem;
+    gap: var(--brand-spacing-1);
+    min-inline-size: 0;
+  }
+  .brand-page-header__title-line {
+    display: flex;
+    min-inline-size: 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--brand-spacing-1) var(--brand-spacing-3);
+  }
+  .brand-page-header__title {
+    margin: 0;
+    min-inline-size: 0;
+    font-size: 1.25rem;
+    font-weight: 650;
+    line-height: 1.8rem;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+  .brand-page-header__meta {
+    color: var(--brand-text-muted);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .brand-page-header__description {
+    margin: 0;
+    max-inline-size: 72ch;
+    color: var(--brand-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .brand-page-header__actions,
+  .brand-page-header__secondary {
+    display: flex;
+    min-inline-size: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--brand-spacing-2);
+  }
+  .brand-page-header__actions { flex: 0 1 auto; justify-content: flex-end; }
+  .brand-page-header__tabs { min-inline-size: 0; margin-block-start: var(--brand-spacing-1); }
+
+  @media (max-width: 47.4375rem) {
+    .brand-page-header { padding-block: var(--brand-spacing-3) var(--brand-spacing-2); }
+    .brand-page-header__actions { inline-size: 100%; justify-content: flex-start; }
+    .brand-page-header__primary { margin-inline-start: auto; }
+  }
+}

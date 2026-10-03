@@ -1,0 +1,52 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Icon from "@brandcloud/astro/components/Icon.astro";
+
+const guides = [
+  {
+    href: "/guides/not-ai-made/",
+    title: "How to make a page not look AI-made",
+    text: "The visual tells of generated pages, why visitors notice them and the fix for each, with side-by-side examples.",
+    minutes: 8,
+  },
+  {
+    href: "/guides/accessible-colours/",
+    title: "How to pick brand colours that pass accessibility",
+    text: "WCAG 2.2 AA contrast in plain English: what the numbers mean and how to fix a colour that fails.",
+    minutes: 6,
+  },
+];
+---
+<Base title="Guides" description="Plain-English guides for marketers: how to make a page not look AI-made, and how to pick brand colours that pass accessibility." current="/guides/">
+  <Container>
+    <header class="s-pagehead" data-split>
+      <h1>Guides in plain English</h1>
+      <p class="s-lead">Short reads for the people who own the page, not only the people who build it. No code needed.</p>
+    </header>
+  </Container>
+  <Section space="tight">
+    <ul class="gi">
+      {guides.map((g) => (
+        <li>
+          <a href={g.href}>
+            <h2>{g.title}</h2>
+            <p>{g.text}</p>
+            <span class="gi__meta">About {g.minutes} minutes to read <Icon name="arrow-right" size={16} /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+</Base>
+
+<style>
+  .gi { display: grid; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
+  .gi a { display: grid; gap: 0.6rem; padding-block: 2rem; border-block-end: 1px solid var(--brand-border); color: inherit; text-decoration: none; }
+  @media (min-width: 56rem) { .gi a { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0.6rem 4rem; } .gi__meta { grid-column: 2; } }
+  .gi h2 { font-size: var(--brand-font-size-h3); max-width: 18em; }
+  .gi a:hover h2 { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
+  .gi p { color: var(--brand-text-muted); }
+  .gi__meta { display: inline-flex; gap: 0.4rem; align-items: center; font-weight: 650; color: var(--brand-accent); }
+</style>

@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+---
+<Base title="Page not found" description="This page does not exist.">
+  <Container>
+    <div class="nf">
+      <h1>That page is not here</h1>
+      <p class="s-lead">It may have moved, or the link may have a typo. These are the places most people are looking for.</p>
+      <div class="s-cluster">
+        <Button href="/">Go to the home page</Button>
+        <Button href="/brand-builder/" tone="ink">Brand builder</Button>
+        <Button href="/developers/" tone="neutral" appearance="outline">For developers</Button>
+      </div>
+    </div>
+  </Container>
+</Base>
+<style>
+  .nf { display: grid; gap: 1.5rem; padding-block: clamp(4rem, 10vw, 8rem); max-width: 40rem; }
+  .nf h1 { font-size: var(--brand-font-size-h1); }
+</style>

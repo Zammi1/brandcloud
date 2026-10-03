@@ -1,0 +1,64 @@
+---
+/**
+ * Credentials and memberships. Real items only: never counts of things listed lower on the
+ * page, never fake logos or invented stats (outreach DESIGN-REVIEW).
+ *   rule    one ruled row of items divided by hairlines, text only (default)
+ *   inline  a single quiet line of items for under a hero or form
+ *   logos   real logos with their names kept visible beside them
+ */
+import "../styles/base.css";
+import type { TrustItem } from "../copy-types.js";
+interface Props {
+  items: TrustItem[];
+  variant?: "rule" | "inline" | "logos";
+  /** Accessible name of the list, e.g. "Qualifications and memberships". */
+  label: string;
+  class?: string;
+}
+const { items, variant = "rule", label, class: className } = Astro.props;
+const cols = Math.min(items.length, 4);
+---
+{items.length > 0 && (
+  <ul class:list={["ba", "ba-trust", className]} data-variant={variant} data-cols={cols} aria-label={label}>
+    {items.map((it) => (
+      <li class="ba-trust__item">
+        {variant === "logos" && it.logo ? (
+          <img class="ba-trust__logo" src={it.logo.src} alt="" width={it.logo.width} height={it.logo.height} loading="lazy" decoding="async" />
+        ) : null}
+        {it.href ? <a class="ba-trust__text" href={it.href}>{it.text}</a> : <span class="ba-trust__text">{it.text}</span>}
+      </li>
+    ))}
+  </ul>
+)}
+
+<style is:global>
+@layer components {
+  .ba-trust { display: grid; gap: 1rem 2.5rem; margin: 0; padding: 0; list-style: none; color: var(--brand-text); }
+  .ba-trust__item { display: flex; align-items: flex-start; gap: 0.75rem; min-width: 0; font-size: 0.96875rem; line-height: 1.4; }
+  .ba-trust__text { padding-top: 0.25rem; overflow-wrap: anywhere; color: inherit; }
+  a.ba-trust__text { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  .ba-trust[data-variant="rule"] { gap: 0; padding-block: 0.5rem; border-block: 1px solid var(--brand-border); }
+  .ba-trust[data-variant="rule"] .ba-trust__item { padding: 1rem 0; font-family: var(--ba-font-display); font-size: 1.0625rem; font-weight: 500; }
+  .ba-trust[data-variant="rule"] .ba-trust__item + .ba-trust__item { border-top: 1px solid var(--brand-border); }
+  .ba-trust[data-variant="rule"] .ba-trust__text { padding-top: 0; }
+  @media (min-width: 48rem) {
+    .ba-trust[data-variant="rule"] { grid-template-columns: repeat(var(--ba-trust-cols, 4), minmax(0, 1fr)); }
+    .ba-trust[data-cols="3"] { --ba-trust-cols: 3; }
+    .ba-trust[data-cols="2"] { --ba-trust-cols: 2; }
+    .ba-trust[data-cols="1"] { --ba-trust-cols: 1; }
+    .ba-trust[data-variant="rule"] .ba-trust__item { padding: 1rem 1.5rem; }
+    .ba-trust[data-variant="rule"] .ba-trust__item:first-child { padding-left: 0; }
+    .ba-trust[data-variant="rule"] .ba-trust__item + .ba-trust__item { border-top: 0; border-left: 1px solid var(--brand-border); }
+  }
+
+  .ba-trust[data-variant="inline"] { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; color: var(--brand-text-muted); }
+  .ba-trust[data-variant="inline"] .ba-trust__item { font-size: 0.9375rem; }
+  .ba-trust[data-variant="inline"] .ba-trust__text { padding-top: 0; }
+  .ba-trust[data-variant="inline"] .ba-trust__item + .ba-trust__item::before { content: ""; align-self: center; width: 0.25rem; height: 0.25rem; margin-right: 0.75rem; border-radius: 50%; background: var(--brand-border-strong); }
+
+  .ba-trust[data-variant="logos"] { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem 2.5rem; }
+  .ba-trust[data-variant="logos"] .ba-trust__item { align-items: center; color: var(--brand-text-muted); font-size: 0.875rem; }
+  .ba-trust[data-variant="logos"] .ba-trust__text { padding-top: 0; }
+  .ba-trust__logo { height: 2rem; width: auto; max-width: 9rem; object-fit: contain; }
+}
+</style>

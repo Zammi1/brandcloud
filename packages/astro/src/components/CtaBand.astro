@@ -1,0 +1,100 @@
+---
+/**
+ * Call to action. One clear next step, optional secondary route and honest urgency.
+ *   band   a full-width band on a solid surface (default tone ink), copy left, actions right
+ *   card   a contained panel inside a light section
+ *   split  copy left, an aside on the right (slot "aside", e.g. a contact card or form)
+ * Urgency renders only with a real reason and an end date or policy (UrgencyCopy). Marked
+ * data-sticky-hide so a StickyBar steps aside while this is on screen.
+ */
+import "../styles/base.css";
+import Button from "./Button.astro";
+import Container from "./Container.astro";
+import Heading from "./Heading.astro";
+import { formatDateGB, validUrgency } from "../lib/index.js";
+import type { CtaCopy, UrgencyCopy } from "../copy-types.js";
+interface Props {
+  copy: CtaCopy;
+  variant?: "band" | "card" | "split";
+  tone?: "default" | "muted" | "raised" | "ink" | "brand";
+  urgency?: UrgencyCopy;
+  headingLevel?: "h2" | "h3";
+  hidesStickyBar?: boolean;
+  id?: string;
+  class?: string;
+}
+const { copy, variant = "band", tone: askedTone, urgency, headingLevel = "h2", hidesStickyBar = true, id, class: className } = Astro.props;
+const tone = askedTone ?? (variant === "band" ? "ink" : "default");
+const dark = tone === "ink" || tone === "brand";
+const showUrgency = validUrgency(urgency);
+if (urgency && !showUrgency) console.warn(`CtaBand: urgency "${(urgency as UrgencyCopy).message}" was not shown: it needs a reason and an end date or policy link.`);
+const titleId = id ? `${id}-title` : "ba-cta-title";
+const primaryTone = tone === "brand" ? "neutral" : "brand";
+const secondaryTone = dark ? "neutral" : "ink";
+// On a brand field the primary is pearl, so the secondary steps back to an outline.
+const secondaryAppearance = tone === "brand" ? ("outline" as const) : undefined;
+---
+<section id={id} class:list={["ba", "ba-cta", className]} data-surface={variant === "card" ? (askedTone ?? "default") : tone} data-variant={variant} data-sticky-hide={hidesStickyBar ? "" : undefined} aria-labelledby={titleId}>
+  <Container>
+    <div class:list={["ba-cta__inner", variant === "card" && "ba"]} data-surface={variant === "card" ? (dark ? tone : "raised") : undefined}>
+      <div class="ba-cta__copy">
+        <Heading as={headingLevel} id={titleId}>{copy.heading}</Heading>
+        {copy.body && <p class="ba-lead">{copy.body}</p>}
+        {showUrgency && urgency && (
+          <p class="ba-cta__urgency">
+            <strong>{urgency.message}</strong>
+            <span>{urgency.reason}{urgency.endsOn && <> Ends <time datetime={urgency.endsOn}>{formatDateGB(urgency.endsOn)}</time>.</>}</span>
+            {urgency.policyHref && <a class="ba-link" href={urgency.policyHref}>See the terms</a>}
+          </p>
+        )}
+      </div>
+      <div class="ba-cta__side">
+        {variant === "split" && Astro.slots.has("aside") ? (
+          <slot name="aside" />
+        ) : (
+          <div class="ba-cta__actions">
+            <div class="ba-actions" data-stack="sm">
+              <Button href={copy.primary.href} external={copy.primary.external} channel={copy.primary.channel} tone={primaryTone} size="lg">{copy.primary.label}</Button>
+              {copy.secondary && <Button href={copy.secondary.href} external={copy.secondary.external} channel={copy.secondary.channel} tone={copy.secondary.channel === "whatsapp" ? "whatsapp" : secondaryTone} appearance={copy.secondary.channel === "whatsapp" ? undefined : secondaryAppearance} size="lg">{copy.secondary.label}</Button>}
+            </div>
+            {copy.note && <p class="ba-cta__note">{copy.note}</p>}
+          </div>
+        )}
+      </div>
+      {variant === "split" && Astro.slots.has("aside") && (
+        <div class="ba-cta__actions ba-cta__actions--below">
+          <div class="ba-actions" data-stack="sm">
+            <Button href={copy.primary.href} external={copy.primary.external} channel={copy.primary.channel} tone={primaryTone} size="lg">{copy.primary.label}</Button>
+            {copy.secondary && <Button href={copy.secondary.href} external={copy.secondary.external} channel={copy.secondary.channel} tone={copy.secondary.channel === "whatsapp" ? "whatsapp" : secondaryTone} appearance={copy.secondary.channel === "whatsapp" ? undefined : secondaryAppearance} size="lg">{copy.secondary.label}</Button>}
+          </div>
+          {copy.note && <p class="ba-cta__note">{copy.note}</p>}
+        </div>
+      )}
+    </div>
+  </Container>
+</section>
+
+<style is:global>
+@layer components {
+  .ba-cta { padding-block: var(--ba-section-y); }
+  .ba-cta[data-variant="band"] { padding-block: clamp(3.5rem, 7vw, 6rem); }
+  .ba-cta__inner { display: grid; gap: 2rem; align-items: center; }
+  .ba-cta__copy { display: grid; gap: 1.25rem; max-width: 42rem; }
+  .ba-cta__note { margin: 0.875rem 0 0; color: var(--brand-text-muted); font-size: 0.9375rem; }
+  .ba-cta__urgency { display: grid; gap: 0.25rem; margin: 0.25rem 0 0; padding-left: 1rem; border-left: 2px solid var(--brand-accent); font-size: 0.9375rem; line-height: 1.5; }
+  .ba-cta[data-surface="ink"] .ba-cta__urgency, .ba-cta[data-surface="brand"] .ba-cta__urgency { border-left-color: currentColor; }
+  .ba-cta__urgency span { color: var(--brand-text-muted); }
+
+  .ba-cta[data-variant="card"] .ba-cta__inner { padding: clamp(1.75rem, 5vw, 4rem); border: 1px solid var(--brand-border); border-radius: var(--brand-radius-feature, 1.25rem); }
+
+  /* split: copy left, aside right; the actions follow the copy */
+  .ba-cta[data-variant="split"] .ba-cta__actions--below { grid-row: 2; }
+  @media (min-width: 56rem) {
+    .ba-cta[data-variant="band"] .ba-cta__inner,
+    .ba-cta[data-variant="card"] .ba-cta__inner { grid-template-columns: minmax(0, 1fr) auto; column-gap: 4rem; }
+    .ba-cta[data-variant="split"] .ba-cta__inner { grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem); grid-template-rows: auto 1fr; column-gap: clamp(2rem, 5vw, 5rem); row-gap: 2.5rem; align-items: start; }
+    .ba-cta[data-variant="split"] .ba-cta__side { grid-column: 2; grid-row: 1 / span 2; }
+    .ba-cta[data-variant="split"] .ba-cta__actions--below { grid-column: 1; }
+  }
+}
+</style>

@@ -1,0 +1,101 @@
+{
+  "name": "@brandcloud/tokens",
+  "version": "0.9.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css": {
+      "types": "./dist/tokens.css.d.ts",
+      "default": "./dist/tokens.css"
+    },
+    "./themes.css": {
+      "types": "./dist/themes.css.d.ts",
+      "default": "./dist/themes.css"
+    },
+    "./tailwind.css": {
+      "types": "./dist/tailwind.css.d.ts",
+      "default": "./dist/tailwind.css"
+    },
+    "./shadcn.css": {
+      "types": "./dist/shadcn.css.d.ts",
+      "default": "./dist/shadcn.css"
+    },
+    "./tokens": "./dist/tokens.json",
+    "./contrast-report": "./dist/contrast-report.json",
+    "./ui-lint": {
+      "types": "./dist/ui-lint.d.mts",
+      "default": "./dist/ui-lint.mjs"
+    },
+    "./brand": {
+      "types": "./dist/brand.d.mts",
+      "default": "./dist/brand.mjs"
+    },
+    "./colour": {
+      "types": "./dist/colour.d.mts",
+      "default": "./dist/colour.mjs"
+    },
+    "./index.js": "./dist/index.js",
+    "./index.d.ts": "./dist/index.d.ts",
+    "./package.json": "./package.json",
+    "./brands/docs.css": {
+      "types": "./dist/brands/docs.css.d.ts",
+      "default": "./dist/brands/docs.css"
+    },
+    "./brands/harbour.css": {
+      "types": "./dist/brands/harbour.css.d.ts",
+      "default": "./dist/brands/harbour.css"
+    },
+    "./brands/marigold.css": {
+      "types": "./dist/brands/marigold.css.d.ts",
+      "default": "./dist/brands/marigold.css"
+    },
+    "./brands/orchard.css": {
+      "types": "./dist/brands/orchard.css.d.ts",
+      "default": "./dist/brands/orchard.css"
+    }
+  },
+  "bin": {
+    "brand-ui-lint": "./dist/ui-lint-cli.mjs",
+    "brand-make": "./scripts/make-brand.mjs"
+  },
+  "files": [
+    "dist",
+    "scripts/make-brand.mjs",
+    "src/brand.mjs",
+    "src/colour.mjs",
+    "src/token-compiler.mjs",
+    "src/tokens.json",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "validate": "node src/validate.mjs",
+    "build": "node src/build.mjs && node ../../scripts/emit-asset-declarations.mjs --package=tokens && node scripts/copy-declarations.mjs",
+    "typecheck": "pnpm validate",
+    "test": "node --test src/*.test.mjs scripts/*.test.mjs",
+    "make-brand": "node scripts/make-brand.mjs"
+  },
+  "description": "Semantic design tokens, brand themes from a small JSON file with WCAG AA checks at build time, a Tailwind v4 layer, a shadcn/ui bridge and a UI linter.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zammi1/brandcloud.git",
+    "directory": "packages/tokens"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "keywords": [
+    "design-tokens",
+    "design-system",
+    "tailwindcss",
+    "shadcn",
+    "wcag",
+    "theming"
+  ]
+}

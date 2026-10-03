@@ -1,0 +1,6 @@
+{
+  "include": ["src"],
+  "baseline": "ui-lint-baseline.json",
+  "rules": { "long-line": { "max": 200 } },
+  "tokens": { "brand": "docs", "mode": "light" }
+}

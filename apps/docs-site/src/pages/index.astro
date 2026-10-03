@@ -1,0 +1,223 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Icon from "@brandcloud/astro/components/Icon.astro";
+import Specimen from "../components/Specimen.astro";
+import RecipeGallery from "../components/RecipeGallery.astro";
+import ScoreBands from "../components/ScoreBands.astro";
+import { PRODUCT, PRO_NAME, M1_STUDIO } from "../lib/site";
+import { ruleCounts } from "../lib/rules";
+import type { FaqItem, HeroCopy, StepItem } from "@brandcloud/astro/copy-types";
+
+const hero: HeroCopy = {
+  heading: "Landing pages that look made by hand, not by a prompt",
+  lede: "Set your colours and fonts once and the whole page follows them, with every text colour checked for contrast. Before it goes live, score the page for " +
+    "the tells that make visitors think it was generated.",
+  primary: { label: "Build your brand, free", href: "/brand-builder/" },
+  secondary: { label: "Score a page for AI tells", href: "/ai-look-score/" },
+  note: "Both tools run in your browser. No account and no email needed.",
+};
+
+const steps: StepItem[] = [
+  { title: "Pick your colours", text: "Upload a logo to pull its colours, or choose them by hand. Text colours are adjusted until they pass WCAG 2.2 AA." },
+  { title: "See it on real sections", text: "Buttons, a hero, steps, an FAQ, a call to action and form fields change as you change the brand." },
+  { title: "Export the brand", text: "Download the brand file and its CSS. A developer drops them into the kit and every component follows." },
+  { title: "Score it before you publish", text: "Paste the finished page into the AI-look score and fix what it finds, with the evidence in front of you." },
+];
+
+const faq: FaqItem[] = [
+  {
+    question: "Is it really free?",
+    answer: `Yes. ${PRODUCT}, the brand builder and the AI-look score are open source under the MIT licence, for your own sites and for client work. ${PRO_NAME} is a separate, optional
+      licence that opens with the first public release.`,
+  },
+  {
+    question: "Do I need a developer?",
+    answer: `Not for the two tools: they run in your browser. Turning a brand into a live site needs someone who works with Astro or React, or you can have ${M1_STUDIO.name} build it
+      for you.`,
+  },
+  {
+    question: "Will my site look like everyone else's?",
+    answer: "Each brand sets its own colours, fonts and default button, and the sections come in several layouts. The four page recipes on this site use four " +
+      "different brands, so you can see the range for yourself.",
+  },
+  {
+    question: "What does the AI-look score check?",
+    answer: `${ruleCounts.visual} visual rules about colour, layout, type, components, imagery, motion and fake proof. ${ruleCounts.browser} of them run in your browser. The other
+      ${ruleCounts.cliOnly} move the pointer or scroll the page, so they run in the command-line version.`,
+  },
+  {
+    question: "Is the HTML I paste sent anywhere?",
+    answer: "No. It is drawn in a sandboxed frame inside your browser with its scripts switched off, and the checks run on your computer. Nothing is uploaded.",
+  },
+];
+---
+<Base title={PRODUCT} description="Free tools for marketers: build a brand that passes accessibility checks, and score any page for the tells that make it look AI-generated. Open source.">
+  <Hero copy={hero} variant="split" id="home-hero">
+    <Specimen slot="media" />
+  </Hero>
+
+  <Section tone="raised" aria-labelledby="tools-title" id="tools">
+    <div class="s-sechead" data-split>
+      <Heading as="h2" id="tools-title">Two free tools to start with</Heading>
+      <p class="s-lead">Neither needs an account. Use them on a brand you already have, or on one you are about to launch.</p>
+    </div>
+    <div class="h-tools">
+      <article class="h-tool" aria-labelledby="tool-builder">
+        <div class="h-tool__copy">
+          <h3 id="tool-builder">Brand builder</h3>
+          <p>Pick your colours or pull them from your logo, choose a font and switch between light and dark. Your brand appears on real buttons, a hero, an FAQ and a form, with every
+            contrast check listed beside it and its ratio. When it passes, export the brand file for your developer.</p>
+        </div>
+        <ul class="h-tool__facts">
+          <li><strong class="s-num">Four inputs</strong><span>accent, ink, paper and font</span></li>
+          <li><strong>WCAG 2.2 AA</strong><span>checked on text, buttons and levels</span></li>
+          <li><strong>JSON and CSS</strong><span>ready for the kit</span></li>
+        </ul>
+        <Button href="/brand-builder/" size="lg">Open the brand builder</Button>
+      </article>
+      <article class="h-tool" aria-labelledby="tool-score">
+        <div class="h-tool__copy">
+          <h3 id="tool-score">AI-look score</h3>
+          <p>Paste a page's HTML or upload the file. It is checked against {ruleCounts.visual} visual rules, from hue-shifting gradients to logo walls with no real customers behind
+            them. You get a score, the evidence for every rule that fired and how to fix it.</p>
+        </div>
+        <ScoreBands />
+        <Button href="/ai-look-score/" tone="ink" size="lg">Score a page</Button>
+      </article>
+    </div>
+  </Section>
+
+  <Section aria-labelledby="jobs-title">
+    <div class="s-sechead" data-split>
+      <Heading as="h2" id="jobs-title">Made for the jobs marketers actually do</Heading>
+      <p class="s-lead">Start with the outcome you need. The developer detail is one level down when someone needs it.</p>
+    </div>
+    <ul class="s-rows" data-cols="2">
+      <li>
+        <h3>Launch a campaign page</h3>
+        <div class="h-row">
+          <p>Start from a recipe for a campaign, an offer, an event or a local service. Swap in your words and photos and the layout holds together on a phone and a wide screen.</p>
+          <a class="s-textlink" href="/recipes/">See the page recipes</a>
+        </div>
+      </li>
+      <li>
+        <h3>Keep a brand consistent</h3>
+        <div class="h-row">
+          <p>Your colours, fonts and button style live in one small brand file. Every page and every developer works from it, so the tenth page matches the first.</p>
+          <a class="s-textlink" href="/brand-builder/">Make the brand file</a>
+        </div>
+      </li>
+      <li>
+        <h3>Stop a site looking AI-made</h3>
+        <div class="h-row">
+          <p>Visitors have learned what generated sites look like. The score finds those tells on your page and the guide shows each fix side by side.</p>
+          <a class="s-textlink" href="/guides/not-ai-made/">Read the guide</a>
+        </div>
+      </li>
+      <li>
+        <h3>Improve conversion</h3>
+        <div class="h-row">
+          <p>Clear calls to action, honest FAQs and short enquiry forms with separate consent come with the free sections. {PRO_NAME} adds a guided copywriting workflow for headlines,
+            offers and guarantees.</p>
+          <a class="s-textlink" href="/pro/">What Pro adds</a>
+        </div>
+      </li>
+    </ul>
+  </Section>
+
+  <Section tone="muted" aria-labelledby="recipes-title">
+    <div class="s-sechead" data-split>
+      <Heading as="h2" id="recipes-title">Start from a page recipe</Heading>
+      <p class="s-lead">Four complete pages for made-up businesses, each in its own brand. Open one to see it full size, then make it yours.</p>
+    </div>
+    <RecipeGallery />
+  </Section>
+
+  <Section aria-labelledby="how-title">
+    <Steps id="how" heading="From colours to a page you can publish" intro="The same four steps whether you are setting up a new brand or tidying an old one." steps={steps} variant="rail" />
+  </Section>
+
+  <Section tone="raised" aria-labelledby="split-title">
+    <div class="s-sechead" data-split>
+      <Heading as="h2" id="split-title">Free covers a whole site. Pro adds the selling.</Heading>
+      <p class="s-lead">Everything on the left is open source and stays that way. {PRO_NAME} is a one-off licence that opens with the first public release.</p>
+    </div>
+    <div class="h-split">
+      <div class="h-split__col">
+        <h3>Free, today</h3>
+        <ul class="s-ticks">
+          <li><Icon name="check" />Brand builder, brand files and contrast checks</li>
+          <li><Icon name="check" />AI-look score and the command-line detector</li>
+          <li><Icon name="check" />Components for Astro and React, with forms and dialogs</li>
+          <li><Icon name="check" />The full motion library, reduced-motion safe</li>
+          <li><Icon name="check" />Page recipes and plain-English guides</li>
+        </ul>
+      </div>
+      <div class="h-split__col ba" data-surface="ink">
+        <h3>{PRO_NAME}, opening with the first release</h3>
+        <ul class="s-ticks">
+          <li><Icon name="plus" />A guided copywriting workflow, linted so it never reads as AI</li>
+          <li><Icon name="plus" />Selling sections: offer ladders, pricing tiers, guarantees and proof</li>
+          <li><Icon name="plus" />A signature theme pack and premium page recipes</li>
+          <li><Icon name="plus" />App sections and agent UI for product teams</li>
+        </ul>
+        <div class="s-cluster h-split__actions">
+          <a class="s-textlink" href="/pro/">Compare Free and Pro<Icon name="arrow-right" size={16} /></a>
+          <a class="s-textlink" href="/pro/#updates">Get an email when Pro opens<Icon name="arrow-right" size={16} /></a>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section aria-labelledby="home-faq-title">
+    <Faq id="home-faq" heading="Questions people ask first" items={faq} variant="split" />
+  </Section>
+
+  <CtaBand
+    id="done-for-you"
+    variant="band"
+    copy={{
+      heading: "Rather have it built for you?",
+      body: `${M1_STUDIO.name} designs and builds sites with this kit, from the brand file to the finished pages.`,
+      primary: { label: `Visit ${M1_STUDIO.name}`, href: M1_STUDIO.href, external: true },
+      secondary: { label: "Try the brand builder first", href: "/brand-builder/" },
+    }}
+  />
+</Base>
+
+<style>
+  .h-tools { display: grid; gap: 1.5rem; }
+  @media (min-width: 60rem) { .h-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; } }
+  .h-tool {
+    display: grid;
+    align-content: start;
+    gap: 1.75rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--brand-border);
+    border-radius: var(--brand-radius-panel);
+    background: var(--brand-canvas);
+  }
+  .h-tool > :global(.ba-button) { justify-self: start; }
+  .h-tool h3 { font-size: var(--brand-font-size-h3); margin-block-end: 0.75rem; }
+  .h-tool__copy p { color: var(--brand-text-muted); }
+  .h-tool__facts { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
+  .h-tool__facts li { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; align-items: baseline; padding-block: 0.7rem; border-block-end: 1px solid var(--brand-border); }
+  .h-tool__facts strong { font-family: var(--brand-font-display); font-size: 1.125rem; }
+  .h-tool__facts span { color: var(--brand-text-muted); }
+  .h-row { display: grid; gap: 0.75rem; justify-items: start; }
+  .h-split { display: grid; gap: 1.5rem; }
+  @media (min-width: 52rem) { .h-split { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; } }
+  .h-split__col { padding: clamp(1.5rem, 3vw, 2.25rem); border-radius: var(--brand-radius-panel); border: 1px solid var(--brand-border); background: var(--brand-canvas); }
+  .h-split__col[data-surface="ink"] { background: var(--brand-canvas); border-color: transparent; }
+  .h-split__col[data-surface="ink"] :global(.s-textlink) { color: var(--brand-text); }
+  .h-split__col[data-surface="ink"] :global(.s-ticks svg) { color: var(--brand-text-muted); }
+  .h-split__col h3 { font-size: 1.5rem; margin-block-end: 1.25rem; }
+  .h-split__actions { margin-block-start: 1.75rem; gap: 0.75rem 1.75rem; }
+</style>

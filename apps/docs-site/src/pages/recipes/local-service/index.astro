@@ -1,0 +1,117 @@
+---
+/* Recipe: local service page. Kestrel Lane Electrical is a made-up business. Free components only. */
+import "../../../styles/recipe.css";
+import Base from "../../../layouts/Base.astro";
+import RecipeBar from "../../../components/RecipeBar.astro";
+import Navbar from "@brandcloud/astro/components/Navbar.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import TrustStrip from "@brandcloud/astro/components/TrustStrip.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import EnquiryFormShell from "@brandcloud/astro/components/EnquiryFormShell.astro";
+import Footer from "@brandcloud/astro/components/Footer.astro";
+
+const business = "Kestrel Lane Electrical";
+const jobs = [
+  { title: "Fault finding", text: "Tripping switches, dead sockets, lights that flicker. Found and fixed, usually in one visit.", from: "From £85" },
+  { title: "Extra sockets and lights", text: "Added where you need them, with the wiring hidden in the wall where it can be.", from: "From £120" },
+  { title: "Consumer unit replacement", text: "A new fuse board with modern protection, tested and certified on the day.", from: "From £520" },
+  { title: "Electric car chargers", text: "Fitted on a wall or a post, with the paperwork for any grant you can claim.", from: "From £850" },
+];
+---
+<Base title={`Recipe: local service page (${business}, fictional)`}
+  description="A local service page recipe built from free components: an electrician covering three towns, made up for this example." bare brand="docs">
+  <Fragment slot="top">
+    <RecipeBar slug="local-service" />
+    <Navbar brandName={business} links={[{ label: "Jobs and prices", href: "#jobs" }, { label: "How a visit works", href: "#visit" }, { label: "Areas", href: "#areas" }]}
+      cta={{ label: "Get a quote", href: "#quote" }} />
+  </Fragment>
+
+  <Hero
+    variant="editorial"
+    copy={{
+      heading: "An electrician for Lowfield homes, booked within the week",
+      lede: "Send a photo of the job and get a fixed price back the same day. Most visits are booked within five working days.",
+      primary: { label: "Get a fixed quote", href: "#quote" },
+      secondary: { label: "See jobs and prices", href: "#jobs" },
+      note: "Covering Lowfield, Easthope and Ashby Vale.",
+    }}
+  />
+
+  <Section space="tight" aria-label="How we work">
+    <TrustStrip variant="rule" label="How we work"
+      items={[
+        { text: "Fixed price agreed before work starts" },
+        { text: "A certificate for every job that needs one" },
+        { text: "Tidy: dust sheets down, rubbish taken away" },
+        { text: "Weekday and Saturday visits" },
+      ]} />
+  </Section>
+
+  <Section id="jobs" aria-labelledby="jobs-title">
+    <div class="r-sechead" data-split>
+      <Heading as="h2" id="jobs-title">Jobs and starting prices</Heading>
+      <p class="r-lead">Every quote is fixed once we have seen photos. The starting prices are here so you know the ballpark first.</p>
+    </div>
+    <ul class="r-rows">
+      {jobs.map((j) => <li><h3>{j.title}</h3><p>{j.text}</p><span class="r-from">{j.from}</span></li>)}
+    </ul>
+  </Section>
+
+  <Section tone="muted" id="visit" aria-labelledby="visit-title">
+    <Steps
+      heading="How a visit works"
+      variant="rail"
+      steps={[
+        { title: "Send photos", text: "Two or three photos of the job and the fuse board, through the form below.", meta: "Same day" },
+        { title: "Get a fixed price", text: "A written quote with the price, the date and what is included.", meta: "Within 24 hours" },
+        { title: "We do the job", text: "On the day agreed, with testing and a certificate where one is needed.", meta: "Within 5 working days" },
+      ]}
+    />
+  </Section>
+
+  <Section id="areas" aria-labelledby="areas-title">
+    <div class="r-two">
+      <div class="s-stack">
+        <Heading as="h2" id="areas-title">Where we work</Heading>
+        <p class="r-lead">Lowfield, Easthope, Ashby Vale and the villages between them. Further out, ask: we say yes when we can get there on time.</p>
+      </div>
+      <Faq
+        id="local-faq"
+        heading="Questions"
+        headingLevel="h3"
+        variant="stacked"
+        items={[
+          { question: "Do you charge a call-out fee?", answer: "No. The price in your quote is the price you pay." },
+          { question: "Can you work while we are out?", answer: "Yes, if you leave a key with a neighbour or a key safe code." },
+          { question: "Do you take card payments?", answer: "Yes, card or bank transfer when the job is finished." },
+        ]}
+      />
+    </div>
+  </Section>
+
+  <Section tone="raised" id="quote" aria-label="Get a quote">
+    <EnquiryFormShell
+      mode="preview"
+      previewMessage="Preview only: nothing was sent. On a live page this form posts to your own endpoint."
+      layout="grid"
+      heading="Get a fixed quote"
+      headingLevel="h2"
+      intro="Describe the job. We reply with a price, usually the same day. This recipe form does not send anything."
+      id="local-quote"
+      fields={["name", "email", "phone", "message"]}
+      required={["name", "phone", "message"]}
+      labels={{ message: "What needs doing?", submit: "Send for a quote" }}
+      interest={{ label: "Type of job", options: jobs.map((j) => j.title), placeholder: "Choose one" }}
+      consent={{ label: "Text me reminders about this job. Optional." }}
+    />
+  </Section>
+
+  <Fragment slot="bottom">
+    <Footer brandName={business} tagline="Electrical work for homes in Lowfield, Easthope and Ashby Vale."
+      columns={[{ heading: "This page", links: [{ label: "Jobs and prices", href: "#jobs" }, { label: "How a visit works", href: "#visit" }, { label: "Get a quote", href: "#quote" }] }]}
+      legal={["Kestrel Lane Electrical is a made-up business for this recipe.", "Example page built with free components."]} />
+  </Fragment>
+</Base>

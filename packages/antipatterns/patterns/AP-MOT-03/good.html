@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- FIX for AP-MOT-03: same content, fixed design -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbour &amp; Pine: project cards (AP-MOT-03 good)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.proj { padding: 24px 28px 28px 0; display: grid; gap: 10px; align-content: start; }
+.proj + .proj { padding-left: 28px; border-left: 1px solid var(--line); }
+.proj p { color: var(--ink-2); }
+@media (max-width: 860px) { .projects { grid-template-columns: 1fr; } .proj, .proj + .proj { padding: 22px 0; border-left: 0; border-bottom: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Harbour &amp; Pine <small>Joinery, Merewick</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Kitchens</a><a href="#">Recent work</a><a href="#">Prices</a><a class="btn btn-ink btn-sm" href="#">Book a survey</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight"><h1>Three kitchens we finished this year.</h1></section>
+<section class="wrap section">
+  <div class="projects">
+    <article class="proj"><h3>Lowfield</h3><p>Painted shaker in a deep green, oak worktops, a larder cupboard built round the boiler.</p><p class="small">9 weeks, &pound;21,400</p></article>
+    <article class="proj"><h3>Fishbourne</h3><p>Solid oak with a hand-cut walnut inlay on the island.</p><p class="small">10 weeks, &pound;27,900</p></article>
+    <article class="proj"><h3>Merewick</h3><p>Small galley in a Victorian terrace, painted ivory, brass rails.</p><p class="small">7 weeks, &pound;12,800</p></article>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Harbour &amp; Pine Joinery Ltd</span><span>Unit 4, Quay Road, Merewick MW19 8TX</span></footer></div>
+
+</body>
+</html>

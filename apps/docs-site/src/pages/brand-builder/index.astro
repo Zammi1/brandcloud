@@ -1,0 +1,151 @@
+---
+import "@brandcloud/ui/public.css";
+import "@fontsource-variable/schibsted-grotesk";
+import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/figtree";
+import "@fontsource-variable/fraunces";
+import "@fontsource-variable/source-serif-4";
+import "../../styles/builder.css";
+import Base from "../../layouts/Base.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import BrandBuilder from "../../islands/BrandBuilder";
+import PreviewFields from "../../islands/PreviewFields";
+import { brands, metadata } from "@brandcloud/tokens";
+import { PRODUCT } from "../../lib/site";
+import { builderFonts } from "../../lib/fonts";
+import type { Preset } from "../../islands/BrandBuilder";
+
+// Starting points: the brands that ship in the kit. Inputs read back from the built light palette.
+const order = ["docs", "harbour", "orchard", "marigold"];
+const presets: Preset[] = order.map((name) => {
+  const light = brands[name].light;
+  const info = metadata.brands.find((b) => b.name === name);
+  return {
+    name,
+    label: name === "docs" ? "This site (burnt orange)" : `${info?.label ?? name} (example)`,
+    accent: light.accent,
+    ink: light.text,
+    paper: light.canvas,
+    display: light["font-display"],
+    body: light["font-body"],
+    appearance: (info?.appearance ?? "depth") as "depth" | "solid",
+  };
+});
+const levels = ["sky", "blue", "navy", "pearl", "obsidian"] as const;
+---
+<Base title="Brand builder"
+  description={"Pick colours or pull them from your logo, choose free fonts and see your brand on real buttons, sections and forms, with every WCAG 2.2 AA contrast " +
+    "check shown. Export the brand file."} current="/brand-builder/">
+  <Container>
+    <header class="s-pagehead" data-split data-compact>
+      <h1>Build your brand and see it pass</h1>
+      <div class="s-stack">
+        <p class="s-lead">Change a colour, a font or the button style and the preview changes with it. Every contrast check below comes from the same code the kit's build uses, so a
+          brand that passes here passes there.</p>
+        <p class="s-pagehead-note">Free, in your browser. Nothing you choose or upload leaves this page.</p>
+      </div>
+    </header>
+  </Container>
+
+  <Container>
+    <BrandBuilder client:load presets={presets} fonts={builderFonts} productName={PRODUCT}>
+      <div class="bb-preview-head">
+        <h2 class="bb-h" id="bb-preview-title">Live preview</h2>
+        <p class="bb-help">Real components from the kit, styled only by your brand's tokens.</p>
+      </div>
+      <div id="bb-preview" class="bb-preview" data-brand="docs" data-theme="light" data-button-appearance="depth" role="region" aria-labelledby="bb-preview-title">
+        <Hero
+          id="bb-hero"
+          variant="editorial"
+          headingLevel="h2"
+          copy={{
+            heading: "Fresh bread on the counter before the school run",
+            lede: "A made-up bakery shows how your headings, body text and buttons sit together. Swap the colours on the left and watch every part follow.",
+            primary: { label: "Order for tomorrow", href: "#bb-preview" },
+            secondary: { label: "See the menu", href: "#bb-preview" },
+            note: "Fictional example copy.",
+          }}
+        />
+        <div class="bb-pv-block">
+          <h3 class="bb-pv-title">Buttons</h3>
+          <div class="bb-pv-row">
+            <Button>Default for the brand</Button>
+            <Button appearance="depth">Depth</Button>
+            <Button appearance="solid">Solid</Button>
+            <Button tone="ink">Ink</Button>
+            <Button tone="neutral" appearance="outline">Outline</Button>
+            <Button tone="whatsapp" channel="whatsapp">WhatsApp</Button>
+          </div>
+          <div class="bb-pv-row">
+            {levels.map((l) => <Button tone="level" level={l}>{l[0].toUpperCase() + l.slice(1)} level</Button>)}
+          </div>
+          <div class="bb-pv-row">
+            <Button size="sm">Small</Button>
+            <Button size="lg">Large</Button>
+            <Button loading>Saving</Button>
+            <Button disabled>Disabled</Button>
+          </div>
+        </div>
+        <div class="bb-pv-block">
+          <Steps
+            heading="How ordering works"
+            headingLevel="h3"
+            variant="rail"
+            steps={[
+              { title: "Choose by 6pm", text: "Pick loaves and pastries for the next morning." },
+              { title: "We bake overnight", text: "Everything is made fresh from 3am." },
+              { title: "Collect from 7am", text: "Your order waits on the counter with your name on it." },
+            ]}
+          />
+        </div>
+        <div class="bb-pv-block">
+          <Faq
+            heading="Questions"
+            headingLevel="h3"
+            variant="stacked"
+            openFirst
+            items={[
+              { question: "Can I change an order?", answer: "Yes, until 6pm the evening before." },
+              { question: "Do you deliver?", answer: "Not yet. Orders are collected from the shop." },
+            ]}
+          />
+        </div>
+        <CtaBand
+          variant="card"
+          tone="ink"
+          headingLevel="h3"
+          id="bb-cta"
+          copy={{
+            heading: "Tomorrow's bake closes at 6pm",
+            body: "A dark section, so you can check text and buttons on the inverse colours too.",
+            primary: { label: "Order now", href: "#bb-preview" },
+            secondary: { label: "Call the shop", href: "#bb-preview" },
+          }}
+        />
+        <div class="bb-pv-block">
+          <h3 class="bb-pv-title">Form fields</h3>
+          <PreviewFields client:visible />
+        </div>
+      </div>
+    </BrandBuilder>
+  </Container>
+
+  <Container>
+    <section class="bb-after" aria-labelledby="bb-next">
+      <h2 id="bb-next">When your brand passes</h2>
+      <div class="s-grid-2">
+        <p class="s-muted">Hand the JSON file to your developer, or to whoever builds your site. In the kit it goes in the brands folder and every component picks it up. The guide to
+          accessible colours explains what each check means and how to fix a fail.</p>
+        <div class="s-cluster">
+          <Button href="/guides/accessible-colours/" tone="ink">Read the colour guide</Button>
+          <a class="s-textlink" href="/developers/theming/">For developers: theming</a>
+        </div>
+      </div>
+    </section>
+  </Container>
+</Base>

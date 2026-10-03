@@ -1,0 +1,47 @@
+---
+/* Read from the repository at build time: CHANGELOG.md and any pending .changeset/*.md files. */
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import Dev from "../../../layouts/Dev.astro";
+import { renderMarkdown, parseChangeset } from "../../../lib/markdown";
+import { PRODUCT } from "../../../lib/site";
+
+const repo = resolve(process.cwd(), "../..");
+const changelogPath = join(repo, "CHANGELOG.md");
+const changelog = existsSync(changelogPath) ? readFileSync(changelogPath, "utf8").replace(/^# .*\n/, "") : null;
+const changesetDir = join(repo, ".changeset");
+const changesets = existsSync(changesetDir)
+  ? readdirSync(changesetDir).filter((f) => f.endsWith(".md") && f !== "README.md").sort().map((f) => ({ file: f, ...parseChangeset(readFileSync(join(changesetDir, f), "utf8")) }))
+  : [];
+---
+<Dev title="Changelog" description={`What changed in ${PRODUCT}, release by release.`}
+  lede="Each package keeps its own changelog once a release is versioned. Until then, this page shows the pending release.">
+  {changelog ? (
+    <section class="dv-section cl" aria-label="Changelog">
+      <Fragment set:html={renderMarkdown(changelog, 0)} />
+    </section>
+  ) : (
+    <section class="dv-section cl" aria-labelledby="cl-title"><h2 id="cl-title">1.0.0, unreleased</h2><p>The first public release is being prepared.</p></section>
+  )}
+  {changesets.length > 0 && (
+    <section class="dv-section cl" aria-labelledby="pending-title">
+      <h2 id="pending-title">Pending changes</h2>
+      {changesets.map((c) => (
+        <article class="cl-set">
+          <ul class="cl-bumps" aria-label="Packages and version bumps">
+            {Object.entries(c.bumps).map(([name, bump]) => <li><code>{name}</code> <span>{bump}</span></li>)}
+          </ul>
+          <Fragment set:html={renderMarkdown(c.body, 2)} />
+        </article>
+      ))}
+    </section>
+  )}
+</Dev>
+
+<style>
+  .cl :global(h2) { font-size: var(--brand-font-size-h3); }
+  .cl :global(p), .cl :global(ul) { max-width: 46rem; }
+  .cl-set { display: grid; gap: 1rem; padding: 1.5rem; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-surface); }
+  .cl-bumps { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; }
+  .cl-bumps span { color: var(--brand-text-muted); }
+</style>

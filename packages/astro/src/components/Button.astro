@@ -1,0 +1,344 @@
+---
+/**
+ * Button. Same props as the React @brandcloud/ui Button (same names and values):
+ *   tone        brand | ink | neutral | danger | whatsapp | level      (default "brand")
+ *   appearance  depth | solid | outline | ghost  (unset: the brand decides: depth inside
+ *               any [data-button-appearance="depth"] ancestor, solid elsewhere)
+ *   level       sky | blue | navy | pearl | obsidian                   (with tone="level")
+ *   size        sm | md | lg
+ *   loading     shows a spinner, sets aria-busy, disables a <button>
+ *   variant     shadcn-compat alias only (default, destructive, outline, secondary, ghost, link)
+ * Renders <a> when `href` is set, otherwise <button type="button">. Links never become buttons.
+ * No arrows inside buttons. The only glyph allowed is a channel (whatsapp, phone, email).
+ * Depth = the tonal light model: lighter top, deeper bottom, a top sheen, a lit rim and a soft
+ * same-hue shadow. Every colour is a token (action-depth-*, action-ink-*, whatsapp-*, level-*).
+ */
+import type { HTMLAttributes } from "astro/types";
+import "../styles/base.css";
+import Icon from "./Icon.astro";
+import { resolveButtonStyle, type ButtonAppearance, type ButtonSize, type ButtonTone, type ButtonVariantAlias } from "../lib/index.js";
+import type { OfferLevel } from "../copy-types.js";
+
+type Common = {
+  tone?: ButtonTone;
+  appearance?: ButtonAppearance;
+  level?: OfferLevel;
+  size?: ButtonSize;
+  variant?: ButtonVariantAlias;
+  loading?: boolean;
+  disabled?: boolean;
+  /** Full width. */
+  block?: boolean;
+  /** Channel glyph before the label. */
+  channel?: "whatsapp" | "phone" | "email";
+  /** Opens in a new tab (links only). */
+  external?: boolean;
+  class?: string;
+};
+type Props = Common & (Omit<HTMLAttributes<"a">, keyof Common> | Omit<HTMLAttributes<"button">, keyof Common>);
+
+const {
+  tone: toneProp,
+  appearance: appearanceProp,
+  level: levelProp,
+  size: sizeProp,
+  variant,
+  loading = false,
+  disabled = false,
+  block = false,
+  channel,
+  external = false,
+  class: className,
+  href,
+  type,
+  ...rest
+} = Astro.props as Common & Record<string, unknown> & { href?: string; type?: "button" | "submit" | "reset" };
+
+const style = resolveButtonStyle({ tone: toneProp, appearance: appearanceProp, level: levelProp, size: sizeProp, variant });
+const shared = {
+  class: ["ba", "ba-button", className].filter(Boolean).join(" "),
+  "data-tone": style.tone,
+  "data-appearance": style.appearance,
+  "data-level": style.level,
+  "data-size": style.size,
+  "data-block": block ? "" : undefined,
+  "aria-busy": loading ? ("true" as const) : undefined,
+};
+const isLink = typeof href === "string";
+const linkDisabled = isLink && (disabled || loading);
+---
+{isLink ? (
+  <a
+    {...rest}
+    {...shared}
+    href={linkDisabled ? undefined : href}
+    role={linkDisabled ? "link" : undefined}
+    aria-disabled={linkDisabled ? "true" : undefined}
+    target={external && !linkDisabled ? "_blank" : undefined}
+    rel={external && !linkDisabled ? "noopener" : undefined}
+  >
+    {loading && <span class="ba-button__spinner" aria-hidden="true"></span>}
+    {channel && <Icon name={channel} />}
+    <span class="ba-button__label"><slot /></span>
+    {external && <span class="ba-sr-only"> (opens in a new tab)</span>}
+  </a>
+) : (
+  <button {...rest} {...shared} type={type ?? "button"} disabled={disabled || loading}>
+    {loading && <span class="ba-button__spinner" aria-hidden="true"></span>}
+    {channel && <Icon name={channel} />}
+    <span class="ba-button__label"><slot /></span>
+  </button>
+)}
+
+<style is:global>
+@layer components {
+  /* Tone knobs (defaults = tone "brand"). Token meanings follow @brandcloud/tokens:
+     highlight = top stop, base = bottom stop and solid fill, hover = solid hover, deep = contact
+     shadow and rim, halo = same-hue glow underneath, text = label on the fill. */
+  .ba-button {
+    --ba-btn-top: var(--brand-action-depth-from, var(--brand-accent));
+    --ba-btn-bottom: var(--brand-action-depth-to, var(--brand-accent));
+    --ba-btn-glow: var(--brand-action-depth-glow, transparent);
+    --ba-btn-glow-reach: var(--brand-action-depth-glow-reach, 30%);
+    --ba-btn-sheen: var(--brand-action-depth-sheen, transparent);
+    --ba-btn-text: var(--brand-action-depth-text, var(--brand-accent-text));
+    --ba-btn-border: transparent;
+    --ba-btn-shadow: var(--brand-action-depth-rim, 0 0 0 0 transparent), var(--brand-shadow-action-depth, var(--brand-shadow-action, 0 0 0 0 transparent));
+    --ba-btn-shadow-hover: var(--brand-action-depth-rim, 0 0 0 0 transparent), var(--brand-shadow-action-depth-hover, var(--brand-shadow-action-depth, var(--brand-shadow-action, 0 0 0 0 transparent)));
+    --ba-btn-flat: var(--brand-accent);
+    --ba-btn-flat-hover: var(--brand-accent-hover);
+    --ba-btn-flat-text: var(--brand-accent-text);
+    --ba-btn-line: var(--brand-accent);
+    --ba-btn-h: var(--brand-action-height-md, 3rem);
+    /* A white-ish sheen at a given strength, built from the brand's sheen token. */
+    --ba-btn-white: var(--brand-action-depth-sheen, var(--brand-accent-text));
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--ba-btn-h);
+    padding: 0.75rem 1.25rem;
+    border: 0;
+    border-radius: var(--brand-radius-sm, 0.75rem);
+    /* Solid is the default treatment; depth applies below (brand default or appearance="depth"). */
+    background: var(--ba-btn-flat);
+    box-shadow: 0 0 0 1px var(--ba-btn-border);
+    color: var(--ba-btn-flat-text);
+    font: 500 1rem/1.5 var(--ba-font-body);
+    letter-spacing: -0.003em;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+  .ba-button > svg { flex: none; }
+  .ba-button__label { min-width: 0; }
+
+  /* Non-brand tones compose their own shadow from same-hue parts: rim, hairline, contact, halo. */
+  .ba-button:not([data-tone="brand"]) {
+    --ba-btn-shadow: inset 0 1.5px 0 var(--ba-btn-rim), 0 0 0 1px var(--ba-btn-border), 0 2px 3px var(--ba-btn-contact), 0 12px 28px -8px var(--ba-btn-halo);
+    --ba-btn-shadow-hover: inset 0 1.5px 0 var(--ba-btn-rim), 0 0 0 1px var(--ba-btn-border), 0 2px 3px var(--ba-btn-contact), 0 14px 30px -8px var(--ba-btn-halo-hover);
+    --ba-btn-rim: rgb(from var(--ba-btn-white) r g b / 0.35);
+    --ba-btn-contact: transparent;
+    --ba-btn-halo: transparent;
+    --ba-btn-halo-hover: var(--ba-btn-halo);
+  }
+
+  .ba-button[data-tone="ink"] {
+    --ba-btn-top: var(--brand-action-ink-hover, var(--brand-inverse-surface));
+    --ba-btn-bottom: var(--brand-action-ink, var(--brand-inverse-canvas));
+    --ba-btn-glow: transparent;
+    --ba-btn-text: var(--brand-action-ink-text, var(--brand-inverse-text));
+    --ba-btn-sheen: rgb(from var(--ba-btn-white) r g b / 0.14);
+    --ba-btn-rim: rgb(from var(--ba-btn-white) r g b / 0.22);
+    --ba-btn-contact: color-mix(in srgb, var(--ba-btn-bottom) 35%, transparent);
+    --ba-btn-halo: color-mix(in srgb, var(--ba-btn-bottom) 45%, transparent);
+    --ba-btn-halo-hover: color-mix(in srgb, var(--ba-btn-bottom) 60%, transparent);
+    --ba-btn-flat: var(--brand-action-ink, var(--brand-inverse-canvas));
+    --ba-btn-flat-hover: var(--brand-action-ink-hover, var(--brand-inverse-surface));
+    --ba-btn-flat-text: var(--ba-btn-text);
+    --ba-btn-line: var(--brand-text);
+  }
+
+  .ba-button[data-tone="neutral"],
+  .ba-button[data-tone="level"][data-level="pearl"] {
+    --ba-lv-hi: var(--brand-level-pearl-highlight, var(--brand-ref-color-surface-raised, var(--brand-surface-raised)));
+    --ba-lv-base: var(--brand-level-pearl-base, var(--brand-ref-color-surface-muted, var(--brand-surface-muted)));
+    --ba-lv-hover: var(--brand-level-pearl-hover, var(--ba-lv-base));
+    --ba-lv-deep: var(--brand-level-pearl-deep, var(--brand-ref-color-text-muted, var(--brand-text-muted)));
+    --ba-lv-halo: var(--brand-level-pearl-halo, var(--brand-ref-color-text-muted, var(--brand-text-muted)));
+    --ba-lv-text: var(--brand-level-pearl-text, var(--brand-ref-color-text, var(--brand-text)));
+  }
+  .ba-button[data-tone="level"][data-level="sky"] {
+    --ba-lv-hi: var(--brand-level-sky-highlight, var(--brand-accent));
+    --ba-lv-base: var(--brand-level-sky-base, var(--brand-accent));
+    --ba-lv-hover: var(--brand-level-sky-hover, var(--brand-accent-hover));
+    --ba-lv-deep: var(--brand-level-sky-deep, var(--brand-accent-hover));
+    --ba-lv-halo: var(--brand-level-sky-halo, var(--brand-accent));
+    --ba-lv-text: var(--brand-level-sky-text, var(--brand-accent-text));
+  }
+  .ba-button[data-tone="level"][data-level="blue"] {
+    --ba-lv-hi: var(--brand-level-blue-highlight, var(--brand-accent));
+    --ba-lv-base: var(--brand-level-blue-base, var(--brand-accent));
+    --ba-lv-hover: var(--brand-level-blue-hover, var(--brand-accent-hover));
+    --ba-lv-deep: var(--brand-level-blue-deep, var(--brand-accent-hover));
+    --ba-lv-halo: var(--brand-level-blue-halo, var(--brand-accent));
+    --ba-lv-text: var(--brand-level-blue-text, var(--brand-accent-text));
+  }
+  .ba-button[data-tone="level"][data-level="navy"] {
+    --ba-lv-hi: var(--brand-level-navy-highlight, var(--brand-accent-hover));
+    --ba-lv-base: var(--brand-level-navy-base, var(--brand-accent-hover));
+    --ba-lv-hover: var(--brand-level-navy-hover, var(--brand-accent-hover));
+    --ba-lv-deep: var(--brand-level-navy-deep, var(--brand-inverse-canvas));
+    --ba-lv-halo: var(--brand-level-navy-halo, var(--brand-accent));
+    --ba-lv-text: var(--brand-level-navy-text, var(--brand-accent-text));
+  }
+  .ba-button[data-tone="level"][data-level="obsidian"] {
+    --ba-lv-hi: var(--brand-level-obsidian-highlight, var(--brand-inverse-surface-muted));
+    --ba-lv-base: var(--brand-level-obsidian-base, var(--brand-inverse-surface));
+    --ba-lv-hover: var(--brand-level-obsidian-hover, var(--brand-inverse-surface-muted));
+    --ba-lv-deep: var(--brand-level-obsidian-deep, var(--brand-inverse-canvas));
+    --ba-lv-halo: var(--brand-level-obsidian-halo, var(--brand-inverse-canvas));
+    --ba-lv-text: var(--brand-level-obsidian-text, var(--brand-inverse-text));
+  }
+  .ba-button:is([data-tone="neutral"], [data-tone="level"]) {
+    --ba-btn-top: var(--ba-lv-hi);
+    --ba-btn-bottom: var(--ba-lv-base);
+    --ba-btn-glow: transparent;
+    --ba-btn-sheen: rgb(from var(--ba-btn-white) r g b / 0.18);
+    --ba-btn-rim: rgb(from var(--ba-btn-white) r g b / 0.5);
+    --ba-btn-contact: color-mix(in srgb, var(--ba-lv-deep) 40%, transparent);
+    --ba-btn-halo: color-mix(in srgb, var(--ba-lv-halo) 50%, transparent);
+    --ba-btn-halo-hover: color-mix(in srgb, var(--ba-lv-halo) 68%, transparent);
+    --ba-btn-text: var(--ba-lv-text);
+    --ba-btn-flat: var(--ba-lv-base);
+    --ba-btn-flat-hover: var(--ba-lv-hover);
+    --ba-btn-flat-text: var(--ba-lv-text);
+    --ba-btn-line: var(--ba-lv-base);
+  }
+  /* Pearl and neutral need a hairline on light pages; the halo is grey, not a glow. */
+  .ba-button:is([data-tone="neutral"], [data-level="pearl"]) {
+    --ba-btn-sheen: rgb(from var(--ba-btn-white) r g b / 0.7);
+    --ba-btn-rim: rgb(from var(--ba-btn-white) r g b / 1);
+    --ba-btn-border: color-mix(in srgb, var(--ba-lv-deep) 18%, transparent);
+    --ba-btn-contact: color-mix(in srgb, var(--ba-lv-deep) 22%, transparent);
+    --ba-btn-halo: color-mix(in srgb, var(--ba-lv-halo) 30%, transparent);
+    --ba-btn-halo-hover: color-mix(in srgb, var(--ba-lv-halo) 42%, transparent);
+    --ba-btn-line: var(--brand-text);
+  }
+
+  .ba-button[data-tone="whatsapp"] {
+    --ba-btn-top: var(--brand-whatsapp-highlight, var(--brand-whatsapp, var(--brand-status-success)));
+    --ba-btn-bottom: var(--brand-whatsapp, var(--brand-status-success));
+    --ba-btn-glow: transparent;
+    --ba-btn-text: var(--brand-whatsapp-text, var(--brand-accent-text));
+    --ba-btn-sheen: rgb(from var(--ba-btn-white) r g b / 0.2);
+    --ba-btn-rim: rgb(from var(--ba-btn-white) r g b / 0.6);
+    --ba-btn-contact: color-mix(in srgb, var(--ba-btn-bottom) 45%, var(--brand-text) 10%);
+    --ba-btn-halo: color-mix(in srgb, var(--ba-btn-bottom) 50%, transparent);
+    --ba-btn-halo-hover: color-mix(in srgb, var(--ba-btn-bottom) 65%, transparent);
+    --ba-btn-flat: var(--brand-whatsapp, var(--brand-status-success));
+    --ba-btn-flat-hover: var(--brand-whatsapp-hover, var(--brand-status-success));
+    --ba-btn-flat-text: var(--ba-btn-text);
+    --ba-btn-line: var(--brand-whatsapp, var(--brand-status-success));
+  }
+
+  .ba-button[data-tone="danger"] {
+    --ba-btn-top: color-mix(in oklab, var(--brand-danger) 88%, var(--brand-accent-text));
+    --ba-btn-bottom: var(--brand-danger);
+    --ba-btn-glow: transparent;
+    --ba-btn-text: var(--brand-accent-text);
+    --ba-btn-sheen: rgb(from var(--ba-btn-white) r g b / 0.1);
+    --ba-btn-rim: rgb(from var(--ba-btn-white) r g b / 0.28);
+    --ba-btn-contact: color-mix(in srgb, var(--brand-danger) 35%, transparent);
+    --ba-btn-halo: color-mix(in srgb, var(--brand-danger) 40%, transparent);
+    --ba-btn-flat: var(--brand-danger);
+    --ba-btn-flat-hover: color-mix(in oklab, var(--brand-danger) 85%, var(--brand-text));
+    --ba-btn-flat-text: var(--brand-accent-text);
+    --ba-btn-line: var(--brand-danger);
+  }
+
+  /* ── Appearances ───────────────────────────────────────────────────────────
+     No appearance = the brand's default: solid, or depth inside any
+     [data-button-appearance="depth"] ancestor (same rule as @brandcloud/ui button.css). */
+  .ba-button[data-appearance="depth"],
+  :where([data-button-appearance="depth"]) .ba-button:not([data-appearance]) {
+    background:
+      radial-gradient(150% 100% at 50% 0%, var(--ba-btn-sheen) 0%, color-mix(in srgb, var(--ba-btn-sheen) 25%, transparent) 99%, transparent 100%) top / 100% 50% no-repeat,
+      radial-gradient(65.28% var(--ba-btn-glow-reach) at 50% 100%, var(--ba-btn-glow), transparent),
+      linear-gradient(var(--ba-btn-top), var(--ba-btn-bottom));
+    box-shadow: var(--ba-btn-shadow);
+    color: var(--ba-btn-text);
+  }
+  .ba-button[data-appearance="outline"] {
+    background: transparent;
+    color: var(--brand-text);
+    box-shadow: inset 0 0 0 1px var(--brand-border-strong);
+  }
+  .ba-button[data-appearance="ghost"] {
+    background: transparent;
+    color: var(--brand-text);
+    box-shadow: none;
+  }
+
+  /* ── States ────────────────────────────────────────────────────────────── */
+  @media (hover: hover) {
+    .ba-button:not([data-appearance]):hover,
+    .ba-button[data-appearance="solid"]:hover { background: var(--ba-btn-flat-hover); }
+    .ba-button[data-appearance="depth"]:hover,
+    :where([data-button-appearance="depth"]) .ba-button:not([data-appearance]):hover {
+      background:
+        radial-gradient(150% 100% at 50% 0%, var(--ba-btn-sheen) 0%, color-mix(in srgb, var(--ba-btn-sheen) 25%, transparent) 99%, transparent 100%) top / 100% 50% no-repeat,
+        radial-gradient(65.28% var(--ba-btn-glow-reach) at 50% 100%, var(--ba-btn-glow), transparent),
+        linear-gradient(var(--ba-btn-top), var(--ba-btn-bottom));
+      box-shadow: var(--ba-btn-shadow-hover);
+      filter: brightness(1.04);
+    }
+    .ba-button[data-appearance="outline"]:hover { box-shadow: inset 0 0 0 1px var(--ba-btn-line); }
+    .ba-button[data-appearance="ghost"]:hover { background: color-mix(in srgb, var(--brand-text) 7%, transparent); }
+  }
+  .ba-button:active { transform: scale(0.96); }
+  .ba-button:focus-visible {
+    outline: 3px solid var(--brand-focus, var(--brand-accent));
+    outline-offset: 4px;
+  }
+  .ba-button:disabled,
+  .ba-button[aria-disabled="true"] {
+    cursor: not-allowed;
+    filter: grayscale(0.7) opacity(0.5);
+    box-shadow: none;
+    transform: none;
+  }
+  .ba-button[aria-busy="true"] { cursor: progress; }
+
+  .ba-button__spinner {
+    width: 1em;
+    height: 1em;
+    flex: none;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: ba-spin 0.8s linear infinite;
+  }
+  @keyframes ba-spin { to { transform: rotate(360deg); } }
+
+  /* ── Sizes ─────────────────────────────────────────────────────────────── */
+  .ba-button[data-size="sm"] { --ba-btn-h: var(--brand-action-height-sm, 2.75rem); padding: 0.5625rem 1rem; font-size: 0.9375rem; }
+  .ba-button[data-size="lg"] { --ba-btn-h: var(--brand-action-height-lg, 3.5rem); padding: 0.875rem 1.625rem; font-size: 1.0625rem; }
+  .ba-button[data-block] { width: 100%; }
+
+  /* Phones: a long label wraps inside its button instead of pushing the page sideways. */
+  @media (max-width: 29.9375rem) {
+    .ba-button { max-width: 100%; white-space: normal; text-wrap: balance; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ba-button { transition: none; }
+    .ba-button:active { transform: none; }
+    .ba-button__spinner { animation-duration: 2.4s; }
+  }
+}
+</style>

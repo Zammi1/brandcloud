@@ -1,0 +1,5 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": ["src/**/*.ts", "src/**/*.astro", "test/**/*.ts", "vitest.config.ts"],
+  "compilerOptions": { "noEmit": true }
+}

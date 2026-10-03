@@ -1,0 +1,70 @@
+---
+/** Developer docs: a side navigation, then the page. Below 62rem the navigation sits above as a disclosure. */
+import Base from "./Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import { devNav } from "../lib/site";
+interface Props { title: string; description: string; lede: string; wide?: boolean }
+const { title, description, lede, wide = false } = Astro.props;
+const path = Astro.url.pathname;
+---
+<Base title={title} description={description} current="/developers/">
+  <slot name="head" slot="head" />
+  <Container>
+    <div class="dv" data-wide={wide ? "" : undefined}>
+      <aside class="dv__side">
+        <details class="dv__menu">
+          <summary>Developer docs menu</summary>
+          <nav aria-label="Developer docs (menu)">
+            {devNav.map((g) => (
+              <div class="dv__group">
+                <p class="dv__group-title">{g.heading}</p>
+                <ul>{g.links.map((l) => <li><a href={l.href} aria-current={l.href === path ? "page" : undefined}>{l.label}</a></li>)}</ul>
+              </div>
+            ))}
+          </nav>
+        </details>
+        <nav class="dv__nav" aria-label="Developer docs">
+          {devNav.map((g) => (
+            <div class="dv__group">
+              <p class="dv__group-title">{g.heading}</p>
+              <ul>{g.links.map((l) => <li><a href={l.href} aria-current={l.href === path ? "page" : undefined}>{l.label}</a></li>)}</ul>
+            </div>
+          ))}
+        </nav>
+      </aside>
+      <div class="dv__main">
+        <header class="dv__head">
+          <h1>{title}</h1>
+          <p class="s-lead">{lede}</p>
+        </header>
+        <slot />
+      </div>
+    </div>
+  </Container>
+</Base>
+
+<style>
+  .dv { display: grid; gap: 1.5rem 3.5rem; padding-block: clamp(1.5rem, 4vw, 3rem) clamp(4rem, 8vw, 6rem); }
+  @media (min-width: 62rem) {
+    .dv { grid-template-columns: 13rem minmax(0, 1fr); }
+    .dv__side { position: sticky; top: 5.5rem; align-self: start; max-height: calc(100vh - 6.5rem); overflow-y: auto; }
+    .dv__menu { display: none; }
+  }
+  @media (max-width: 61.99rem) { .dv__nav { display: none; } }
+  .dv__menu > summary { padding: 0.75rem 1rem; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-control); font-weight: 650; cursor: pointer; background: var(--brand-surface); }
+  .dv__menu[open] > summary { margin-block-end: 1rem; }
+  .dv__group + .dv__group { margin-block-start: 1.5rem; }
+  .dv__group-title { font-size: 0.875rem; font-weight: 650; color: var(--brand-text-muted); margin-block-end: 0.4rem; }
+  .dv__group ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.15rem; }
+  .dv__group a { display: block; padding: 0.35rem 0.6rem; margin-inline-start: -0.6rem; border-radius: var(--brand-radius-xs); color: var(--brand-text); text-decoration: none; }
+  .dv__group a:hover { background: var(--brand-surface-muted); }
+  .dv__group a[aria-current="page"] { background: var(--brand-surface); box-shadow: inset 2px 0 0 var(--brand-accent); font-weight: 650; }
+  .dv__main { min-inline-size: 0; }
+  .dv__main :global(.dv-section > *) { min-inline-size: 0; }
+  .dv__head { display: grid; gap: 1rem; padding-block-end: 2rem; margin-block-end: 2.5rem; border-block-end: 1px solid var(--brand-border); }
+  .dv__head h1 { font-size: var(--brand-font-size-h1); }
+  .dv__main :global(.dv-section > h2) { font-size: var(--brand-font-size-h3); scroll-margin-top: 6rem; }
+  .dv__main :global(.dv-section) { display: grid; gap: 1rem; padding-block: 2.5rem; border-block-end: 1px solid var(--brand-border); }
+  .dv__main :global(.dv-section > p), .dv__main :global(.dv-section > ul) { max-width: 46rem; }
+  .dv__main :global(.dv-section > h3) { font-size: 1.25rem; margin-block-start: 0.75rem; }
+</style>

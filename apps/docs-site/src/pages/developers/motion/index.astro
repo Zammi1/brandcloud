@@ -1,0 +1,459 @@
+---
+import "../../../styles/components.css";
+import "../../../styles/motion-page.css";
+import Dev from "../../../layouts/Dev.astro";
+import Code from "../../../components/Code.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import MotionReact from "../../../islands/MotionReact";
+import { duration, easing, spring, distance, scale, stagger, budget, simulateSpring } from "@brandcloud/motion";
+import { characterPresets, surfacePresets, presetDurationMs } from "@brandcloud/motion/character";
+import { pkg } from "../../../lib/site";
+
+const curve = ([x1, y1, x2, y2]: readonly number[]) => `M0,100 C${x1 * 100},${100 - y1 * 100} ${x2 * 100},${100 - y2 * 100} 100,0`;
+const springPath = (name: keyof typeof spring) => {
+  const { samples } = simulateSpring(spring[name], 60);
+  const max = Math.max(1.2, ...samples);
+  return samples.map((v, i) => `${i === 0 ? "M" : "L"}${((i / (samples.length - 1)) * 100).toFixed(1)},${(100 - (v / max) * 100).toFixed(1)}`).join(" ");
+};
+const springDuration = (name: keyof typeof spring) => Math.round(simulateSpring(spring[name]).durationMs);
+const durations = Object.entries(duration) as [string, number][];
+const easings = Object.entries(easing) as [string, readonly number[]][];
+const springs = Object.keys(spring) as (keyof typeof spring)[];
+const loops = new Set(["breathe", "float", "nod", "typing", "progress"]);
+const presetNotes: Record<string, string> = {
+  settle: "A landing squash after a glide or a drop.",
+  "pop-in": "Appearing at a new place: a small pop with one squash.",
+  hop: "A short hop on the spot.",
+  celebrate: "Anticipation, hop and landing. Once per earned moment.",
+  "settle-in": "First arrival on the page: drops in and settles.",
+  "hop-out": "Leaving one place to reappear at another.",
+  stretch: "Held while gliding: a slight stretch along the move.",
+  hold: "Squashed and still while the page scrolls fast.",
+  breathe: "Idle: a very slow breath. Loops.",
+  float: "Idle: drifts up and down. Loops.",
+  blink: "Blinks four times, then stops.",
+  nod: "A small nod. Loops.",
+  wave: "Waves twice.",
+  phrase: "Phrases arrive in order, each with --i.",
+  "splash-art": "A splash or panel opening: the art rises first.",
+  "splash-rise": "Then the text rises, with --i for order.",
+  "splash-fade": "Then the rest fades in.",
+  "card-enter": "A card arriving in a list or conversation.",
+  ripple: "A touch ripple from the press point (--x, --y).",
+  typing: "Typing dots, each with --i. Tie it to real progress.",
+  progress: "The moving part of an indeterminate progress bar. Loops.",
+  squash: "Squash on press, spring back on release. Works under reduced motion too.",
+};
+---
+<Dev title="Motion"
+  description={"Every motion preset from the kit, live: timing and spring presets, React variants, CSS utilities, character presets and the spring drivers. " +
+    "Reduced-motion safe, with a switch."} lede={"Motion that explains something: feedback, orientation, continuity and the occasional earned moment. " +
+    "Nothing here moves until you ask it to, and the switch below turns all of it down to short fades."}>
+  <div class="mo-switch" role="group" aria-labelledby="mo-switch-label">
+    <p id="mo-switch-label"><strong>Reduce motion</strong> <span class="s-muted">for this site, remembered on this device. Your system setting: <span
+      data-os-motion>checking</span>.</span></p>
+    <button type="button" class="mo-toggle" role="switch" aria-checked="false" data-motion-toggle aria-labelledby="mo-switch-label"><span class="mo-toggle__track"
+      aria-hidden="true"><span class="mo-toggle__thumb"></span></span><span data-motion-state>Off</span></button>
+  </div>
+
+  <section class="dv-section" id="tokens" aria-labelledby="tokens-title">
+    <h2 id="tokens-title">Timing presets</h2>
+    <p>Durations in milliseconds and easing curves from <code>{pkg("motion")}</code>. Press a track, or Play every dot, to move the dots with each token. Under reduced motion every
+      distance is zero, so the
+      dots stay put: that is the point.</p>
+    <Code title="CSS" code={`@import "${pkg("motion")}/motion.css";
+.panel { transition: transform var(--brand-motion-duration-normal) var(--brand-motion-ease-enter); }`} />
+    <div class="mo-tracks" data-track-group>
+      {durations.filter(([n]) => n !== "count").map(([name, ms]) => (
+        <div class="mo-track">
+          <p class="mo-track__label"><code>duration.{name}</code> <span class="s-num">{ms}ms</span></p>
+          <div class="mo-track__rail"><span class="mo-dot" data-dot data-duration={name} data-easing="standard"></span></div>
+        </div>
+      ))}
+    </div>
+    <p class="mo-note"><code>duration.count</code> is {duration.count}ms and moves digits, not layout, so it has its own demo under React presets.</p>
+    <div class="mo-curves">
+      {easings.map(([name, pts]) => (
+        <figure class="mo-curve">
+          <svg viewBox="-4 -4 108 108" aria-hidden="true"><path class="mo-curve__axis" d="M0,100 L100,100 M0,100 L0,0" /><path class="mo-curve__line" d={curve(pts)} /></svg>
+          <figcaption><code>easing.{name}</code><span class="s-num">{pts.join(", ")}</span></figcaption>
+          <div class="mo-track__rail mo-track__rail--small"><span class="mo-dot" data-dot data-duration="slow" data-easing={name}></span></div>
+        </figure>
+      ))}
+    </div>
+    <h3>Springs</h3>
+    <p>Physical stiffness, damping and mass, so the web and React Native run the same physics. CSS gets each spring as a <code>linear()</code> curve and a duration.</p>
+    <div class="mo-curves">
+      {springs.map((name) => (
+        <figure class="mo-curve">
+          <svg viewBox="-4 -4 108 108" aria-hidden="true"><path class="mo-curve__axis" d="M0,100 L100,100 M0,100 L0,0" /><path class="mo-curve__line" d={springPath(name)} /></svg>
+          <figcaption><code>spring.{name}</code><span class="s-num">{spring[name].stiffness} / {spring[name].damping} / {spring[name].mass}, settles in
+            {springDuration(name)}ms</span></figcaption>
+          <div class="mo-track__rail mo-track__rail--small"><span class="mo-dot" data-dot data-spring={name}></span></div>
+        </figure>
+      ))}
+    </div>
+    <div class="mo-actions"><button type="button" class="ud-trigger" data-play-dots>Play every dot</button></div>
+    <div class="s-table-wrap" tabindex="0">
+      <table class="s-table">
+        <caption class="s-sr">Distance, scale, stagger and budget tokens</caption>
+        <thead><tr><th scope="col">Group</th><th scope="col">Values</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">distance (px)</th><td>{Object.entries(distance).map(([k, v]) => `${k} ${v}`).join(", ")}</td></tr>
+          <tr><th scope="row">scale</th><td>{Object.entries(scale).map(([k, v]) => `${k} ${v}`).join(", ")}</td></tr>
+          <tr><th scope="row">stagger</th><td>{Object.entries(stagger).map(([k, v]) => `${k} ${v}`).join(", ")}</td></tr>
+          <tr><th scope="row">budget</th><td>{Object.entries(budget).map(([k, v]) => `${k} ${v}`).join(", ")}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="dv-section" id="motion-react" aria-labelledby="react-title">
+    <h2 id="react-title">React presets</h2>
+    <p>Spread a preset on a Motion element. Wrap the app in <code>BrandMotionConfig</code> so the OS setting and this page's switch both apply.</p>
+    <Code title="TSX" code={`import { LazyMotion, domAnimation, m, AnimatePresence } from "motion/react";
+import { BrandMotionConfig, depthButton, dialog } from "${pkg("motion")}/react";
+
+<BrandMotionConfig>
+  <LazyMotion features={domAnimation}>
+    <m.button {...depthButton}>Book a visit</m.button>
+    <AnimatePresence>{open && <m.div variants={dialog} initial="hidden" animate="visible" exit="exit" />}</AnimatePresence>
+  </LazyMotion>
+</BrandMotionConfig>`} />
+    <MotionReact client:visible />
+  </section>
+
+  <section class="dv-section" id="css" aria-labelledby="css-title">
+    <h2 id="css-title">CSS utilities</h2>
+    <p>For Astro and static pages: classes in the <code>brand-motion</code> layer, so your own rules win. Only transform, opacity and filter animate.</p>
+    <div class="mo-grid">
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-press</code> and <code>.m-press-lg</code></p><div class="s-cluster"><button type="button" class="ud-trigger m-press">Press
+        me</button><button type="button" class="ud-trigger m-press m-press-lg">Large surface</button></div></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-depth</code></p><Button class="m-depth" appearance="depth">Hover and press</Button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-tile</code></p><a class="mo-tile m-tile" href="#css"><strong>Blue level</strong><span>Lifts on hover and focus</span></a></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-focus</code></p><button type="button" class="ud-trigger m-focus mo-nofocus">Tab to me</button><p class="mo-note">The ring
+        settles in from further out.</p></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>dialog.m-dialog</code></p><button type="button" class="ud-trigger" data-open-dialog="mo-dialog">Open a native dialog</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>dialog.m-drawer</code></p><button type="button" class="ud-trigger" data-open-dialog="mo-drawer">Open a native drawer</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-popover[popover]</code></p><button type="button" class="ud-trigger" popovertarget="mo-popover">Toggle a popover</button><div
+        id="mo-popover" class="m-popover mo-popover" popover>No JavaScript: @starting-style does the entrance.</div></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-spinner</code></p><div class="s-cluster"><button type="button" class="ud-trigger" data-toggle-spinner
+        aria-pressed="false">Show the spinner</button><span class="mo-spinner-slot" data-spinner-slot role="status" aria-live="polite"></span></div><p class="mo-note">A slow pulse under
+        reduced motion.</p></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-enter</code></p><div class="s-cluster"><button type="button" class="ud-trigger" data-enter>Add a card</button></div><div
+        class="mo-enter-slot" data-enter-slot></div></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>[data-reveal]</code> with <code>reveal()</code></p><p class="mo-note">One section per page at most. The reveal script only
+        hides what is below the fold, so nothing already on screen fades out. This page uses it on the box at the bottom of the drivers section.</p></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>.m-reveal-scroll</code></p><p class="mo-reveal-demo m-reveal-scroll">Tied to scroll position with no script. Browsers without
+        scroll-driven animation just show it.</p></div>
+    </div>
+    <dialog id="mo-dialog" class="m-dialog mo-dialog" aria-labelledby="mo-dialog-title"><h3 id="mo-dialog-title">A native dialog</h3><p>Enters and leaves with @starting-style. No
+      framework.</p><form method="dialog"><button class="ud-trigger">Close</button></form></dialog>
+    <dialog id="mo-drawer" class="m-drawer mo-drawer" aria-labelledby="mo-drawer-title"><h3 id="mo-drawer-title">A native drawer</h3><p>Slides in from the inline end, so from the left
+      on right-to-left pages.</p><form method="dialog"><button class="ud-trigger">Close</button></form></dialog>
+  </section>
+
+  <section class="dv-section" id="character" aria-labelledby="char-title">
+    <h2 id="char-title">Character and surface presets</h2>
+    <p>From <code>{pkg("motion")}/character.css</code>: weight for things that move, such as a guide, a badge or a card. Use a class (<code>m-settle</code>) or set
+      <code>data-motion="settle"</code> from script. All of them stop under reduced motion.</p>
+    <div class="mo-char">
+      <div class="mo-char__stage" aria-hidden="true">
+        <div class="mo-guide" data-guide><span class="mo-guide__eye"></span><span class="mo-guide__eye"></span></div>
+      </div>
+      <div class="mo-char__presets">
+        <p class="mo-cell__name">One-shot presets</p>
+        <div class="mo-chips">
+          {characterPresets.map((p) => <button type="button" class="ud-trigger mo-chip" data-preset={p} data-ms={presetDurationMs[p]}>{p}</button>)}
+        </div>
+        <p class="mo-cell__name">Surface presets on the guide</p>
+        <div class="mo-chips">
+          {["breathe", "float", "blink", "nod", "wave"].map((p) => <button type="button" class="ud-trigger mo-chip" data-surface={p} aria-pressed="false">{p}{loops.has(p) ? " (loop)" : ""}</button>)}
+        </div>
+      </div>
+    </div>
+    <div class="mo-grid">
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-phrase</code></p><div class="mo-phrases" data-phrases><p class="mo-bubble">Hello.</p><p class="mo-bubble">This section
+        explains the prices.</p><p class="mo-bubble">Ask me anything.</p></div><button type="button" class="ud-trigger" data-replay="phrases">Play</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-splash-art</code>, <code>m-splash-rise</code>, <code>m-splash-fade</code></p><div class="mo-splash" data-splash><div
+        class="mo-splash__art"></div><p class="mo-splash__t">Welcome back</p><p class="mo-splash__s">Your saved brand is ready.</p></div><button type="button" class="ud-trigger"
+        data-replay="splash">Play</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-card-enter</code></p><div class="mo-cards" data-cards></div><button type="button" class="ud-trigger" data-card-enter>Add a
+        card</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-ripple</code></p><button type="button" class="ud-trigger mo-ripple-btn" data-ripple>Tap for a ripple</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-typing</code> (loop)</p><div class="mo-typing" data-typing
+        aria-hidden="true"><span></span><span></span><span></span></div><button type="button" class="ud-trigger" data-loop="typing" aria-pressed="false">Start</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-progress</code> (loop)</p><div class="mo-progress" data-progress role="progressbar"
+        aria-label="Indeterminate progress demo"><span></span></div><button type="button" class="ud-trigger" data-loop="progress" aria-pressed="false">Start</button></div>
+      <div class="mo-cell"><p class="mo-cell__name"><code>m-squash</code></p><button type="button" class="ud-trigger m-squash">Press and hold</button></div>
+    </div>
+    <details class="mo-list"><summary>What each preset is for</summary>
+      <ul>{[...characterPresets, ...surfacePresets].map((p) => <li><code>{p}</code>: {presetNotes[p] ?? ""}</li>)}</ul>
+    </details>
+  </section>
+
+  <section class="dv-section" id="drivers" aria-labelledby="drivers-title">
+    <h2 id="drivers-title">Spring drivers</h2>
+    <p>From <code>{pkg("motion")}/character</code>. Each runs one animation frame loop only while something moves, and jumps under reduced motion.</p>
+    <Code title="TS" code={`import { flyTo, hopTo, springFollower, turntable, playPreset } from "${pkg("motion")}/character";`} />
+    <div class="mo-grid mo-grid--2">
+      <div class="mo-cell">
+        <p class="mo-cell__name"><code>flyTo</code>: along an arc, then settles</p>
+        <div class="mo-fly" data-fly>
+          <ul class="mo-fly__from" data-fly-from><li><button type="button" class="mo-item" data-fly-item>Chain clean</button></li><li><button type="button" class="mo-item"
+            data-fly-item>New tyres</button></li><li><button type="button" class="mo-item" data-fly-item>Bar tape</button></li></ul>
+          <div class="mo-fly__to" data-fly-to><p class="mo-note">Basket</p></div>
+        </div>
+        <p class="mo-note">Click an item to send it to the basket.</p>
+      </div>
+      <div class="mo-cell">
+        <p class="mo-cell__name"><code>springFollower</code>: a guide that keeps level</p>
+        <div class="mo-follow" data-follow>
+          <div class="mo-follow__guide" data-follow-guide aria-hidden="true"></div>
+          <ul class="mo-follow__list">{["Pricing", "What is included", "How it works", "Questions"].map((t) => <li><button type="button" class="mo-item" data-follow-to>{t}</button></li>)}</ul>
+        </div>
+        <p class="mo-note">Click a row: the guide glides there, stretches on the way and settles.</p>
+      </div>
+      <div class="mo-cell">
+        <p class="mo-cell__name"><code>hopTo</code>: out, moved, popped in</p>
+        <div class="mo-hop" data-hop>
+          <div class="mo-hop__slot" data-hop-slot><span class="mo-badge" data-hop-badge>Saved</span></div>
+          <div class="mo-hop__slot" data-hop-slot></div>
+          <div class="mo-hop__slot" data-hop-slot></div>
+        </div>
+        <button type="button" class="ud-trigger" data-hop-next>Hop to the next slot</button>
+      </div>
+      <div class="mo-cell">
+        <p class="mo-cell__name"><code>turntable</code>: drag, release, turn</p>
+        <div class="mo-dial" data-dial tabindex="0" role="slider" aria-label="Turntable demo" aria-valuemin="0" aria-valuemax="359" aria-valuenow="0" aria-valuetext="0 degrees"><div
+          class="mo-dial__face" data-dial-face><span></span></div></div>
+        <div class="s-cluster"><button type="button" class="ud-trigger" data-dial-turn="-1">Turn left</button><button type="button" class="ud-trigger" data-dial-turn="1">Turn
+          right</button></div>
+        <p class="mo-note">Drag the dial, or use the arrow keys. It springs to the nearest quarter turn.</p>
+      </div>
+    </div>
+    <div class="mo-revealed" data-reveal><strong>The one reveal on this page.</strong> This box faded in once as it came into view, using <code>reveal()</code>. With reduced motion it
+      was simply there.</div>
+  </section>
+
+  <section class="dv-section" aria-labelledby="rules-title">
+    <h2 id="rules-title">The rules that keep motion honest</h2>
+    <ul>
+      <li>Every animation has a job: feedback, orientation, continuity or an earned moment of delight.</li>
+      <li>Interface movement stays under 500ms. Exits are shorter than entrances.</li>
+      <li>Nothing loops unless it shows progress, and loops stop off screen.</li>
+      <li>Under reduced motion there is no travel, scale, overshoot or parallax. Short fades stay so things still visibly appear.</li>
+      <li>Content is never hidden waiting for an animation.</li>
+    </ul>
+  </section>
+</Dev>
+
+<script>
+  import { flyTo, hopTo, playPreset, springFollower, turntable } from "@brandcloud/motion/character";
+  import { prefersReducedMotion, reveal } from "@brandcloud/motion/dom";
+
+  const root = document.documentElement;
+  // Reduce motion switch: <html data-motion="reduce">, remembered in localStorage.
+  const toggle = document.querySelector<HTMLButtonElement>("[data-motion-toggle]");
+  const state = document.querySelector<HTMLElement>("[data-motion-state]");
+  const osLabel = document.querySelector<HTMLElement>("[data-os-motion]");
+  const os = matchMedia("(prefers-reduced-motion: reduce)");
+  const sync = () => {
+    const on = root.dataset.motion === "reduce";
+    toggle?.setAttribute("aria-checked", String(on));
+    if (state) state.textContent = on ? "On" : "Off";
+    if (osLabel) osLabel.textContent = os.matches ? "reduce" : "no preference";
+  };
+  toggle?.addEventListener("click", () => {
+    if (root.dataset.motion === "reduce") { delete root.dataset.motion; try { localStorage.removeItem("motion"); } catch {} }
+    else { root.dataset.motion = "reduce"; try { localStorage.setItem("motion", "reduce"); } catch {} }
+    sync();
+  });
+  os.addEventListener("change", sync);
+  sync();
+
+  // Timing dots.
+  const dots = [...document.querySelectorAll<HTMLElement>("[data-dot]")];
+  for (const dot of dots) {
+    if (dot.dataset.duration) dot.style.setProperty("--dot-duration", `var(--brand-motion-duration-${dot.dataset.duration})`);
+    if (dot.dataset.easing) dot.style.setProperty("--dot-easing", `var(--brand-motion-ease-${dot.dataset.easing})`);
+    if (dot.dataset.spring) {
+      dot.style.setProperty("--dot-duration", `var(--brand-motion-spring-${dot.dataset.spring}-duration)`);
+      dot.style.setProperty("--dot-easing", `var(--brand-motion-spring-${dot.dataset.spring})`);
+    }
+  }
+  document.querySelector("[data-play-dots]")?.addEventListener("click", () => {
+    for (const dot of dots) dot.toggleAttribute("data-at-end");
+  });
+  for (const rail of document.querySelectorAll<HTMLElement>(".mo-track__rail")) {
+    rail.addEventListener("click", () => rail.querySelector("[data-dot]")?.toggleAttribute("data-at-end"));
+  }
+
+  // Native dialogs.
+  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-open-dialog]")) {
+    b.addEventListener("click", () => (document.getElementById(b.dataset.openDialog ?? "") as HTMLDialogElement | null)?.showModal());
+  }
+  // Spinner only on request (loops are for real progress).
+  const spinBtn = document.querySelector<HTMLButtonElement>("[data-toggle-spinner]");
+  const spinSlot = document.querySelector<HTMLElement>("[data-spinner-slot]");
+  spinBtn?.addEventListener("click", () => {
+    const on = spinBtn.getAttribute("aria-pressed") !== "true";
+    spinBtn.setAttribute("aria-pressed", String(on));
+    spinBtn.textContent = on ? "Hide the spinner" : "Show the spinner";
+    if (spinSlot) spinSlot.innerHTML = on ? '<span class="m-spinner" aria-hidden="true"></span> Loading' : "";
+  });
+  // m-enter: plays once on insertion.
+  const enterSlot = document.querySelector<HTMLElement>("[data-enter-slot]");
+  let enterCount = 0;
+  document.querySelector("[data-enter]")?.addEventListener("click", () => {
+    if (!enterSlot) return;
+    const card = document.createElement("p");
+    card.className = "mo-card m-enter";
+    card.textContent = `Card ${++enterCount}`;
+    enterSlot.prepend(card);
+    while (enterSlot.children.length > 3) enterSlot.lastElementChild?.remove();
+  });
+
+  // Character presets on the guide.
+  const guide = document.querySelector<HTMLElement>("[data-guide]");
+  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-preset]")) {
+    b.addEventListener("click", async () => {
+      if (!guide) return;
+      const name = b.dataset.preset as Parameters<typeof playPreset>[1];
+      if (name === "stretch" || name === "hold") {
+        guide.dataset.motion = name;
+        setTimeout(() => { if (guide.dataset.motion === name) delete guide.dataset.motion; }, 600);
+        return;
+      }
+      await playPreset(guide, name);
+      if (name === "hop-out") await playPreset(guide, "pop-in");
+    });
+  }
+  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-surface]")) {
+    b.addEventListener("click", () => {
+      if (!guide) return;
+      const cls = `m-${b.dataset.surface}`;
+      const on = b.getAttribute("aria-pressed") !== "true";
+      for (const other of document.querySelectorAll<HTMLButtonElement>("[data-surface]"))
+        { other.setAttribute("aria-pressed", "false"); guide.classList.remove(`m-${other.dataset.surface}`); }
+      if (on) { void guide.offsetWidth; guide.classList.add(cls); b.setAttribute("aria-pressed", "true"); }
+    });
+  }
+  // Replays for phrase and splash.
+  const replay = (container: Element | null, classes: [string, string][]) => {
+    if (!container) return;
+    for (const [sel, cls] of classes) for (const el of container.querySelectorAll<HTMLElement>(sel)) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  };
+  document.querySelectorAll<HTMLElement>("[data-phrases] .mo-bubble").forEach((el, i) => el.style.setProperty("--i", String(i)));
+  document.querySelectorAll<HTMLElement>("[data-splash] .mo-splash__t, [data-splash] .mo-splash__s").forEach((el, i) => el.style.setProperty("--i", String(i)));
+  document.querySelectorAll<HTMLElement>("[data-typing] span[aria-hidden]").forEach((el, i) => el.style.setProperty("--i", String(i)));
+  document.querySelector('[data-replay="phrases"]')?.addEventListener("click", () => replay(document.querySelector("[data-phrases]"), [[".mo-bubble", "m-phrase"]]));
+  document.querySelector('[data-replay="splash"]')?.addEventListener("click", () => replay(document.querySelector("[data-splash]"), [[".mo-splash__art", "m-splash-art"],
+    [".mo-splash__t, .mo-splash__s", "m-splash-rise"]]));
+  const cards = document.querySelector<HTMLElement>("[data-cards]");
+  let cardCount = 0;
+  document.querySelector("[data-card-enter]")?.addEventListener("click", () => {
+    if (!cards) return;
+    const c = document.createElement("p");
+    c.className = "mo-card m-card-enter";
+    c.textContent = `Message ${++cardCount}`;
+    cards.append(c);
+    while (cards.children.length > 3) cards.firstElementChild?.remove();
+  });
+  const rippleBtn = document.querySelector<HTMLButtonElement>("[data-ripple]");
+  rippleBtn?.addEventListener("pointerdown", (e) => {
+    const r = rippleBtn.getBoundingClientRect();
+    const span = document.createElement("span");
+    span.className = "m-ripple mo-ripple";
+    span.style.setProperty("--x", `${e.clientX - r.left}px`);
+    span.style.setProperty("--y", `${e.clientY - r.top}px`);
+    rippleBtn.append(span);
+    setTimeout(() => span.remove(), 700);
+  });
+  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-loop]")) {
+    b.addEventListener("click", () => {
+      const on = b.getAttribute("aria-pressed") !== "true";
+      b.setAttribute("aria-pressed", String(on));
+      b.textContent = on ? "Stop" : "Start";
+      if (b.dataset.loop === "typing") document.querySelectorAll("[data-typing] span[aria-hidden]").forEach((s) => s.classList.toggle("m-typing", on));
+      if (b.dataset.loop === "progress") document.querySelector("[data-progress] span")?.classList.toggle("m-progress", on);
+    });
+  }
+
+  // flyTo
+  const basket = document.querySelector<HTMLElement>("[data-fly-to]");
+  for (const item of document.querySelectorAll<HTMLButtonElement>("[data-fly-item]")) {
+    item.addEventListener("click", async () => {
+      if (!basket || item.dataset.flown) return;
+      item.dataset.flown = "1";
+      const a = item.getBoundingClientRect();
+      const b = basket.getBoundingClientRect();
+      const to = { x: b.left + 12 - a.left, y: b.top + 36 + basket.querySelectorAll("[data-fly-item]").length * 8 - a.top };
+      await flyTo(item, { x: 0, y: 0 }, to, { liftPx: 60 });
+      basket.append(item);
+      item.disabled = true;
+    });
+  }
+  // springFollower
+  const follow = document.querySelector<HTMLElement>("[data-follow]");
+  const fguide = document.querySelector<HTMLElement>("[data-follow-guide]");
+  if (follow && fguide) {
+    const follower = springFollower({ x: 0, y: 0 }, {
+      apply: ({ y }) => fguide.style.setProperty("transform", `translate3d(0, ${y.toFixed(1)}px, 0)`),
+      onMove: () => (fguide.dataset.motion = "stretch"),
+      onLand: () => { delete fguide.dataset.motion; void playPreset(fguide, "settle"); },
+    });
+    for (const b of follow.querySelectorAll<HTMLButtonElement>("[data-follow-to]")) {
+      b.addEventListener("click", () => follower.moveTo({ x: 0, y: b.offsetTop }));
+    }
+  }
+  // hopTo
+  const slots = [...document.querySelectorAll<HTMLElement>("[data-hop-slot]")];
+  const badge = document.querySelector<HTMLElement>("[data-hop-badge]");
+  let at = 0;
+  document.querySelector("[data-hop-next]")?.addEventListener("click", async () => {
+    if (!badge || !slots.length) return;
+    at = (at + 1) % slots.length;
+    await hopTo(badge, () => slots[at].append(badge));
+  });
+  // turntable
+  const dial = document.querySelector<HTMLElement>("[data-dial]");
+  const face = document.querySelector<HTMLElement>("[data-dial-face]");
+  if (dial && face) {
+    const tt = turntable(0, {
+      snap: Math.PI / 2,
+      render: (angle) => {
+        face.style.setProperty("transform", `rotate(${angle}rad)`);
+        const deg = Math.round((((angle * 180) / Math.PI) % 360 + 360) % 360);
+        dial.setAttribute("aria-valuenow", String(deg));
+        dial.setAttribute("aria-valuetext", `${deg} degrees`);
+      },
+    });
+    let last: number | null = null;
+    let lastT = 0;
+    let velocity = 0;
+    dial.addEventListener("pointerdown", (e) => { last = e.clientX; lastT = e.timeStamp; dial.setPointerCapture(e.pointerId); });
+    dial.addEventListener("pointermove", (e) => {
+      if (last === null) return;
+      const dx = e.clientX - last;
+      const dt = Math.max(1, e.timeStamp - lastT);
+      velocity = (dx * 0.01) / (dt / 1000);
+      tt.drag(dx, 0.01);
+      last = e.clientX;
+      lastT = e.timeStamp;
+    });
+    const end = () => { if (last !== null) { tt.release(velocity); last = null; velocity = 0; } };
+    dial.addEventListener("pointerup", end);
+    dial.addEventListener("pointercancel", end);
+    dial.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") { e.preventDefault(); tt.turn(1); }
+      if (e.key === "ArrowLeft" || e.key === "ArrowDown") { e.preventDefault(); tt.turn(-1); }
+    });
+    for (const b of document.querySelectorAll<HTMLButtonElement>("[data-dial-turn]")) b.addEventListener("click", () => tt.turn(Number(b.dataset.dialTurn) as 1 | -1));
+    const io = new IntersectionObserver(([entry]) => (entry?.isIntersecting ? tt.resume() : tt.pause()));
+    io.observe(dial);
+  }
+  // The one reveal on this page.
+  reveal();
+  void prefersReducedMotion;
+</script>

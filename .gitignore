@@ -1,0 +1,16 @@
+node_modules
+dist
+.astro
+coverage
+playwright-report
+test-results
+.vite
+*.log
+*.tgz
+*.local
+.env
+.env.*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+.vercel

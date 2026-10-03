@@ -1,0 +1,136 @@
+---
+import Dev from "../../../layouts/Dev.astro";
+import Code from "../../../components/Code.astro";
+import { PRODUCT, pkg, tgz, PACK_STEPS, NPM_NOTE } from "../../../lib/site";
+import makeBrandSample from "../../../samples/make-brand.txt?raw";
+---
+<Dev title="Getting started" description={`Install ${PRODUCT} in Astro, React or Next, with Tailwind v4 and the shadcn/ui bridge.`}
+  lede="Pick your setup. Every route uses the same tokens, so a brand file made in the builder works in all of them.">
+  <nav class="gs-toc" aria-label="On this page">
+    <a href="#install">Get the packages</a>
+    <a href="#astro">Astro</a><a href="#react">React and Next</a><a href="#tailwind">Tailwind v4</a><a href="#shadcn">The shadcn bridge</a><a href="#brand">Add your brand</a>
+  </nav>
+
+  <section class="dv-section" id="install" aria-labelledby="install-title">
+    <h2 id="install-title">Get the packages</h2>
+    <p>{NPM_NOTE}</p>
+    <Code title="Terminal" code={PACK_STEPS} />
+    <p>The commands below assume your project folder sits next to the cloned repository. Change the paths if it does not.</p>
+  </section>
+
+  <section class="dv-section" id="astro" aria-labelledby="astro-title">
+    <h2 id="astro-title">Astro</h2>
+    <p>The Astro components ship as <code>.astro</code> source. They render to HTML and CSS and send no JavaScript, except the small scripts in the navbar menu and the enquiry form.</p>
+    <Code title="Terminal" code={`pnpm add ${tgz("astro")} ${tgz("tokens")} ${tgz("motion")} astro`} />
+    <Code title="src/layouts/Layout.astro" code={`---
+import "${pkg("tokens")}/css";
+import "${pkg("tokens")}/themes.css";      // every brand and mode, or one brand file
+import "${pkg("motion")}/motion.css";      // optional: motion tokens and utilities
+---
+<html lang="en-GB" data-brand="harbour" data-theme="light" data-button-appearance="depth">
+  <body><slot /></body>
+</html>`} />
+    <Code title="src/pages/index.astro" code={`---
+import Layout from "../layouts/Layout.astro";
+import Hero from "${pkg("astro")}/components/Hero.astro";
+import Button from "${pkg("astro")}/components/Button.astro";
+---
+<Layout>
+  <Hero variant="editorial" copy={{ heading: "Your headline", primary: { label: "Book a visit", href: "/book/" } }} />
+  <Button href="/prices/" tone="ink">See prices</Button>
+</Layout>`} />
+    <ul>
+      <li>Import components one by one from <code>{pkg("astro")}/components/Name.astro</code>, so only their CSS reaches the page.</li>
+      <li>Component styles sit in <code>@layer components</code>. Keep your own element rules (<code>h1</code>, <code>a</code>) in <code>@layer base</code>, and declare the layer order
+        once before any stylesheet: <code>@layer tokens, theme, base, components, brand-motion, utilities;</code></li>
+      <li><code>data-button-appearance="depth"</code> on <code>&lt;html&gt;</code> makes the depth button the default. Without it buttons are solid.</li>
+      <li>Fonts are not bundled. Load them yourself (this site self-hosts Bricolage Grotesque and Hanken Grotesk from Fontsource) and keep their licence.</li>
+    </ul>
+  </section>
+
+  <section class="dv-section" id="react" aria-labelledby="react-title">
+    <h2 id="react-title">React and Next</h2>
+    <p>The React primitives are built on Base UI, styled only with the tokens. Include the stylesheet once near the root.</p>
+    <Code title="Terminal" code={`pnpm add ${tgz("ui")} ${tgz("tokens")} react react-dom`} />
+    <Code title="main.tsx (Vite)" code={`import "${pkg("tokens")}/css";
+import "${pkg("tokens")}/themes.css";
+import "${pkg("ui")}/styles.css";
+import { Button } from "${pkg("ui")}/button";
+
+export function Save() {
+  return <Button loading={false}>Save changes</Button>;
+}`} />
+    <Code title="app/layout.tsx (Next App Router)" code={`import "${pkg("tokens")}/css";
+import "${pkg("tokens")}/themes.css";
+import "${pkg("ui")}/styles.css";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en-GB" data-brand="harbour" data-theme="light">
+      <body>{children}</body>
+    </html>
+  );
+}`} />
+    <ul>
+      <li>Interactive components (dialog, drawer, menu, popover, tooltip and the rest) carry <code>"use client"</code> in the build, so you can import them from a Server Component page.
+        <code>Card</code> also has a <code>react-server</code> entry.</li>
+      <li>Import leaf paths such as <code>{pkg("ui")}/button</code> to keep bundles small, or the root for everything.</li>
+      <li>For motion in React, wrap the app in <code>BrandMotionConfig</code> from <code>{pkg("motion")}/react</code>. It follows the OS reduced-motion setting and <code>&lt;html
+        data-motion="reduce"&gt;</code>.</li>
+    </ul>
+  </section>
+
+  <section class="dv-section" id="tailwind" aria-labelledby="tw-title">
+    <h2 id="tw-title">Tailwind v4</h2>
+    <p>The Tailwind layer is <code>@theme inline</code>, so utilities read the tokens where they are used and re-theme with <code>data-brand</code> or <code>data-theme</code> on any
+      element.</p>
+    <Code title="app.css" code={`@import "tailwindcss";
+@import "${pkg("tokens")}/css";
+@import "${pkg("tokens")}/themes.css";
+@import "${pkg("tokens")}/tailwind.css";
+@import "${pkg("motion")}/tokens.css";
+@import "${pkg("motion")}/tailwind.css";`} />
+    <div class="s-table-wrap" tabindex="0">
+      <table class="s-table">
+        <caption class="s-sr">Tailwind utilities from the tokens</caption>
+        <thead><tr><th scope="col">Tokens</th><th scope="col">Utilities</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Colour roles</th><td><code>bg-canvas</code>, <code>text-text-muted</code>, <code>border-border</code>, <code>bg-action-ink</code>,
+            <code>bg-whatsapp</code></td></tr>
+          <tr><th scope="row">Shadows</th><td><code>shadow-action-depth</code>, <code>hover:shadow-action-depth-hover</code>, <code>shadow-popover</code></td></tr>
+          <tr><th scope="row">Type</th><td><code>font-display</code>, <code>font-body</code>, <code>text-display</code>, <code>text-h1</code>, <code>text-lead</code></td></tr>
+          <tr><th scope="row">Layout</th><td><code>py-section</code>, <code>h-action-md</code>, <code>max-w-content-max</code>, <code>rounded-control</code></td></tr>
+          <tr><th scope="row">Gradients</th><td><code>bg-action-depth</code>, <code>bg-level-sky</code> to <code>bg-level-obsidian</code></td></tr>
+          <tr><th scope="row">Motion</th><td><code>ease-brand-enter</code>, <code>duration-brand-fast</code>, <code>transition-spring-snappy</code>,
+            <code>animate-brand-enter</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="dv-section" id="shadcn" aria-labelledby="shadcn-title">
+    <h2 id="shadcn-title">The shadcn bridge</h2>
+    <p>Already using shadcn/ui? Import the bridge last and stock components take on the brand without edits.</p>
+    <Code title="app.css" code={`@import "tailwindcss";
+@import "${pkg("tokens")}/css";
+@import "${pkg("tokens")}/themes.css";
+@import "${pkg("tokens")}/tailwind.css";
+@import "${pkg("tokens")}/shadcn.css"; /* last */`} />
+    <p><code>--background</code> becomes <code>canvas</code>, <code>--primary</code> becomes <code>accent</code>, <code>--muted</code> becomes <code>surface-muted</code>,
+      <code>--destructive</code> becomes <code>danger</code>, <code>--ring</code> becomes <code>focus</code> and <code>--radius</code> becomes <code>radius-control</code>, along with
+      the card, popover, chart and sidebar variables. They are re-declared on every <code>[data-brand]</code> and <code>[data-theme]</code> element, so nested brands work too.</p>
+    <p class="s-note">With the bridge loaded, Tailwind's <code>bg-accent</code> follows shadcn's meaning (the hover surface). Use <code>bg-primary</code> for the brand colour.</p>
+  </section>
+
+  <section class="dv-section" id="brand" aria-labelledby="brand-title">
+    <h2 id="brand-title">Add your brand</h2>
+    <p>Export the JSON from the <a href="/brand-builder/">brand builder</a>, or make one from the command line in a clone of the repository:</p>
+    <Code title="Terminal" code={makeBrandSample} />
+    <p>It prints a pass or fail line for every required contrast pair and refuses to write a brand that fails. More in <a href="/developers/theming/">Theming</a>.</p>
+  </section>
+</Dev>
+
+<style>
+  .gs-toc { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; padding-block-end: 0.5rem; }
+  .gs-toc a { font-weight: 600; }
+</style>

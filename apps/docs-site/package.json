@@ -1,0 +1,43 @@
+{
+  "name": "docs-site",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "The public docs and marketing site, built with the kit itself.",
+  "scripts": {
+    "assets": "node scripts/sync-assets.mjs",
+    "dev": "node scripts/sync-assets.mjs && astro dev",
+    "build": "node scripts/sync-assets.mjs && astro build && node scripts/sitemap.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint:ui": "node ../../packages/tokens/dist/ui-lint-cli.mjs --root .",
+    "detect": "node scripts/detect-all.mjs",
+    "shots": "node scripts/shots.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.0.0",
+    "@brandcloud/antipatterns": "workspace:*",
+    "@brandcloud/astro": "workspace:*",
+    "@brandcloud/motion": "workspace:*",
+    "@brandcloud/tokens": "workspace:*",
+    "@brandcloud/ui": "workspace:*",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/schibsted-grotesk": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "astro": "^7.3.5",
+    "motion": "^13.1.1",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
+  }
+}

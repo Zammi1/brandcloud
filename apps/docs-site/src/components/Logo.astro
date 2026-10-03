@@ -1,0 +1,24 @@
+---
+/** The site mark: a small key drawn with the depth button's own tokens (lighter top, deeper bottom, sheen). */
+---
+<span class="s-logo" aria-hidden="true"><span class="s-logo__key"></span></span>
+
+<style>
+  .s-logo {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: 0.5rem;
+    background-image: var(--brand-action-depth-fill);
+    box-shadow: var(--brand-action-depth-rim), var(--brand-shadow-action-depth);
+    flex: none;
+  }
+  .s-logo__key {
+    inline-size: 0.75rem;
+    block-size: 0.5rem;
+    border-radius: 0.2rem;
+    background: var(--brand-action-depth-text);
+    box-shadow: 0 0.18rem 0 var(--brand-action-depth-to);
+  }
+</style>

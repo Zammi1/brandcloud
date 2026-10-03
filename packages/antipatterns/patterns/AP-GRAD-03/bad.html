@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-GRAD-03: blurred glow blobs floating behind the hero -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saltmarsh Sea School: learn to sail (AP-GRAD-03 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.hero { position: relative; isolation: isolate; }
+/* ANTIPATTERN AP-GRAD-03 */
+.blob { position: absolute; width: 440px; height: 440px; border-radius: 50%; filter: blur(90px); opacity: 0.55; z-index: -1; }
+.b1 { background: #a855f7; top: -40px; left: -80px; }
+.b2 { background: #22d3ee; top: 160px; right: -40px; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Saltmarsh Sea School <small>Dinghy sailing, Wessex</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Courses</a><a href="#">Dates</a><a href="#">Kit list</a><a class="btn btn-ink btn-sm" href="#">See dates</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <div class="blob b1" aria-hidden="true"></div><div class="blob b2" aria-hidden="true"></div>
+  <h1>Learn to sail on Merewick Harbour, two people to a boat.</h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">RYA Stage 1 and 2 dinghy courses from April to October. Four instructors, eight boats and a warm changing room at the end of the day.</p>
+      <div class="actions"><a class="btn btn-depth" href="#">See 2027 dates</a><a class="textlink" href="#">What to bring</a></div>
+    </div>
+    <dl class="facts">
+      <div><dt>Next course</dt><dd>Sat 17 and Sun 18 April 2027</dd></div>
+      <div><dt>Two-day course</dt><dd>&pound;295, boat and buoyancy aid included</dd></div>
+      <div><dt>Ages</dt><dd>12 and up, adults welcome</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Saltmarsh Sea School CIC</span><span>Merewick Hard, Merewick Harbour</span></footer></div>
+
+</body>
+</html>

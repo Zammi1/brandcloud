@@ -1,0 +1,132 @@
+---
+/* Recipe: campaign landing page. Tidewell Physio is a made-up business. Free components only. */
+import "@fontsource-variable/schibsted-grotesk";
+import "../../../styles/recipe.css";
+import Base from "../../../layouts/Base.astro";
+import RecipeBar from "../../../components/RecipeBar.astro";
+import Navbar from "@brandcloud/astro/components/Navbar.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import EnquiryFormShell from "@brandcloud/astro/components/EnquiryFormShell.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Footer from "@brandcloud/astro/components/Footer.astro";
+import Icon from "@brandcloud/astro/components/Icon.astro";
+
+const business = "Tidewell Physio";
+---
+<Base title={`Recipe: campaign landing page (${business}, fictional)`}
+  description="A campaign landing page recipe built from free components: a six-week return-to-running programme for a made-up physio clinic." bare brand="harbour">
+  <Fragment slot="top">
+    <RecipeBar slug="campaign" />
+    <Navbar brandName={business} links={[{ label: "The programme", href: "#programme" }, { label: "How it works", href: "#how" }, { label: "Questions", href: "#questions" }]}
+      cta={{ label: "Book a place", href: "#book" }} />
+  </Fragment>
+
+  <Hero
+    variant="field"
+    copy={{
+      heading: "Back to running by summer, without the knee pain coming back",
+      lede: "A six-week return-to-run programme for runners coming back from injury, led by a physiotherapist in Kingsport. Small groups, one plan, and a test run at the end.",
+      primary: { label: "Book a place", href: "#book" },
+      secondary: { label: "How it works", href: "#how" },
+      note: "Spring group starts Monday 1 March 2027.",
+    }}
+    facts={[
+      { label: "Starts", value: "Monday 1 March 2027" },
+      { label: "Length", value: "6 weeks, two sessions a week" },
+      { label: "Group size", value: "Up to 8 runners" },
+      { label: "Price", value: "£180 for the whole programme" },
+    ]}
+  />
+
+  <Section id="programme" aria-labelledby="who-title">
+    <div class="r-sechead" data-split>
+      <Heading as="h2" id="who-title">For runners who keep stopping at the same point</Heading>
+      <p class="r-lead">You have been told you can run again. Your body has other ideas after twenty minutes. This programme rebuilds the load in steps you can measure.</p>
+    </div>
+    <div class="r-two">
+      <ul class="r-ticks">
+        <li><Icon name="check" /><div><strong>Knee, shin or Achilles pain that returns</strong><span>Usually around the same distance or time on your feet.</span></div></li>
+        <li><Icon name="check" /><div><strong>Back after a break of three months or more</strong><span>Injury, illness, a new baby or simply life.</span></div></li>
+        <li><Icon name="check" /><div><strong>Training for a spring 10K or half</strong><span>And you want to reach the start line in one piece.</span></div></li>
+      </ul>
+      <div class="r-panel">
+        <h3 class="r-panel-title">What the £180 covers</h3>
+        <ul class="r-ticks">
+          <li><Icon name="check" /><span>A one-to-one assessment in week one</span></li>
+          <li><Icon name="check" /><span>Twelve group sessions: strength, then running drills</span></li>
+          <li><Icon name="check" /><span>A written plan for the days between sessions</span></li>
+          <li><Icon name="check" /><span>A timed test run in week six, with a plan for what comes next</span></li>
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="muted" id="how" aria-labelledby="how-title">
+    <Steps
+      heading="Six weeks, three stages"
+      intro="Each stage starts when you pass the one before, so nobody is pushed past what their legs can take."
+      variant="rail"
+      steps={[
+        { title: "Assess", text: "A one-hour assessment finds what gives way first and sets your starting load.", meta: "Week 1" },
+        { title: "Build", text: "Strength work twice a week, with short run intervals that grow each session.", meta: "Weeks 2 to 5" },
+        { title: "Test", text: "A timed run on the seafront, then a plan for the months after.", meta: "Week 6" },
+      ]}
+    />
+  </Section>
+
+  <Section id="questions" aria-labelledby="campaign-faq-title">
+    <Faq
+      id="campaign-faq"
+      heading="Before you book"
+      items={[
+        { question: "Do I need a referral?", answer: "No. Book a place and the assessment in week one decides whether the group is right for you. If it is not, you get your money back." },
+        { question: "What if I miss a session?", answer: "Each week has a second slot, so you can swap. Your plan also covers what to do at home." },
+        { question: "Can I claim it on health insurance?", answer: "Some insurers cover physiotherapy assessments. We give you a receipt with everything they usually ask for." },
+        { question: "Where is it?", answer: "Sessions are at the clinic and on the seafront path nearby, depending on the week." },
+      ]}
+    />
+  </Section>
+
+  <Section tone="raised" id="book" aria-label="Book a place">
+    <div class="r-two">
+      <div class="s-stack">
+        <Heading as="h2">Book a place in the spring group</Heading>
+        <p class="r-lead">Tell us a little about your running and we will reply within two working days to arrange your assessment.</p>
+        <p class="r-fine">This is a recipe preview. The form does not send anything.</p>
+      </div>
+      <EnquiryFormShell
+        mode="preview"
+        previewMessage="Preview only: nothing was sent. On a live page this form posts to your own endpoint."
+        layout="panel"
+        id="campaign-book"
+        fields={["name", "email", "phone", "message"]}
+        required={["name", "email"]}
+        labels={{ message: "What stops your running at the moment?", submit: "Request a place" }}
+        interest={{ label: "Which group?", options: ["Spring group, from 1 March 2027", "A later group"], placeholder: "Choose a group" }}
+        consent={{ label: "Email me when future groups open. Optional, and separate from this booking." }}
+      />
+    </div>
+  </Section>
+
+  <CtaBand
+    copy={{
+      heading: "Not sure the group is right for you?",
+      body: "Book the assessment on its own first. If you join the programme afterwards, its cost comes off the price.",
+      primary: { label: "Book a place", href: "#book" },
+      secondary: { label: "Read the questions", href: "#questions" },
+    }}
+  />
+
+  <Fragment slot="bottom">
+    <Footer variant="simple" brandName={business} links={[{ label: "The programme", href: "#programme" }, { label: "How it works", href: "#how" }, { label: "Book", href: "#book" }]}
+      legal={["Tidewell Physio is a made-up business for this recipe.", "Example page built with free components."]} />
+  </Fragment>
+</Base>
+
+<style>
+  .r-panel-title { font-size: 1.375rem; margin-block-end: 1.25rem; }
+</style>

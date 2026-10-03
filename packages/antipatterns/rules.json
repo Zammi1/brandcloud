@@ -1,0 +1,1615 @@
+{
+  "name": "ai-design-antipatterns",
+  "version": "1.0.0",
+  "updated": "2026-10-01",
+  "description": "Machine-readable tells of AI-generated (vibe-coded) web design, with detection heuristics and fixes. Visual rules are checked by detect.mjs in a real browser. Extra rule sets (for example copy rules) can be added through the engine's addRules extension point.",
+  "scoring": {
+    "weights": {
+      "high": 12,
+      "medium": 7,
+      "low": 4
+    },
+    "bands": [
+      {
+        "max": 9,
+        "label": "clean",
+        "meaning": "No meaningful AI tells found."
+      },
+      {
+        "max": 29,
+        "label": "some tells",
+        "meaning": "A few defaults slipped through. Fix before shipping."
+      },
+      {
+        "max": 59,
+        "label": "reads as AI",
+        "meaning": "A visitor will clock this as generated. Rework the flagged sections."
+      },
+      {
+        "max": 100,
+        "label": "obviously AI",
+        "meaning": "Template look end to end. Start the section designs again."
+      }
+    ],
+    "cap": 100
+  },
+  "categories": {
+    "GRAD": "Colour and gradient",
+    "LAY": "Layout",
+    "TYPE": "Typography",
+    "COMP": "Components",
+    "IMG": "Imagery and decoration",
+    "MOT": "Motion",
+    "TRUST": "Trust and fake proof"
+  },
+  "gradientPolicy": {
+    "summary": "Gradients are allowed when they model light on a physical object. Gradients used as decoration with no light logic are the AI tell.",
+    "good": [
+      "Single hue family, small hue spread (under about 20 degrees), e.g. #3b82f6 to #1d4ed8",
+      "Lighter at the top, deeper at the bottom, small angle (180deg or close to it)",
+      "Thin white sheen or inset top highlight",
+      "Soft same-hue shadow or halo underneath with a vertical offset",
+      "Used on actions (buttons), offer level tiles and occasionally one brand-colour section"
+    ],
+    "bad": [
+      "Purple or violet to pink or cyan gradients",
+      "Rainbow, conic, mesh or aurora backgrounds",
+      "Gradient text or gradient accent words",
+      "Blurred glow blobs behind the hero",
+      "Gradient borders on every card",
+      "Glassmorphism on anything holding text",
+      "Centred coloured glows on many elements",
+      "Hue-shifting gradients with no light logic"
+    ],
+    "approvedOptOut": "Elements inside [data-approved-gradient] are skipped by AP-GRAD-01. Only for brand-approved gradient tokens recorded in the project's decisions. Never for gradient text."
+  },
+  "rules": [
+    {
+      "id": "AP-GRAD-01",
+      "slug": "ai-hue-shift-gradient",
+      "category": "GRAD",
+      "title": "Hue-shifting 'AI' gradient",
+      "description": "Gradients that travel across hues (indigo to violet, purple to pink, blue to cyan to pink) on buttons, backgrounds or badges.",
+      "whyAI": "Indigo and violet gradients are the default accent of Tailwind demos and the training data behind most generators, so they became the signature colour of generated sites. There is no light source that produces them, so they read as decoration.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "gradientHueShift",
+        "params": {
+          "minSaturation": 0.25,
+          "maxHueSpread": 30,
+          "aiBand": [
+            235,
+            340
+          ],
+          "aiBandMinSpread": 10
+        }
+      },
+      "fix": "Use a single-hue tonal gradient that models light: lighter top, deeper bottom, thin sheen, same-hue shadow (e.g. #3b82f6 to #1d4ed8). Take it from tokens (action-depth-*, level-*), never hard-coded hex.",
+      "pair": "patterns/AP-GRAD-01",
+      "sources": [
+        "S01",
+        "S02",
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S14",
+        "S15",
+        "S16",
+        "S19",
+        "S20",
+        "S22",
+        "S23",
+        "S28",
+        "S30",
+        "S31",
+        "S32",
+        "S34",
+        "S37"
+      ],
+      "sectionTypes": [
+        "actions",
+        "pricing"
+      ]
+    },
+    {
+      "id": "AP-GRAD-02",
+      "slug": "gradient-text",
+      "category": "GRAD",
+      "title": "Gradient text and gradient accent words",
+      "description": "Headline words filled with a gradient via background-clip: text.",
+      "whyAI": "The single most repeated hero treatment in generated landing pages: one or two words of the H1 clipped to an indigo or purple gradient.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "gradientText",
+        "params": {}
+      },
+      "fix": "Solid ink headline. Let the wording and the size carry the emphasis. If a word must stand out, change the sentence, not the paint.",
+      "pair": "patterns/AP-GRAD-02",
+      "sources": [
+        "S09",
+        "S11",
+        "S19",
+        "S20",
+        "S21",
+        "S26",
+        "S36"
+      ],
+      "sectionTypes": [
+        "hero",
+        "headings"
+      ]
+    },
+    {
+      "id": "AP-GRAD-03",
+      "slug": "glow-blobs",
+      "category": "GRAD",
+      "title": "Blurred glow blobs behind the hero",
+      "description": "Large absolutely positioned circles with heavy blur or soft radial gradients floating behind content.",
+      "whyAI": "Generators add 'depth' by dropping two or three blurred coloured orbs behind the hero. They carry no information and are the same on every page.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "glowBlob",
+        "params": {
+          "minBlurPx": 24,
+          "minSizePx": 120
+        }
+      },
+      "fix": "Remove the blobs. Create depth with real content: a photograph of the work, a tonal brand section, or a clear contrast step between paper and ink.",
+      "pair": "patterns/AP-GRAD-03",
+      "sources": [
+        "S02",
+        "S03",
+        "S05",
+        "S15",
+        "S19",
+        "S20",
+        "S22",
+        "S26",
+        "S34"
+      ],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-GRAD-04",
+      "slug": "mesh-aurora-background",
+      "category": "GRAD",
+      "title": "Mesh, aurora or rainbow backgrounds",
+      "description": "Section backgrounds built from several layered radial gradients or a conic gradient in different hues.",
+      "whyAI": "Mesh and aurora backgrounds are a stock generator move to make an empty section feel designed.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "meshBackground",
+        "params": {
+          "minLayers": 2,
+          "minWidthRatio": 0.5,
+          "minHeightPx": 240
+        }
+      },
+      "fix": "One brand colour section with a single-hue tonal gradient (e.g. deep navy top to slightly deeper bottom), or a flat colour. Never more than one hue family.",
+      "pair": "patterns/AP-GRAD-04",
+      "sources": [
+        "S19",
+        "S21"
+      ],
+      "sectionTypes": [
+        "sections"
+      ]
+    },
+    {
+      "id": "AP-GRAD-05",
+      "slug": "glows-everywhere",
+      "category": "GRAD",
+      "title": "Coloured glows on everything",
+      "description": "Centred, saturated box-shadow or text-shadow glows on buttons, cards, icons and headings.",
+      "whyAI": "Neon glow shadows are the generator's way of signalling 'premium' or 'AI'. On real objects light casts a shadow below, not a halo all round.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "glowEverywhere",
+        "params": {
+          "minCount": 2,
+          "minBlurPx": 12,
+          "minSaturation": 0.35
+        }
+      },
+      "fix": "Neutral or same-hue shadows with a vertical offset (light from above). At most one soft halo, on the primary action.",
+      "pair": "patterns/AP-GRAD-05",
+      "sources": [
+        "S04",
+        "S23"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-GRAD-06",
+      "slug": "gradient-borders",
+      "category": "GRAD",
+      "title": "Gradient borders on cards",
+      "description": "Cards outlined with gradient borders via border-image, mask-composite or the padding-box / border-box background trick.",
+      "whyAI": "A favourite 'shimmer card' pattern from component galleries; repeated on every card it becomes noise.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "gradientBorder",
+        "params": {
+          "minCount": 2
+        }
+      },
+      "fix": "Plain hairline borders in a neutral line colour, or separate content with spacing and rules instead of boxes.",
+      "pair": "patterns/AP-GRAD-06",
+      "sources": [
+        "S19"
+      ],
+      "sectionTypes": [
+        "pricing",
+        "cards"
+      ]
+    },
+    {
+      "id": "AP-GRAD-07",
+      "slug": "glassmorphism-text",
+      "category": "GRAD",
+      "title": "Glassmorphism on text containers",
+      "description": "Semi-transparent panels with backdrop-filter: blur() holding body text.",
+      "whyAI": "Frosted glass cards over gradient blobs are a 2021 Dribbble trend that generators still reach for. Text over a blurred, moving background loses contrast.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "glassText",
+        "params": {
+          "minTextChars": 20,
+          "maxBgAlpha": 0.9
+        }
+      },
+      "fix": "Solid surfaces for anything with text. Contrast checked against the actual background (WCAG 2.2 AA).",
+      "pair": "patterns/AP-GRAD-07",
+      "sources": [
+        "S04",
+        "S06",
+        "S09",
+        "S19",
+        "S20",
+        "S22",
+        "S23",
+        "S26",
+        "S28"
+      ],
+      "sectionTypes": [
+        "cards"
+      ]
+    },
+    {
+      "id": "AP-GRAD-08",
+      "slug": "dark-neon",
+      "category": "GRAD",
+      "title": "Dark mode with neon accents",
+      "description": "Near-black page with neon cyan, magenta, lime or violet text, borders and glows.",
+      "whyAI": "The 'Linear look' gone generic: dark by default with saturated neon accents is one of the most cited vibe-coded tells.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "darkNeon",
+        "params": {
+          "maxBgLuminance": 0.06,
+          "minNeon": 2
+        }
+      },
+      "fix": "If the brand is dark, use a calm dark (ink or deep navy) with off-white text and one brand accent used sparingly. No neon text, no glow.",
+      "pair": "patterns/AP-GRAD-08",
+      "sources": [
+        "S02",
+        "S03",
+        "S04",
+        "S07",
+        "S11",
+        "S20",
+        "S25",
+        "S28",
+        "S29"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-LAY-01",
+      "slug": "everything-centred",
+      "category": "LAY",
+      "title": "Everything centred",
+      "description": "Every heading, paragraph and list centre-aligned down the whole page.",
+      "whyAI": "Centring is the safest default for a model that does not know the content. Long centred text is harder to read and makes every section look the same.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "allCentred",
+        "params": {
+          "minBlocks": 6,
+          "ratio": 0.7
+        }
+      },
+      "fix": "Left-align text on a grid. Use asymmetry (wide headline column, narrower body column) and centre only short, standalone moments.",
+      "pair": "patterns/AP-LAY-01",
+      "sources": [
+        "S04",
+        "S08",
+        "S16",
+        "S20",
+        "S29",
+        "S34"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-LAY-02",
+      "slug": "identical-icon-cards",
+      "category": "LAY",
+      "title": "Walls of identical icon cards",
+      "description": "Three, six or nine cards of identical size, each icon + short heading + one-line blurb.",
+      "whyAI": "The 3-up feature row is the most common generated section. Equal weight for every item says the author did not decide what matters.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "identicalCards",
+        "params": {
+          "minCards": 3,
+          "sizeTolerance": 0.08
+        }
+      },
+      "fix": "Rank the points. Lead with the one that matters most, give it room and a specific example; list the rest as plain rows. Drop the decorative icons.",
+      "pair": "patterns/AP-LAY-02",
+      "sources": [
+        "S01",
+        "S02",
+        "S04",
+        "S05",
+        "S08",
+        "S13",
+        "S15",
+        "S16",
+        "S19",
+        "S21",
+        "S23",
+        "S25",
+        "S34"
+      ],
+      "sectionTypes": [
+        "features"
+      ]
+    },
+    {
+      "id": "AP-LAY-03",
+      "slug": "bento-grid",
+      "category": "LAY",
+      "title": "Bento grid of rounded tiles",
+      "description": "A grid of rounded tiles of mixed spans, each holding a feature blurb or a fake widget.",
+      "whyAI": "Bento grids became the default 'features' layout after Apple keynotes and component libraries. Generators fill them with filler tiles because the format demands a tile count, not content. Counter-evidence: a Reddit-mined ranking puts bento grids near the bottom of complaints, so this is a weak tell on its own.",
+      "severity": "low",
+      "detect": {
+        "kind": "dom",
+        "check": "bentoGrid",
+        "params": {
+          "minTiles": 4,
+          "minRadiusPx": 12
+        }
+      },
+      "fix": "Lay out what you actually have. Real content of different kinds deserves different treatments, not equal tiles.",
+      "pair": "patterns/AP-LAY-03",
+      "sources": [
+        "S22"
+      ],
+      "sectionTypes": [
+        "features"
+      ]
+    },
+    {
+      "id": "AP-LAY-04",
+      "slug": "template-section-order",
+      "category": "LAY",
+      "title": "The template section order",
+      "description": "Hero, logo strip, features, testimonials, pricing, FAQ, closing CTA, in that order.",
+      "whyAI": "Every generated SaaS page uses the same skeleton, so a visitor can predict the next section before scrolling.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "templateOrder",
+        "params": {
+          "minMatches": 5
+        }
+      },
+      "fix": "Order sections by the visitor's questions for this business (what is it, is it for me, proof, price, how to start). Merge or drop sections that have nothing specific to say.",
+      "pair": "patterns/AP-LAY-04",
+      "sources": [
+        "S13",
+        "S14",
+        "S19",
+        "S22",
+        "S34"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-LAY-05",
+      "slug": "pillowy-uniform-radius",
+      "category": "LAY",
+      "title": "Same large radius on every box",
+      "description": "Every card, image, input and panel uses the same big rounded corner (rounded-2xl / rounded-3xl).",
+      "whyAI": "One radius everywhere is a utility-class default, not a design decision. It flattens hierarchy and gives the soft 'template' look.",
+      "severity": "low",
+      "detect": {
+        "kind": "dom",
+        "check": "uniformRadius",
+        "params": {
+          "minBoxes": 6,
+          "minRadiusPx": 16,
+          "ratio": 0.85
+        }
+      },
+      "fix": "A small radius scale with roles (e.g. 4px controls, 8px cards, 0 for full-bleed media). Fewer boxes overall.",
+      "pair": "patterns/AP-LAY-05",
+      "sources": [
+        "S01",
+        "S07",
+        "S15",
+        "S16",
+        "S23",
+        "S30",
+        "S31"
+      ],
+      "sectionTypes": [
+        "cards",
+        "forms"
+      ]
+    },
+    {
+      "id": "AP-LAY-06",
+      "slug": "numbered-steps",
+      "category": "LAY",
+      "title": "01 / 02 / 03 numbered steps",
+      "description": "Three or four 'How it works' columns, each topped by a big zero-padded number.",
+      "whyAI": "Zero-padded step numbers are a stock generator section. Most processes are not three equal steps.",
+      "severity": "low",
+      "detect": {
+        "kind": "dom",
+        "check": "numberedSteps",
+        "params": {
+          "minSteps": 3,
+          "minFontPx": 20
+        }
+      },
+      "fix": "Describe the real process with real timings in sentences or a plain ordered list. Only number things the reader needs to do in order.",
+      "pair": "patterns/AP-LAY-06",
+      "sources": [
+        "S04",
+        "S05",
+        "S21"
+      ],
+      "sectionTypes": [
+        "process"
+      ]
+    },
+    {
+      "id": "AP-TYPE-01",
+      "slug": "default-inter-slate",
+      "category": "TYPE",
+      "title": "Untouched default type and greys",
+      "description": "Inter, Geist or the system stack with Tailwind slate / gray / zinc text colours on pure white.",
+      "whyAI": "These are the defaults of Tailwind, shadcn and every generator. Nothing in the type says who the business is.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "defaultTypeStack",
+        "params": {
+          "minGreyRatio": 0.5
+        }
+      },
+      "fix": "Choose a typeface with character for the brand, a warm or brand-tinted neutral scale and an off-white or brand canvas.",
+      "pair": "patterns/AP-TYPE-01",
+      "sources": [
+        "S01",
+        "S04",
+        "S07",
+        "S08",
+        "S14",
+        "S15",
+        "S16",
+        "S22",
+        "S25",
+        "S31"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-TYPE-02",
+      "slug": "mono-caps-kicker",
+      "category": "TYPE",
+      "title": "Mono or tracked caps kicker above headings",
+      "description": "A small monospace or wide-tracked uppercase label sitting on top of each section heading ('FEATURES', '// HOW IT WORKS').",
+      "whyAI": "Kickers on every section are a generator habit borrowed from developer-tool sites. They repeat the heading and add a third type style for no reason.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "monoCapsKicker",
+        "params": {
+          "maxChars": 48,
+          "minTrackingEm": 0.05
+        }
+      },
+      "fix": "Delete the kicker and make the heading say the specific thing. If navigation context is needed, use a breadcrumb or the section's own wording.",
+      "pair": "patterns/AP-TYPE-02",
+      "sources": [
+        "S04",
+        "S21",
+        "S25"
+      ],
+      "sectionTypes": [
+        "headings"
+      ]
+    },
+    {
+      "id": "AP-TYPE-03",
+      "slug": "accent-word-headline",
+      "category": "TYPE",
+      "title": "Accent words in headlines (colour or italic serif)",
+      "description": "Headlines with one phrase in the brand colour, a muted grey second half ('Ship faster. Without the chaos.') or one italic serif word in a sans headline.",
+      "whyAI": "Two-tone headlines are the non-gradient version of gradient text. The 2026 variant is a single Fraunces or Instrument Serif italic word inside an Inter headline.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "accentWordHeadline",
+        "params": {
+          "minColourDistance": 60
+        }
+      },
+      "fix": "One colour and one typeface per headline. Emphasis comes from the words, the size and the line break.",
+      "pair": "patterns/AP-TYPE-03",
+      "sources": [
+        "S04",
+        "S21",
+        "S25"
+      ],
+      "sectionTypes": [
+        "hero",
+        "headings"
+      ]
+    },
+    {
+      "id": "AP-COMP-01",
+      "slug": "eyebrow-pill",
+      "category": "COMP",
+      "title": "Eyebrow pill above the H1",
+      "description": "A rounded-full badge above the hero headline ('New: AI-powered insights', with a sparkle or arrow).",
+      "whyAI": "Shipped by default in most hero templates. It is usually invented news to fill the space above the headline.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "eyebrowPill",
+        "params": {
+          "maxChars": 70,
+          "lookback": 2
+        }
+      },
+      "fix": "Remove it. If there is real news, put it in the headline or as a plain dated line near the action.",
+      "pair": "patterns/AP-COMP-01",
+      "sources": [
+        "S04",
+        "S08",
+        "S19",
+        "S21",
+        "S25",
+        "S26",
+        "S36"
+      ],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-COMP-02",
+      "slug": "chip-wall",
+      "category": "COMP",
+      "title": "Chip walls",
+      "description": "Rows of pill-shaped tags listing services, technologies or industries.",
+      "whyAI": "A cheap way to look comprehensive. Six or more equal pills say nothing about what matters.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "chipWall",
+        "params": {
+          "minChips": 6,
+          "maxChipHeightPx": 44
+        }
+      },
+      "fix": "A short sentence or a plain list with a line of detail per item. Group and rank.",
+      "pair": "patterns/AP-COMP-02",
+      "sources": [],
+      "sectionTypes": [
+        "features",
+        "lists"
+      ]
+    },
+    {
+      "id": "AP-COMP-03",
+      "slug": "floating-chips",
+      "category": "COMP",
+      "title": "Floating chips around the hero visual",
+      "description": "Small absolutely positioned cards ('+38% conversions', 'Payment received') stuck over the corners of a hero image.",
+      "whyAI": "Fake notifications floating over a mockup are a stock hero composition. The numbers are invented and the cards hide the image.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "floatingChips",
+        "params": {
+          "minChips": 2,
+          "maxChipWidthPx": 340,
+          "maxChipHeightPx": 140
+        }
+      },
+      "fix": "Show the image unobstructed. Put one real, sourced fact in the caption.",
+      "pair": "patterns/AP-COMP-03",
+      "sources": [
+        "S26"
+      ],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-COMP-04",
+      "slug": "tinted-icon-squares",
+      "category": "COMP",
+      "title": "Icons in tinted rounded squares",
+      "description": "Line icons (usually Lucide) centred in a pale tinted rounded square, repeated on every card.",
+      "whyAI": "The shadcn / Tailwind UI feature card signature. The icon is chosen to match a word, not to inform.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "tintedIconSquares",
+        "params": {
+          "minCount": 3,
+          "minSizePx": 28,
+          "maxSizePx": 72
+        }
+      },
+      "fix": "Drop decorative icons. Use numbers, photographs, or icons only where they carry meaning (status, file type, action).",
+      "pair": "patterns/AP-COMP-04",
+      "sources": [
+        "S07",
+        "S09",
+        "S19",
+        "S22"
+      ],
+      "sectionTypes": [
+        "features",
+        "lists"
+      ]
+    },
+    {
+      "id": "AP-COMP-05",
+      "slug": "emoji-bullets",
+      "category": "COMP",
+      "title": "Emoji bullets and emoji headings",
+      "description": "Lists and headings that start with emoji (rocket, lightning, check, fire) as icons.",
+      "whyAI": "Chat models use emoji as visual bullets and generated pages inherit the habit. On a business site it reads as unedited model output.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "emojiBullets",
+        "params": {
+          "minCount": 3
+        }
+      },
+      "fix": "Plain bullets or numbered rows. Use real icons only with a purpose and a text label.",
+      "pair": "patterns/AP-COMP-05",
+      "sources": [
+        "S02",
+        "S04",
+        "S05",
+        "S09",
+        "S20",
+        "S23",
+        "S34"
+      ],
+      "sectionTypes": [
+        "lists"
+      ]
+    },
+    {
+      "id": "AP-COMP-06",
+      "slug": "shadcn-defaults",
+      "category": "COMP",
+      "title": "Component library defaults left untouched",
+      "description": "shadcn/ui default theme variables, slate-900 6px-radius buttons and grey-bordered cards exactly as installed.",
+      "whyAI": "A component kit is a starting point. Shipping its default theme means the site looks like thousands of others built from it.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "shadcnDefaults",
+        "params": {
+          "minVarMatches": 3
+        }
+      },
+      "fix": "Theme the kit with brand tokens: colour, type, radius scale, shadows, button family (depth / solid / ink).",
+      "pair": "patterns/AP-COMP-06",
+      "sources": [
+        "S04",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S19",
+        "S20",
+        "S22",
+        "S31",
+        "S36"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-COMP-07",
+      "slug": "coloured-stripe-cards",
+      "category": "COMP",
+      "title": "Cards with a coloured side or top stripe",
+      "description": "Cards with a thick coloured left or top border, often a different colour per card.",
+      "whyAI": "Called out by several reviewers as being 'almost as reliable a sign of AI-generated design as em dashes for text'.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "stripeCards",
+        "params": {
+          "minCount": 3,
+          "minStripePx": 3
+        }
+      },
+      "fix": "Separate items with spacing and hairlines. Use colour only where it encodes something (status), with a text label.",
+      "pair": "patterns/AP-COMP-07",
+      "sources": [
+        "S02",
+        "S04",
+        "S05",
+        "S06",
+        "S19"
+      ],
+      "sectionTypes": [
+        "cards"
+      ]
+    },
+    {
+      "id": "AP-IMG-01",
+      "slug": "fake-ui-mock",
+      "category": "IMG",
+      "title": "Fake UI built from divs",
+      "description": "A pretend app window (traffic-light dots, skeleton bars, fake chart columns) drawn in HTML as the hero visual.",
+      "whyAI": "Generators cannot show the real product so they draw a plausible one. Visitors learn nothing and it signals there is no product to show.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "fakeUi",
+        "params": {
+          "minSkeletonBars": 6,
+          "minChartBars": 5
+        }
+      },
+      "fix": "A real screenshot or photo of the real thing, with a caption saying what it is. If nothing exists yet, show the outcome in words or a real example.",
+      "pair": "patterns/AP-IMG-01",
+      "sources": [
+        "S19",
+        "S26",
+        "S29"
+      ],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-IMG-02",
+      "slug": "grid-dot-backdrop",
+      "category": "IMG",
+      "title": "Decorative grid or dot pattern behind the hero",
+      "description": "Faint graph-paper lines or dot grids, often faded out with a radial mask, behind the headline.",
+      "whyAI": "A default 'technical' texture from component galleries. It fills space without saying anything.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "gridDotBackdrop",
+        "params": {
+          "maxTilePx": 96,
+          "minWidthRatio": 0.4
+        }
+      },
+      "fix": "Plain canvas, or a real image. Texture only if it belongs to the brand (e.g. a material the business works with).",
+      "pair": "patterns/AP-IMG-02",
+      "sources": [
+        "S36"
+      ],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-IMG-03",
+      "slug": "sparkles-signifier",
+      "category": "IMG",
+      "title": "Sparkles as the 'AI' signifier",
+      "description": "The sparkles emoji or icon on buttons, badges and headings.",
+      "whyAI": "Sparkles became the universal 'AI feature' icon, so it marks the page as AI-made even when the product is not AI.",
+      "severity": "low",
+      "detect": {
+        "kind": "dom",
+        "check": "sparkles",
+        "params": {}
+      },
+      "fix": "Remove it. Say what the feature does in words.",
+      "pair": "patterns/AP-IMG-03",
+      "sources": [
+        "S09",
+        "S27"
+      ],
+      "sectionTypes": [
+        "actions"
+      ]
+    },
+    {
+      "id": "AP-MOT-01",
+      "slug": "fade-up-everything",
+      "category": "MOT",
+      "title": "Everything fades up on scroll",
+      "description": "Every block starts invisible and slides up as it enters the viewport (AOS, framer-motion whileInView, .reveal classes).",
+      "whyAI": "Generators wrap every section in the same entrance animation. Content hides from people who scroll fast, print or use reduced motion.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "fadeUpEverything",
+        "params": {
+          "minCount": 4
+        }
+      },
+      "fix": "Content visible by default. Motion only where it explains a change (a state, an order, a reveal the user asked for), and none under prefers-reduced-motion.",
+      "pair": "patterns/AP-MOT-01",
+      "sources": [
+        "S26",
+        "S36"
+      ],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-MOT-02",
+      "slug": "stagger-every-card",
+      "category": "MOT",
+      "title": "Staggered entrance on every card",
+      "description": "Sibling cards animate in one after another with incrementing delays (0.1s, 0.2s, 0.3s).",
+      "whyAI": "The stagger is the default 'polish' a model adds to any repeated element. It slows reading and repeats on every list.",
+      "severity": "low",
+      "detect": {
+        "kind": "dom",
+        "check": "staggerSiblings",
+        "params": {
+          "minSiblings": 3
+        }
+      },
+      "fix": "Show lists at once. If an order matters, show the order with numbers, not timing.",
+      "pair": "patterns/AP-MOT-02",
+      "sources": [
+        "S26",
+        "S36"
+      ],
+      "sectionTypes": [
+        "lists"
+      ]
+    },
+    {
+      "id": "AP-MOT-03",
+      "slug": "hover-lift-everything",
+      "category": "MOT",
+      "title": "Hover lift and scale on every card",
+      "description": "Cards that jump up or grow on hover even though they are not links.",
+      "whyAI": "hover:-translate-y-1 hover:scale-105 is pasted onto every card. Motion on non-interactive things signals a click that does nothing.",
+      "severity": "low",
+      "detect": {
+        "kind": "dom",
+        "check": "hoverLift",
+        "params": {
+          "minCount": 3
+        }
+      },
+      "fix": "Hover feedback only on interactive elements, and keep it calm (colour, underline, a 1px press).",
+      "pair": "patterns/AP-MOT-03",
+      "sources": [],
+      "sectionTypes": [
+        "cards"
+      ]
+    },
+    {
+      "id": "AP-MOT-04",
+      "slug": "endless-floating",
+      "category": "MOT",
+      "title": "Endless floating and pulsing decoration",
+      "description": "Infinite float, bob, pulse or shimmer animations on badges, blobs, icons and buttons.",
+      "whyAI": "Looping motion is added to make static generated pages feel alive. It pulls the eye away from the content and ignores reduced motion.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "infiniteDecor",
+        "params": {
+          "minCount": 2
+        },
+        "notes": "Ignores spinners and targets under 16px. Calibration: hand-designed product sites (Basecamp, Linear) also loop decoration, so treat a single hit as a prompt to check reduced-motion handling."
+      },
+      "fix": "No looping decoration. Loops only for real progress (a spinner while something loads) and stopped under prefers-reduced-motion.",
+      "pair": "patterns/AP-MOT-04",
+      "sources": [
+        "S19",
+        "S21"
+      ],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-MOT-05",
+      "slug": "logo-marquee",
+      "category": "MOT",
+      "title": "Infinite logo marquee",
+      "description": "A strip of client logos scrolling sideways forever, often duplicated to loop.",
+      "whyAI": "The marquee makes a short or invented logo list look long. It is the most copied social-proof component in generated pages.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "logoMarquee",
+        "params": {
+          "minItems": 4
+        }
+      },
+      "fix": "A static, short list of real clients you have permission to name, ideally each with what you did for them.",
+      "pair": "patterns/AP-MOT-05",
+      "sources": [
+        "S19"
+      ],
+      "sectionTypes": [
+        "proof"
+      ]
+    },
+    {
+      "id": "AP-MOT-06",
+      "slug": "cursor-glow",
+      "category": "MOT",
+      "title": "Cursor-following glow or spotlight",
+      "description": "A radial glow that follows the pointer across the page or across cards.",
+      "whyAI": "Spotlight cards and cursor glows are copied from a handful of developer sites. They add work for the GPU and nothing for the reader.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "cursorGlow",
+        "params": {}
+      },
+      "fix": "Remove it. Use standard hover and focus-visible states.",
+      "pair": "patterns/AP-MOT-06",
+      "sources": [],
+      "sectionTypes": [
+        "page"
+      ]
+    },
+    {
+      "id": "AP-MOT-07",
+      "slug": "typewriter-headline",
+      "category": "MOT",
+      "title": "Typewriter or rotating-word headline",
+      "description": "The H1 types itself out, or a word in it cycles through options with a blinking caret.",
+      "whyAI": "A stock trick to make a generic headline feel dynamic. Screen readers and slow readers get a moving target.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "typewriter",
+        "params": {
+          "observeMs": 1200
+        }
+      },
+      "fix": "One fixed headline that says the specific thing. If there are several audiences, write for the main one and route the rest.",
+      "pair": "patterns/AP-MOT-07",
+      "sources": [],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-MOT-08",
+      "slug": "parallax-decor",
+      "category": "MOT",
+      "title": "Parallax-scrolling decorative shapes",
+      "description": "Blobs, orbs or shapes that move at a different speed from the page as you scroll.",
+      "whyAI": "Scroll-linked parallax on decoration is a generator flourish that costs performance and can trigger motion sickness.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "parallaxDecor",
+        "params": {
+          "scrollPx": 400,
+          "minShiftPx": 20
+        }
+      },
+      "fix": "Static layout. If scroll-linked motion is needed for a story, tie it to content and respect prefers-reduced-motion.",
+      "pair": "patterns/AP-MOT-08",
+      "sources": [],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-MOT-09",
+      "slug": "spinning-3d-hero",
+      "category": "MOT",
+      "title": "Purposeless spinning hero object",
+      "description": "A large orb, globe, cube or 3D shape rotating forever in the hero.",
+      "whyAI": "A spinning shape is the generator's stand-in for 'technology'. It does not show the product or the work.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "spinningHero",
+        "params": {
+          "minSizePx": 160
+        }
+      },
+      "fix": "Show the actual work, team or result. A still photograph beats an abstract shape.",
+      "pair": "patterns/AP-MOT-09",
+      "sources": [],
+      "sectionTypes": [
+        "hero"
+      ]
+    },
+    {
+      "id": "AP-TRUST-01",
+      "slug": "fake-logo-strip",
+      "category": "TRUST",
+      "title": "'Trusted by' strip of placeholder logos",
+      "description": "A 'Trusted by teams at' row of company names typed out as text wordmarks, often Acme, Globex, Initech or invented brands, usually greyed out.",
+      "whyAI": "Generators always add a logo strip and fill it with placeholders. Visitors recognise the names, and fake proof costs more trust than none.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "trustedByLogos",
+        "params": {
+          "minItems": 4
+        },
+        "notes": "Real logo strips that use the clients' own logo files (img or svg) are not flagged; typed wordmarks and known placeholder names are."
+      },
+      "fix": "Only real clients you may name. One named client with what you did beats twelve grey logos.",
+      "pair": "patterns/AP-TRUST-01",
+      "sources": [
+        "S19"
+      ],
+      "sectionTypes": [
+        "proof"
+      ]
+    },
+    {
+      "id": "AP-TRUST-02",
+      "slug": "inflated-stat-band",
+      "category": "TRUST",
+      "title": "Inflated stat band",
+      "description": "A row of big round numbers ('10x', '99.9%', '50K+', '24/7') with one-word captions.",
+      "whyAI": "Generated pages invent metrics to fill the stats section. Round numbers with no source or date are read as made up.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "inflatedStats",
+        "params": {
+          "minStats": 3,
+          "minFontPx": 28
+        }
+      },
+      "fix": "One specific, sourced figure in a sentence with its context and date ('41 kitchens fitted in 2025, all in Wessex').",
+      "pair": "patterns/AP-TRUST-02",
+      "sources": [
+        "S04",
+        "S19",
+        "S21",
+        "S26"
+      ],
+      "sectionTypes": [
+        "proof"
+      ]
+    },
+    {
+      "id": "AP-TRUST-03",
+      "slug": "avatar-stack",
+      "category": "TRUST",
+      "title": "Avatar stack with 'Loved by 10,000+'",
+      "description": "Overlapping circular avatars next to a star row and a user count.",
+      "whyAI": "Standard hero social proof in generated templates, usually stock faces and a made-up count.",
+      "severity": "medium",
+      "detect": {
+        "kind": "dom",
+        "check": "avatarStack",
+        "params": {
+          "minAvatars": 3
+        }
+      },
+      "fix": "A named review with a link to where it was posted, or the real review score from a platform with its count and date.",
+      "pair": "patterns/AP-TRUST-03",
+      "sources": [
+        "S19",
+        "S21",
+        "S23"
+      ],
+      "sectionTypes": [
+        "hero",
+        "proof"
+      ]
+    },
+    {
+      "id": "AP-TRUST-04",
+      "slug": "placeholder-testimonials",
+      "category": "TRUST",
+      "title": "Placeholder testimonials",
+      "description": "Five-star quote cards from 'Sarah Johnson, CEO at TechCorp' with generic praise.",
+      "whyAI": "Models generate the same handful of names and job titles. Generic praise with no detail reads as invented.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "placeholderTestimonials",
+        "params": {
+          "minFiveStarCards": 3
+        }
+      },
+      "fix": "Real quotes with permission: full name or first name and town, the job done, and one specific detail from their experience.",
+      "pair": "patterns/AP-TRUST-04",
+      "sources": [
+        "S19",
+        "S21",
+        "S23"
+      ],
+      "sectionTypes": [
+        "proof"
+      ]
+    },
+    {
+      "id": "AP-TRUST-05",
+      "slug": "template-leftovers",
+      "category": "TRUST",
+      "title": "Template and builder leftovers",
+      "description": "Stale copyright years, 'Edit with Lovable' badges, lorem ipsum, '[Your Company]', example.com links, default favicons.",
+      "whyAI": "Leftovers show nobody read the page before it shipped, which undoes any other trust signal.",
+      "severity": "high",
+      "detect": {
+        "kind": "dom",
+        "check": "templateLeftovers",
+        "params": {
+          "maxCopyrightAgeYears": 1
+        }
+      },
+      "fix": "Search the build for placeholders before launch. Copyright year from the build date, real company details, builder badges removed.",
+      "pair": "patterns/AP-TRUST-05",
+      "sources": [
+        "S07",
+        "S22",
+        "S23",
+        "S24"
+      ],
+      "sectionTypes": [
+        "footer",
+        "page"
+      ]
+    }
+  ],
+  "motionNote": "Motion rules AP-MOT-01..09 cover the @brandcloud/motion anti-pattern list (fade-up on scroll, stagger, parallax, endless floating, logo marquee, cursor glow, typewriter, spinning 3D hero) using document.getAnimations(), computed delays, pointer and scroll probes.",
+  "sources": {
+    "S01": {
+      "title": "Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500)",
+      "author": "Alan West / DEV Community",
+      "published": "2026-03-25",
+      "accessed": "2026-10-01",
+      "url": "https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p"
+    },
+    "S02": {
+      "title": "7 Signs a UI Has Been Vibe Coded (And How to Avoid Them)",
+      "author": "Jeff Humble / The Fountain Institute",
+      "published": "24 Apr (year not shown; footer 2026)",
+      "accessed": "2026-10-01",
+      "url": "https://www.thefountaininstitute.com/blog/signs-vibe-coded-ui"
+    },
+    "S03": {
+      "title": "7 Tells that a UI is AI-Generated",
+      "author": "Jeff Humble / The Fountain Institute (newsletter)",
+      "published": "about Apr 2026 (\"6 months ago\")",
+      "accessed": "2026-10-01",
+      "url": "https://pages.thefountaininstitute.com/posts/7-tells-that-a-ui-is-ai-generated"
+    },
+    "S04": {
+      "title": "Scoring Show HN submissions for AI design patterns",
+      "author": "Adrian Krebs / adriankrebs.ch",
+      "published": "2026-04-20",
+      "accessed": "2026-10-01",
+      "url": "https://www.adriankrebs.ch/blog/design-slop/"
+    },
+    "S05": {
+      "title": "Scoring Show HN submissions for AI design patterns (HN discussion, 333 points, 235 comments)",
+      "author": "Hacker News, submitted by hubraumhugo",
+      "published": "about Apr 2026 (\"5 months ago\")",
+      "accessed": "2026-10-01",
+      "url": "https://news.ycombinator.com/item?id=47864393"
+    },
+    "S06": {
+      "title": "AI Design Slop: 16 Patterns That Out Your App as Vibe-Coded",
+      "author": "Developers Digest (no byline)",
+      "published": "2026-04-22 (updated 2026-09-28)",
+      "accessed": "2026-10-01",
+      "url": "https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it"
+    },
+    "S07": {
+      "title": "How to tell if a website is vibe coded (7 signs)",
+      "author": "Josh / VibeZero (vendor)",
+      "published": "2026-07-08 (updated 2026-09-29)",
+      "accessed": "2026-10-01",
+      "url": "https://www.vibe0.com.au/blog/how-to-tell-if-a-website-is-vibe-coded"
+    },
+    "S08": {
+      "title": "How to Keep Your Website From Looking Like Every Other Vibe Coded Website",
+      "author": "John Davenport / CodeMySpec (vendor)",
+      "published": "2026-07-26",
+      "accessed": "2026-10-01",
+      "url": "https://codemyspec.com/blog/vibe-coded-websites-look-the-same"
+    },
+    "S09": {
+      "title": "Is That Vibe Coded? (free AI website detector)",
+      "author": "isthatvibecoded.com (vendor tool)",
+      "published": "undated",
+      "accessed": "2026-10-01",
+      "url": "https://isthatvibecoded.com/"
+    },
+    "S10": {
+      "title": "Why Do A Lot Of AI-Generated Websites Have Purple Vibes?",
+      "author": "Faturoti Kayode / AI in a Nutshell (newsletters.ai)",
+      "published": "2025-10-29",
+      "accessed": "2026-10-01",
+      "url": "https://newsletters.ai/p/ai-vs-purple"
+    },
+    "S11": {
+      "title": "AI Purple Problem: Make Your UI Unmistakable",
+      "author": "Jainil Prajapati / DEV Community",
+      "published": "2025-10-08",
+      "accessed": "2026-10-01",
+      "url": "https://dev.to/jaainil/ai-purple-problem-make-your-ui-unmistakable-3ono"
+    },
+    "S12": {
+      "title": "Why Does Every AI-Generated Website Look the Same? (Fifty Shades of Indigo)",
+      "author": "Paco Valdez / Paco's AI Lab (Substack)",
+      "published": "2025-11-10",
+      "accessed": "2026-10-01",
+      "url": "https://pacovaldez.substack.com/p/why-does-every-ai-generated-website"
+    },
+    "S13": {
+      "title": "Why Do Most AI-Generated Websites Look the Same?",
+      "author": "Benedykt Michalski / Shuffle (vendor)",
+      "published": "2026-01-29",
+      "accessed": "2026-10-01",
+      "url": "https://shuffle.dev/blog/2026/01/why-do-most-ai-generated-websites-look-the-same/"
+    },
+    "S14": {
+      "title": "Improving frontend design through Skills",
+      "author": "Prithvi Rajasekaran, Justin Wei, Alexander Bricken / Anthropic (claude.com blog)",
+      "published": "2025-11-12",
+      "accessed": "2026-10-01",
+      "url": "https://claude.com/blog/improving-frontend-design-through-skills"
+    },
+    "S15": {
+      "title": "AI Slop Fonts and Gradients: The Tells That Give Away AI Design",
+      "author": "925studios (vendor)",
+      "published": "2026-06-14 (body date)",
+      "accessed": "2026-10-01",
+      "url": "https://www.925studios.co/blog/ai-slop-design-tells"
+    },
+    "S16": {
+      "title": "Why Your AI Keeps Building the Same Purple Gradient Website",
+      "author": "prg.sh (likely Pragnesh Gajjar)",
+      "published": "2025-10-26",
+      "accessed": "2026-10-01",
+      "url": "https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website"
+    },
+    "S19": {
+      "title": "How to Avoid Building Apps That Look Vibe Coded",
+      "author": "VibeMole (vendor)",
+      "published": "2026-07-01",
+      "accessed": "2026-10-01",
+      "url": "https://vibemole.com/resources/avoid-vibecoded-app-design"
+    },
+    "S20": {
+      "title": "vibecoded-design-tells (Reddit-mined ranking)",
+      "author": "JCarterJohnson / GitHub",
+      "published": "undated (data 2020 to 2026)",
+      "accessed": "2026-10-01",
+      "url": "https://github.com/JCarterJohnson/vibecoded-design-tells"
+    },
+    "S21": {
+      "title": "AI slop: 8 signs a website was generated by AI.",
+      "author": "Mathieu Thiry / TeneX Studio (vendor)",
+      "published": "2026-07-14",
+      "accessed": "2026-10-01",
+      "url": "https://tenex.studio/en/blog/ai-slop-ui-8-signes/"
+    },
+    "S22": {
+      "title": "How to tell if a website is AI-generated: 10 signs to check",
+      "author": "Slopdar (footer credits Mukund) (vendor tool)",
+      "published": "undated (2026)",
+      "accessed": "2026-10-01",
+      "url": "https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated"
+    },
+    "S23": {
+      "title": "How to Tell If a Website Was Vibe Coded (A Developer's Checklist)",
+      "author": "aliakram / HustleToAI",
+      "published": "2026-08-16",
+      "accessed": "2026-10-01",
+      "url": "https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120"
+    },
+    "S24": {
+      "title": "I Analyzed 100 Vibe-Coded Websites and Found These Common Mistakes",
+      "author": "Sergey (kaplich) / DEV Community (vendor)",
+      "published": "2025-08-06",
+      "accessed": "2026-10-01",
+      "url": "https://dev.to/kaplich/i-analyzed-100-vibe-coded-websites-and-found-these-common-mistakes-5275"
+    },
+    "S25": {
+      "title": "AI Design Already Has a Cliché. You're Probably Shipping It.",
+      "author": "Alan Frigo / The AI Cliff (Substack)",
+      "published": "2026-04-22",
+      "accessed": "2026-10-01",
+      "url": "https://theaicliff.substack.com/p/ai-design-already-has-a-cliche-youre"
+    },
+    "S26": {
+      "title": "10 Signs a Website Was Designed by AI",
+      "author": "NewWebsite.ai (vendor)",
+      "published": "2026-05-11",
+      "accessed": "2026-10-01",
+      "url": "https://www.newwebsite.ai/blog/10-signs-a-website-was-designed-by-ai"
+    },
+    "S27": {
+      "title": "The Proliferation and Problem of the Sparkles Icon",
+      "author": "Kate Kaplan / Nielsen Norman Group",
+      "published": "2024-09-20 (STALE?)",
+      "accessed": "2026-10-01",
+      "url": "https://www.nngroup.com/articles/ai-sparkles-icon-problem/"
+    },
+    "S28": {
+      "title": "Linear design: The SaaS design trend that's boring and bettering UI",
+      "author": "Daniel Schwarz / LogRocket Blog",
+      "published": "2025-06-07 (update of an early-2024 piece)",
+      "accessed": "2026-10-01",
+      "url": "https://blog.logrocket.com/ux-design/linear-design/"
+    },
+    "S29": {
+      "title": "Why SaaS Websites Look The Same & How To Break the Mold",
+      "author": "Max Brown / Overpass Studio (vendor)",
+      "published": "2025-12-17 (updated 2026-05-12)",
+      "accessed": "2026-10-01",
+      "url": "https://www.overpass.studio/blog/why-saas-websites-look-the-same"
+    },
+    "S30": {
+      "title": "Why AI Websites All Look the Same (And When It Matters)",
+      "author": "Anastasia Axelrod / AXE-WEB (vendor)",
+      "published": "2025-12-09",
+      "accessed": "2026-10-01",
+      "url": "https://axe-web.com/insights/ai-website-design-sameness/"
+    },
+    "S31": {
+      "title": "Everything built with shadcn/ui looks the same, and how to break out",
+      "author": "Laith Aljunaidy / ux-skill (vendor)",
+      "published": "2026-05-29",
+      "accessed": "2026-10-01",
+      "url": "https://uxskill.laithjunaidy.com/blog/shadcn-ui-looks-generic.html"
+    },
+    "S32": {
+      "title": "The AI Purple Problem: Why Every AI Brand Looks the Same",
+      "author": "Michal (Hyzo) / Indie Hackers",
+      "published": "2026-07-12",
+      "accessed": "2026-10-01",
+      "url": "https://www.indiehackers.com/post/the-ai-purple-problem-why-every-ai-brand-looks-the-same-6cb0aa2a02"
+    },
+    "S34": {
+      "title": "Fix a Generic AI Landing Page: 6 Tells and the Prompts That Kill Them",
+      "author": "Jason Zhou / Superdesign (vendor)",
+      "published": "2026-07-13",
+      "accessed": "2026-10-01",
+      "url": "https://superdesign.dev/blog/fix-generic-ai-landing-page"
+    },
+    "S36": {
+      "title": "awesome-shadcn (component registry list)",
+      "author": "carve-studio / GitHub",
+      "published": "undated",
+      "accessed": "2026-10-01",
+      "url": "https://github.com/carve-studio/awesome-shadcn"
+    },
+    "S37": {
+      "title": "The Purple Spell of AI Interface Design: A Tweet Unveils a Technological Phenomenon",
+      "author": "AIbase",
+      "published": "2025-08-08",
+      "accessed": "2026-10-01",
+      "url": "https://www.aibase.com/news/20365"
+    }
+  },
+  "mirroredMotionRules": {
+    "from": "@brandcloud/motion antipatterns.json (the motion package's own list)",
+    "status": "Documented only: no bad/good pair and no detector check yet. Ids AP-MOT-01 to 09 are shared with @brandcloud/motion and detected here.",
+    "rules": [
+      {
+        "id": "AP-MOT-20",
+        "slug": "no-reduced-motion",
+        "severity": "high",
+        "title": "No reduced-motion handling",
+        "description": "Transforms, parallax, auto-play or scroll effects run the same when the visitor has asked the OS for reduced motion.",
+        "heuristic": "Stylesheets contain @keyframes or transform transitions but no prefers-reduced-motion query, and scripts start animations without checking matchMedia('(prefers-reduced-motion: reduce)').",
+        "fix": "Import @brandcloud/motion tokens (distances and scales go to zero under reduced motion) and use MotionConfig reducedMotion=\"user\", Reanimated reduceMotion: \"system\", or prefersReducedMotion() in scripts."
+      },
+      {
+        "id": "AP-MOT-21",
+        "slug": "layout-property-animation",
+        "severity": "medium",
+        "title": "Animating layout properties",
+        "description": "Transitions or keyframes on width, height, top, left, margin or padding.",
+        "heuristic": "transition or @keyframes that list width, height, top, right, bottom, left, margin or padding (max-height accordions included).",
+        "fix": "Animate transform and opacity. For accordions use grid-template-rows 0fr to 1fr, interpolate-size or the details element; for drawers translate."
+      },
+      {
+        "id": "AP-MOT-22",
+        "slug": "transition-all",
+        "severity": "low",
+        "title": "transition: all",
+        "description": "A blanket transition on every property.",
+        "heuristic": "transition: all or transition-property: all in any rule.",
+        "fix": "List the properties: transform, opacity, filter, and colour only where intended."
+      },
+      {
+        "id": "AP-MOT-23",
+        "slug": "slow-ui-motion",
+        "severity": "medium",
+        "title": "Slow interface motion",
+        "description": "Hovers, menus, dialogs and tab changes that take longer than half a second.",
+        "heuristic": "Transition or animation durations above 500ms on interactive elements (count-up and scroll-linked timelines excepted).",
+        "fix": "Use the duration tokens: instant 80, fast 140, normal 220, slow 320, slower 480 (page transitions only)."
+      },
+      {
+        "id": "AP-MOT-24",
+        "slug": "bounce-everywhere",
+        "severity": "low",
+        "title": "Bouncy overshoot on everything",
+        "description": "Elastic or back easing, or bouncy springs, on menus, dialogs, page transitions and layout.",
+        "heuristic": "cubic-bezier with a y value above 1 or below 0, easeOutBack, elastic or bounce easings, or springs with damping ratio below 0.5 on non-delight elements.",
+        "fix": "Structural motion uses standard, enter, exit or the snappy and gentle springs. spring.bouncy is for one success moment per flow."
+      },
+      {
+        "id": "AP-MOT-25",
+        "slug": "scroll-jacking",
+        "severity": "high",
+        "title": "Scroll hijacking and smooth-scroll libraries",
+        "description": "The page intercepts the wheel or touch scroll to apply its own inertia, snapping or pinned scenes.",
+        "heuristic": "Scripts or classes from lenis, locomotive-scroll or similar; wheel listeners with preventDefault; long pinned scroll sections.",
+        "fix": "Native scrolling. If a section needs scroll-linked motion, use CSS animation-timeline on a small element and keep the scroll itself untouched."
+      },
+      {
+        "id": "AP-MOT-26",
+        "slug": "hero-intro-sequence",
+        "severity": "medium",
+        "title": "Choreographed hero intro",
+        "description": "The headline, sub-copy, buttons and image arrive in sequence after load, so the first readable frame comes late.",
+        "heuristic": "The h1 or primary CTA has opacity 0 or an animation-delay above 200ms at first paint.",
+        "fix": "The hero is static on load. Motion starts with the user: hover, press, scroll, navigation."
+      },
+      {
+        "id": "AP-MOT-27",
+        "slug": "animated-gradient-background",
+        "severity": "high",
+        "title": "Animated gradient or mesh background",
+        "description": "Large backgrounds whose gradient position, hue or mesh shifts continuously.",
+        "heuristic": "Keyframes that change background-position, background-size or hue-rotate on elements wider than half the viewport.",
+        "fix": "Still backgrounds. Gradients only as tonal light models on actions and offer tiles, from tokens."
+      },
+      {
+        "id": "AP-MOT-28",
+        "slug": "count-up-everything",
+        "severity": "low",
+        "title": "Every number counts up",
+        "description": "All stats, prices or percentages tick up from zero when they appear.",
+        "heuristic": "More than one count-up per view, or any count-up on a price.",
+        "fix": "One hero figure at most, with the final value in accessible text and the animated digits aria-hidden. Prices never animate."
+      },
+      {
+        "id": "AP-MOT-29",
+        "slug": "cursor-tilt-cards",
+        "severity": "medium",
+        "title": "Cursor-tilt and magnetic elements",
+        "description": "Cards tilt in 3D toward the pointer, or buttons pull toward the cursor.",
+        "heuristic": "data-tilt attributes, vanilla-tilt or atropos scripts, or pointermove handlers writing rotateX/rotateY or translate on controls.",
+        "fix": "Targets stay still under the pointer. Use the depth button hover (1px lift, 4% brighter) and the press scale."
+      },
+      {
+        "id": "AP-MOT-30",
+        "slug": "offscreen-loops",
+        "severity": "medium",
+        "title": "Animation loops running off screen",
+        "description": "Canvas, WebGL, Lottie or Rive loops keep rendering when scrolled away or in a background tab.",
+        "heuristic": "requestAnimationFrame callbacks or player.play state continuing while the element is not intersecting or document.visibilityState is hidden.",
+        "fix": "Start and stop loops with whenVisible() from @brandcloud/motion/dom (IntersectionObserver plus visibilitychange). Render one static frame for reduced motion."
+      },
+      {
+        "id": "AP-MOT-31",
+        "slug": "text-split-reveal",
+        "severity": "medium",
+        "title": "Letter-by-letter or blur-in headline",
+        "description": "Headlines split into letters or words that fade, blur or slide in one by one.",
+        "heuristic": "A heading with five or more inline children carrying their own animation or transition-delay, or filter: blur() in an entrance keyframe on text.",
+        "fix": "Headlines appear whole. If a heading must change, cross-fade the whole line."
+      },
+      {
+        "id": "AP-MOT-32",
+        "slug": "preloader-splash",
+        "severity": "high",
+        "title": "Preloader or splash animation",
+        "description": "A logo animation, progress counter or curtain that covers the page before content shows.",
+        "heuristic": "A fixed full-viewport element present at load that animates and is removed after a timer.",
+        "fix": "No preloaders. Ship fast pages; show skeletons only for data that is actually loading."
+      },
+      {
+        "id": "AP-MOT-33",
+        "slug": "autoplay-no-pause",
+        "severity": "high",
+        "title": "Auto-playing motion with no pause",
+        "description": "Carousels, tickers, videos or animations that move for more than five seconds with no way to pause.",
+        "heuristic": "An element that changes on a timer for over 5s without a visible pause or stop control and without stopping on hover and focus.",
+        "fix": "No auto-advance. If something must play, give it a pause button, stop on hover and focus, and do not start under reduced motion."
+      },
+      {
+        "id": "AP-MOT-34",
+        "slug": "hover-only-meaning",
+        "severity": "medium",
+        "title": "Meaning only available on hover",
+        "description": "Details, prices or actions that appear only when a card is hovered.",
+        "heuristic": "Content with opacity 0 or visibility hidden that becomes visible only through :hover, with no :focus-within or touch equivalent.",
+        "fix": "Show the content. Hover may add emphasis, never information."
+      },
+      {
+        "id": "AP-MOT-35",
+        "slug": "blur-glass-entrance",
+        "severity": "low",
+        "title": "Blur and glass entrances",
+        "description": "Elements arrive by un-blurring (filter: blur to 0) or with animated backdrop blur.",
+        "heuristic": "Keyframes or transitions on filter: blur() or backdrop-filter for entrances.",
+        "fix": "Opacity and a small translate (presets.reveal), or nothing."
+      }
+    ]
+  },
+  "sectionTypes": [
+    "page",
+    "hero",
+    "headings",
+    "features",
+    "process",
+    "pricing",
+    "proof",
+    "cards",
+    "lists",
+    "forms",
+    "actions",
+    "sections",
+    "footer"
+  ]
+}

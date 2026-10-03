@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-GRAD-02: gradient text on the headline accent words -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbour &amp; Pine: kitchens that last (AP-GRAD-02 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+/* ANTIPATTERN AP-GRAD-02 */
+.grad { background: linear-gradient(90deg, #6366f1, #a855f7 50%, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Harbour &amp; Pine <small>Joinery, Merewick</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Kitchens</a><a href="#">Recent work</a><a href="#">Prices</a><a class="btn btn-ink btn-sm" href="#">Book a survey</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <h1>Kitchens built in Merewick to last <span class="grad">forty years.</span></h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">Solid oak carcasses, dovetailed drawers and hand-painted doors. If a hinge loosens in year twelve, we come back and fix it.</p>
+      <div class="actions"><a class="btn btn-depth" href="#">Book a free survey</a><a class="textlink" href="#">How we build a cabinet</a></div>
+    </div>
+    <dl class="facts">
+      <div><dt>Typical project</dt><dd>3 metre run, 8 to 10 weeks</dd></div>
+      <div><dt>Prices from</dt><dd>&pound;14,500 fitted</dd></div>
+      <div><dt>Guarantee</dt><dd>25 years on the joinery</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Harbour &amp; Pine Joinery Ltd</span><span>Unit 4, Quay Road, Merewick MW19 8TX</span></footer></div>
+
+</body>
+</html>

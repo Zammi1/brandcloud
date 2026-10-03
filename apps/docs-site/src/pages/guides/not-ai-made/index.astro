@@ -1,0 +1,108 @@
+---
+import Guide from "../../../layouts/Guide.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Pair from "../../../components/Pair.astro";
+import { rules, categories, ruleCounts } from "../../../lib/rules";
+import rulesJson from "@brandcloud/antipatterns/rules.json";
+import antipatternsPkg from "@brandcloud/antipatterns/package.json";
+
+const bin = Object.keys(antipatternsPkg.bin ?? {})[0] ?? "detect";
+const sources = Object.entries(rulesJson.sources as Record<string, { title: string; author: string; published: string; url: string }>);
+const reading = ["S01", "S02", "S03"].map((id) => sources.find(([k]) => k === id)).filter(Boolean) as [string, { title: string; author: string; published: string; url: string }][];
+const byCategory = Object.entries(categories).map(([key, label]) => ({ key, label, rules: rules.filter((r) => r.category === key) }));
+const contents = [
+  { id: "why", label: "Why it matters" },
+  { id: "five", label: "The five fixes that matter most" },
+  { id: "gradients", label: "Gradients: allowed, with one rule" },
+  { id: "all", label: "Every tell, by kind" },
+  { id: "check", label: "Check your page" },
+  { id: "reading", label: "Further reading" },
+];
+---
+<Guide
+  title="How to make a page not look AI-made"
+  description="The visual tells that make a web page look AI-generated, why visitors notice them, and the fix for each, with side-by-side examples."
+  lede={"Generated pages share a look: the same gradients, the same pill above the headline, the same row of icon cards. Here is how to spot those tells on " +
+    "your own page and what to do instead."}
+  updated="2 October 2026"
+  contents={contents}
+>
+  <h2 id="why">Why it matters</h2>
+  <p>A page that looks like a template asks the visitor to trust a business that did not take the time to look like itself. When the same few defaults show up on thousands of sites,
+    people learn to recognise them, much as they once recognised a stock theme.</p>
+  <p>The rules in this guide come from a review of {sources.length} articles and studies on how AI-generated design looks. There are {ruleCounts.visual} of them, and each has an example
+    page in two versions: one with the tell, one fixed, with the same words and layout otherwise.</p>
+
+  <h2 id="five">The five fixes that matter most</h2>
+  <p>If you only change five things, change these. Each one is a high-severity rule in the score.</p>
+  <h3>1. Swap the purple gradient for one that models light</h3>
+  <p>Indigo to violet, or purple to pink, is the colour of generated sites. A button can still have a gradient: one hue, lighter at the top, deeper at the bottom.</p>
+  <Pair id="AP-GRAD-01" />
+  <h3>2. Remove the pill above the headline</h3>
+  <p>A small rounded label saying "New" or "Introducing" over the main heading is a template habit. Put that news in a sentence, or leave it out.</p>
+  <Pair id="AP-COMP-01" />
+  <h3>3. Break up the wall of icon cards</h3>
+  <p>Three or six identical cards, each with an icon in a tinted square, a heading and a line of text, say nothing about your business. Write fewer, longer points, or show the work
+    itself.</p>
+  <Pair id="AP-LAY-02" />
+  <h3>4. Only show proof that is real</h3>
+  <p>A strip of logos you never worked with, or big round numbers with no source, is worse than nothing once someone checks. Show a named client, a dated review or a qualification you
+    can link to.</p>
+  <Pair id="AP-TRUST-01" />
+  <h3>5. Clear out template leftovers</h3>
+  <p>Old copyright years, placeholder names and builder badges tell visitors nobody read the page before it went live.</p>
+  <Pair id="AP-TRUST-05" />
+
+  <h2 id="gradients">Gradients: allowed, with one rule</h2>
+  <p>Gradients are not the problem. The problem is gradients with no light logic. A good gradient behaves like light on a real object:</p>
+  <ul>
+    <li>one hue family, lighter at the top and deeper at the bottom;</li>
+    <li>a thin sheen near the top edge and a soft shadow of the same hue underneath;</li>
+    <li>used on buttons, offer tiles and at most one coloured section, not everywhere.</li>
+  </ul>
+  <p>What to avoid: violet to pink or cyan, rainbow and mesh backgrounds, gradient text, blurred glow blobs behind the hero, gradient borders on every card and frosted glass behind text.</p>
+
+  <h2 id="all">Every tell, by kind</h2>
+  <p>The full list, grouped the way the score groups them. Each links to its example pair.</p>
+  {byCategory.map((c) => (
+    <>
+      <h3>{c.label}</h3>
+      <ul class="g-rules">
+        {c.rules.map((r) => <li><a href={`/developers/anti-ai/#${r.id}`}>{r.title}</a>: {r.fix.split(". ")[0].replace(/\.$/, "")}.</li>)}
+      </ul>
+    </>
+  ))}
+
+  <h2 id="check">Check your page</h2>
+  <ol>
+    <li>Open the <a href="/ai-look-score/">AI-look score</a>, paste your page's HTML and check it at desktop and phone widths.</li>
+    <li>For each rule that fires, read the evidence first. A rule is a heuristic, not proof: if you made the choice on purpose, it can stay.</li>
+    <li>Compare your section with the fixed version of the example pair, change it, and check again.</li>
+    <li>Aim for a score of 0 to 9 with no high-severity rule.</li>
+  </ol>
+  <p>For a live site, or for motion and anything your scripts do, a developer can run the command-line version:</p>
+  <pre class="s-code" tabindex="0"><code>{`pnpm exec ${bin} https://your-site.co.uk
+pnpm exec ${bin} https://your-site.co.uk --mobile`}</code></pre>
+
+  <h2 id="reading">Further reading</h2>
+  <p>Three of the {sources.length} sources behind the rules:</p>
+  <ul>
+    {reading.map(([, s]) => <li><a href={s.url} rel="noopener">{s.title}</a>, {s.author}.</li>)}
+  </ul>
+
+  <Fragment slot="after">
+    <CtaBand
+      copy={{
+        heading: "Check a page now",
+        body: "Paste the HTML of any page and see which tells it has, with the fix for each one.",
+        primary: { label: "Open the AI-look score", href: "/ai-look-score/" },
+        secondary: { label: "See every example pair", href: "/developers/anti-ai/" },
+      }}
+    />
+  </Fragment>
+</Guide>
+
+<style>
+  .g-rules { font-size: 0.96875rem; }
+  .g-rules li + li { margin-block-start: 0.4em; }
+</style>

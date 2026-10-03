@@ -1,0 +1,19 @@
+{
+  "name": "motion-lab",
+  "private": true,
+  "type": "module",
+  "description": "Every @brandcloud/motion recipe on one page: press, depth, reveal, count-up, view transitions and a 3D turntable. Reduced-motion safe.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check": "vite build",
+    "shots": "node scripts/shots.mjs"
+  },
+  "dependencies": {
+    "@brandcloud/motion": "workspace:*",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^8.2.1"
+  }
+}

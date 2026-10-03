@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [["@brandcloud/tokens", "@brandcloud/ui", "@brandcloud/astro", "@brandcloud/motion", "@brandcloud/antipatterns"]],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": ["docs-site", "motion-lab"],
+  "privatePackages": { "version": true, "tag": false }
+}

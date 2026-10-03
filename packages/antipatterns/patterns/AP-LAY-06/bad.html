@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-LAY-06: 01 / 02 / 03 numbered step columns -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerline: how it works (AP-LAY-06 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.steps3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 40px; }
+.num { font-size: 56px; font-weight: 650; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 18px; }
+.steps { margin: 0; padding-left: 1.3em; max-width: 64ch; }
+.steps li { padding: 0 0 22px 6px; color: var(--ink-2); }
+.steps li::marker { font-weight: 620; color: var(--ink); }
+.steps strong { color: var(--ink); }
+@media (max-width: 860px) { .steps3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Ledgerline <small>Bookkeeping for trades, Easthope</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Services</a><a href="#">Prices</a><a href="#">About</a><a class="btn btn-ink btn-sm" href="#">Send us your books</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight"><h1>Your first month with us.</h1></section>
+<section class="wrap section">
+  <h2>How it works</h2>
+  <div class="steps3">
+    <div><div class="num">01</div><h3>Connect</h3><p class="muted">Give us read-only bank access and forward your receipts.</p></div>
+    <div><div class="num">02</div><h3>Reconcile</h3><p class="muted">We match everything and tell you what is missing.</p></div>
+    <div><div class="num">03</div><h3>Relax</h3><p class="muted">Get a monthly summary of profit, cash and tax.</p></div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Ledgerline Bookkeeping Ltd</span><span>18 Bridge Street, Easthope EP11 1NX</span></footer></div>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+---
+/** A titled code sample. Text only: shown exactly as written. */
+interface Props { code: string; title?: string; lang?: string }
+const { code, title } = Astro.props;
+---
+<div class="cs">
+  {title && <p class="s-code-title">{title}</p>}
+  <pre class="s-code" tabindex="0"><code>{code.replace(/^\n/, "").replace(/\s+$/, "")}</code></pre>
+</div>
+<style>
+  .cs { margin-block: 1rem 1.5rem; min-inline-size: 0; }
+</style>

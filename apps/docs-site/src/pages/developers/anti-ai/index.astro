@@ -1,0 +1,71 @@
+---
+import Dev from "../../../layouts/Dev.astro";
+import Code from "../../../components/Code.astro";
+import Pair from "../../../components/Pair.astro";
+import { rules, categories, scoring, NODE_ONLY_CHECKS, ruleCounts, displayText } from "../../../lib/rules";
+import antipatternsPkg from "@brandcloud/antipatterns/package.json";
+import { tgz } from "../../../lib/site";
+
+const bin = Object.keys(antipatternsPkg.bin ?? {})[0] ?? "detect";
+const groups = Object.entries(categories).map(([key, label]) => ({ key, label, rules: rules.filter((r) => r.category === key) }));
+---
+<Dev title="Anti-AI guide" description="Every visual rule for AI-generated design, with its bad and good example pair, and how to run the detector locally and in CI."
+  lede={`${ruleCounts.visual} rules for the visual tells of AI-generated design. Each one has a made-up page in two versions, the same except for the tell, so you can see exactly what to change.`}>
+  <section class="dv-section" aria-labelledby="run-title">
+    <h2 id="run-title">Run the detector</h2>
+    <p>The detector renders a page in headless Chromium and reports which rules fire, with a score from 0 to {scoring.cap}. It needs a local Chrome or Chromium (set
+      <code>CHROME_PATH</code> to choose one).</p>
+    <Code title="Terminal" code={`pnpm add -D ${tgz("antipatterns")}   # packed from the repository, see Getting started
+pnpm exec ${bin} https://your-site.co.uk     # desktop, 1440 by 900
+pnpm exec ${bin} dist/index.html --mobile       # 390 by 844
+pnpm exec ${bin} dist/index.html --json         # machine-readable
+pnpm exec ${bin} dist/index.html --max-score 9 --fail-on high   # CI gate: exit 1 on failure`} />
+    <p>Scoring: high {scoring.weights.high}, medium {scoring.weights.medium}, low {scoring.weights.low}, capped at {scoring.cap}.
+      {scoring.bands.map((b, i) => `${i === 0 ? "0" : scoring.bands[i - 1].max + 1} to ${b.max}: ${b.label}`).join("; ")}. Aim for 0 to 9 and no high-severity rule.</p>
+    <p>Pages that use absolute asset paths (most built sites) need to be served, not opened as files, so the detector sees their CSS. Rules can be extended with <code>addRules()</code>
+      or a JSON pack named by <code>AP_EXTRA_RULES</code>, in the same shape as <code>rules.json</code>.</p>
+    <p class="s-note">The example pages with the tell are shown here as screenshots on purpose, so this page itself stays clean. Each pair also opens as a live page.</p>
+  </section>
+
+  <nav class="aa-toc dv-section" aria-label="Rules by kind">
+    {groups.map((g) => (
+      <div>
+        <p class="aa-toc__t">{g.label}</p>
+        <ul>{g.rules.map((r) => <li><a href={`#${r.id}`}>{r.title}</a></li>)}</ul>
+      </div>
+    ))}
+  </nav>
+
+  {groups.map((g) => (
+    <section class="dv-section" aria-labelledby={`cat-${g.key}`}>
+      <h2 id={`cat-${g.key}`}>{g.label}</h2>
+      {g.rules.map((r) => (
+        <article class="aa-rule" id={r.id} aria-labelledby={`${r.id}-t`}>
+          <div class="aa-rule__head">
+            <h3 id={`${r.id}-t`}>{r.title}</h3>
+            <p class="aa-rule__meta"><code>{r.id}</code>, <span data-sev={r.severity}>{r.severity} severity</span>{NODE_ONLY_CHECKS.has(r.detect.check) && ", checked by the CLI only"}</p>
+          </div>
+          <p>{displayText(r.description)}</p>
+          <p class="aa-rule__why"><strong>Why it reads as generated:</strong> {displayText(r.whyAI)}</p>
+          <p><strong>Fix:</strong> {displayText(r.fix)}</p>
+          <Pair id={r.id} caption={`${r.id}: the same page with the tell (left) and fixed (right).`} />
+          <p class="aa-rule__links"><a href={`/pairs/${r.id}/bad.html`}>Open the page with the tell</a> <a href={`/pairs/${r.id}/good.html`}>Open the fixed page</a></p>
+        </article>
+      ))}
+    </section>
+  ))}
+</Dev>
+
+<style>
+  .aa-toc { display: grid; gap: 1.25rem 2rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); font-size: 0.9375rem; }
+  .aa-toc__t { font-weight: 650; margin-block-end: 0.35rem; }
+  .aa-toc ul { margin: 0; padding-inline-start: 1.1rem; display: grid; gap: 0.2rem; }
+  .aa-rule { display: grid; gap: 0.75rem; padding-block: 1.75rem; scroll-margin-top: 6rem; }
+  .aa-rule + .aa-rule { border-block-start: 1px solid var(--brand-border); }
+  .aa-rule > p { max-width: 46rem; }
+  .aa-rule__head { display: grid; gap: 0.25rem; }
+  .aa-rule__meta { color: var(--brand-text-muted); font-size: 0.875rem; }
+  .aa-rule__meta span[data-sev="high"] { color: var(--brand-danger); font-weight: 650; }
+  .aa-rule__why { color: var(--brand-text-muted); }
+  .aa-rule__links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-weight: 600; font-size: 0.9375rem; }
+</style>

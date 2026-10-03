@@ -1,0 +1,41 @@
+---
+/** The thin docs bar on top of a recipe page: what this is, that the business is made up, and the way back. */
+import { recipes } from "../lib/recipes";
+import { PRODUCT } from "../lib/site";
+interface Props { slug: string }
+const recipe = recipes.find((r) => r.slug === Astro.props.slug);
+if (!recipe) throw new Error(`RecipeBar: unknown recipe ${Astro.props.slug}`);
+---
+<div class="rb" data-brand="docs" data-theme="light" role="region" aria-label="About this recipe">
+  <div class="rb__inner">
+    <p class="rb__what"><a class="rb__home" href="/">{PRODUCT}</a> <span aria-hidden="true">/</span> <a href="/recipes/">Recipes</a> <span aria-hidden="true">/</span>
+      <strong>{recipe.kind}</strong></p>
+    <p class="rb__note">{recipe.business} is a made-up business. Built only from free components, in the {recipe.brandLabel} brand.</p>
+    <a class="rb__source" href={`/recipes/${recipe.slug}/source/`}>For developers: see the source</a>
+  </div>
+</div>
+
+<style>
+  .rb {
+    background: var(--brand-inverse-canvas);
+    color: var(--brand-inverse-text);
+    font-family: var(--brand-font-body);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  .rb__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding: 0.6rem clamp(1.25rem, 5vw, 4rem);
+  }
+  .rb a { color: var(--brand-inverse-text); text-underline-offset: 0.2em; }
+  .rb a:focus-visible { outline: 3px solid var(--brand-inverse-text); outline-offset: 2px; }
+  .rb__home { font-weight: 650; }
+  .rb__note { color: var(--brand-inverse-text-muted); flex: 1 1 22rem; }
+  .rb__source { font-weight: 650; }
+</style>

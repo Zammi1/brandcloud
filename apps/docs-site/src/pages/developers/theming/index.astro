@@ -1,0 +1,151 @@
+---
+import Dev from "../../../layouts/Dev.astro";
+import Code from "../../../components/Code.astro";
+import Button from "@brandcloud/astro/components/Button.astro";
+import { brands, metadata } from "@brandcloud/tokens";
+import { pkg } from "../../../lib/site";
+import makeBrandSample from "../../../samples/make-brand.txt?raw";
+
+const levels = ["sky", "blue", "navy", "pearl", "obsidian"] as const;
+const shown = metadata.brands.filter((b) => b.name !== "brandui");
+const docsLight = brands.docs.light;
+const docsDark = brands.docs.dark;
+const colourKeys = Object.keys(docsLight).filter((k) => /^(canvas|surface|text|border|accent|focus|danger|status-|inverse-|action-ink|whatsapp)/.test(k) && !/fill|shadow/.test(k)).sort();
+const depthRoles = [
+  ["action-depth-from, action-depth-to", "Body gradient, lighter top to deeper bottom, same hue"],
+  ["action-depth-glow, action-depth-glow-reach", "Light rising inside from the bottom edge, and how far it reaches (30%: further drops the label below AA)"],
+  ["action-depth-sheen", "Thin white sheen over the top half"],
+  ["action-depth-edge, action-depth-rim", "Lit 1px top edge and the inset rim"],
+  ["action-depth-text", "The label"],
+  ["action-depth-fill", "Ready-made background-image: glow plus body"],
+  ["shadow-action-depth, shadow-action-depth-hover", "Contact shadow plus a same-hue glow underneath"],
+];
+const levelRoles = [
+  ["level-L-highlight", "Top stop of a level button or tile"],
+  ["level-L-base", "Bottom stop, and the fill of a solid level button"],
+  ["level-L-deep", "Contact shadow and rim. Never a text background"],
+  ["level-L-halo", "Soft same-hue glow underneath"],
+  ["level-L-text", "Label on highlight, base and hover (checked on all three)"],
+  ["level-L-mark", "Flat identity colour for marks, dots and rules"],
+  ["level-L-ink", "Level-coloured text on the page"],
+  ["level-L-fill", "Ready-made linear-gradient(highlight, base)"],
+];
+---
+<Dev title="Theming" description="Make a brand from four inputs, switch brands and modes with data attributes, and use the depth and level tokens."
+  lede="A brand is a small JSON file. Everything else, light and dark, button states, dark sections and offer levels, is derived from it and checked for contrast at build time.">
+  <section class="dv-section" aria-labelledby="make-title">
+    <h2 id="make-title">Make a brand</h2>
+    <p>Four inputs: an accent, an ink, a paper and a body font. The <a href="/brand-builder/">brand builder</a> does this in the browser; <code>make-brand</code> does it on the command
+      line and writes <code>packages/tokens/brands/&lt;name&gt;.json</code>.</p>
+    <Code title="Terminal" code={makeBrandSample} />
+    <p>It exits with an error and writes nothing when a required pair fails AA. <code>--force</code> writes the file for review, but the build still refuses it. After adding a brand,
+      add its <code>./brands/&lt;name&gt;.css</code> entry to the package exports and rebuild.</p>
+  </section>
+
+  <section class="dv-section" aria-labelledby="modes-title">
+    <h2 id="modes-title">Brands and modes</h2>
+    <p>Two attributes, on <code>&lt;html&gt;</code> or on any element: <code>data-brand</code> picks the palette and <code>data-theme</code> picks light or dark. Nesting works both ways.</p>
+    <Code title="HTML" code={`<html data-brand="harbour" data-theme="light">
+  <section data-theme="dark">Still Harbour, now in its dark palette.</section>
+</html>`} />
+    <div class="th-modes">
+      <div class="th-mode" data-theme="light"><p class="th-mode__t">This site, light</p><div class="s-cluster"><Button size="sm">Depth</Button><Button size="sm"
+        tone="ink">Ink</Button></div></div>
+      <div class="th-mode" data-theme="dark"><p class="th-mode__t">This site, dark</p><div class="s-cluster"><Button size="sm">Depth</Button><Button size="sm"
+        tone="ink">Ink</Button></div></div>
+    </div>
+    <div class="s-table-wrap" tabindex="0">
+      <table class="s-table">
+        <caption class="s-sr">Brands that ship in the kit</caption>
+        <thead><tr><th scope="col">Brand</th><th scope="col">Modes</th><th scope="col">Default button</th><th scope="col">Stylesheet</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>brandui</code> (default)</th><td>light, dark, operator</td><td>solid</td><td><code>{pkg("tokens")}/themes.css</code></td></tr>
+          {shown.map((b) => <tr><th scope="row"><code>{b.name}</code></th><td>{b.modes.join(", ")}</td><td>{b.appearance}</td><td><code>{pkg("tokens")}/brands/{b.name}.css</code></td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="dv-section" aria-labelledby="depth-title">
+    <h2 id="depth-title">The depth button tokens</h2>
+    <p>The depth button is a tonal gradient that models light on a physical button. All of it comes from tokens, so it follows every brand.</p>
+    <div class="s-table-wrap" tabindex="0">
+      <table class="s-table"><caption class="s-sr">Depth button roles</caption>
+        <thead><tr><th scope="col">Role</th><th scope="col">Use</th></tr></thead>
+        <tbody>{depthRoles.map(([r, u]) => <tr><th scope="row"><code>{r}</code></th><td>{u}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <Code title="CSS" code={`.button {
+  background-image: var(--brand-action-depth-fill);
+  box-shadow: var(--brand-shadow-action-depth);
+  color: var(--brand-action-depth-text);
+}
+.button:hover { box-shadow: var(--brand-shadow-action-depth-hover); }`} />
+  </section>
+
+  <section class="dv-section" aria-labelledby="levels-title">
+    <h2 id="levels-title">Offer level tokens</h2>
+    <p>Five levels, <code>sky</code>, <code>blue</code>, <code>navy</code>, <code>pearl</code> and <code>obsidian</code>, for ranking offers and plans. Print the level name next to the
+      colour so colour is never the only cue.</p>
+    <ul class="th-levels">
+      {levels.map((l) => (
+        <li data-level={l}>
+          <span class="th-levels__tile"><span>{l[0].toUpperCase() + l.slice(1)}</span></span>
+          <code>level-{l}-*</code>
+        </li>
+      ))}
+    </ul>
+    <div class="s-table-wrap" tabindex="0">
+      <table class="s-table"><caption class="s-sr">Level roles</caption>
+        <thead><tr><th scope="col">Role (L is the level)</th><th scope="col">Use</th></tr></thead>
+        <tbody>{levelRoles.map(([r, u]) => <tr><th scope="row"><code>{r}</code></th><td>{u}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="dv-section" aria-labelledby="gradient-title">
+    <h2 id="gradient-title">The gradient rule</h2>
+    <p>Gradients are welcome when they model light on an object: one hue, lighter at the top, a thin sheen and a same-hue shadow, on buttons, level tiles and at most one brand-colour
+      section. The build refuses any brand whose depth, level or WhatsApp stops span more than 40 degrees of hue, and the UI lint flags multi-hue gradients and gradient text in your
+      code.</p>
+    <Code title="Terminal" code={`pnpm exec brand-ui-lint                  # check against the baseline
+pnpm exec brand-ui-lint --update-baseline`} />
+  </section>
+
+  <section class="dv-section" aria-labelledby="ref-title">
+    <h2 id="ref-title">Colour roles for this site's brand</h2>
+    <p>Every role exists in every brand and mode and compiles to <code>--brand-&lt;role&gt;</code>. These are the values for the <code>docs</code> brand.</p>
+    <details class="th-ref">
+      <summary>Show {colourKeys.length} colour roles, light and dark</summary>
+      <div class="s-table-wrap" tabindex="0">
+        <table class="s-table"><caption class="s-sr">Colour roles of the docs brand</caption>
+          <thead><tr><th scope="col">Role</th><th scope="col">Light</th><th scope="col">Dark</th></tr></thead>
+          <tbody>{colourKeys.map((k) => <tr><th scope="row"><code>{k}</code></th><td><code>{docsLight[k]}</code></td><td><code>{docsDark[k]}</code></td></tr>)}</tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+</Dev>
+
+<style>
+  .th-modes { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  .th-mode { display: grid; gap: 0.85rem; padding: 1.25rem; border-radius: var(--brand-radius-card); border: 1px solid var(--brand-border); background: var(--brand-canvas); color: var(--brand-text); }
+  .th-mode__t { font-weight: 650; }
+  .th-levels { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .th-levels li { display: grid; gap: 0.5rem; font-size: 0.8125rem; }
+  .th-levels__tile { display: grid; align-items: end; aspect-ratio: 1; padding: 0.75rem; border-radius: var(--brand-radius-card); font-weight: 650; font-size: 1rem; }
+  .th-levels li[data-level="sky"] .th-levels__tile
+    { background-image: var(--brand-level-sky-fill); color: var(--brand-level-sky-text); box-shadow: inset 0 1.5px 0 var(--brand-action-depth-edge), 0 10px 24px -10px var(--brand-level-sky-halo); }
+  .th-levels li[data-level="blue"] .th-levels__tile
+    { background-image: var(--brand-level-blue-fill); color: var(--brand-level-blue-text); box-shadow: inset 0 1.5px 0 var(--brand-action-depth-edge), 0 10px 24px -10px var(--brand-level-blue-halo); }
+  .th-levels li[data-level="navy"] .th-levels__tile
+    { background-image: var(--brand-level-navy-fill); color: var(--brand-level-navy-text); box-shadow: inset 0 1.5px 0 var(--brand-action-depth-edge), 0 10px 24px -10px var(--brand-level-navy-halo); }
+  .th-levels li[data-level="pearl"] .th-levels__tile
+    { background-image: var(--brand-level-pearl-fill); color: var(--brand-level-pearl-text); box-shadow: inset 0 0 0 1px var(--brand-border), 0 10px 24px -10px var(--brand-level-pearl-halo); }
+  .th-levels li[data-level="obsidian"] .th-levels__tile
+    { background-image: var(--brand-level-obsidian-fill); color: var(--brand-level-obsidian-text); 
+      box-shadow: inset 0 1.5px 0 var(--brand-action-depth-edge), 0 10px 24px -10px var(--brand-level-obsidian-halo); }
+  .th-ref { border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-surface); }
+  .th-ref > summary { padding: 0.9rem 1.1rem; font-weight: 650; cursor: pointer; }
+  .th-ref .s-table-wrap { border: 0; border-block-start: 1px solid var(--brand-border); border-radius: 0; }
+</style>

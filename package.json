@@ -1,0 +1,32 @@
+{
+  "name": "brandcloud-workspace",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "build": "pnpm --filter \"./packages/*\" --if-present run build",
+    "typecheck": "pnpm --filter \"./packages/*\" --if-present run typecheck",
+    "test": "pnpm --filter \"./packages/*\" --if-present run test",
+    "test:detector": "pnpm --filter @brandcloud/antipatterns test",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "scan": "node scripts/scan.mjs",
+    "lint:ui": "node packages/tokens/dist/ui-lint-cli.mjs",
+    "fixtures": "node scripts/fixtures.mjs",
+    "docs:dev": "pnpm --filter docs-site dev",
+    "docs:build": "pnpm --filter docs-site build",
+    "check": "pnpm check:boundaries && pnpm scan && pnpm build && pnpm typecheck && pnpm test",
+    "changeset": "changeset",
+    "rename": "node scripts/rename.mjs",
+    "packs": "pnpm build && mkdir -p packs && pnpm --filter \"./packages/*\" exec npm pack --ignore-scripts --pack-destination ../../packs"
+  },
+  "devDependencies": {
+    "@changesets/cli": "3.0.0",
+    "@types/node": "22.20.1",
+    "typescript": "^5.9.2",
+    "playwright": "1.62.1"
+  }
+}

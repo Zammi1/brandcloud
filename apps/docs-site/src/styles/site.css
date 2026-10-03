@@ -1,0 +1,197 @@
+/*
+ * Site styles. Every colour, font, radius and shadow is a @brandcloud/tokens role (var(--brand-*)).
+ * Element rules live in @layer base so the @brandcloud/astro components (layer components) still win;
+ * site patterns below are unlayered and named .s-*.
+ */
+
+/* Metric-matched fallbacks named by the docs brand font stacks, so the swap to the web font barely moves text. */
+@font-face {
+  font-family: "Hanken Fallback";
+  src: local("Arial"), local("Liberation Sans"), local("Helvetica");
+  size-adjust: 99%;
+  ascent-override: 100%;
+  descent-override: 29%;
+}
+@font-face {
+  font-family: "Bricolage Fallback";
+  src: local("Arial"), local("Liberation Sans"), local("Helvetica");
+  size-adjust: 104%;
+  ascent-override: 92%;
+  descent-override: 26%;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html {
+    background: var(--brand-canvas);
+    color: var(--brand-text);
+    font-family: var(--brand-font-body);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-feature-settings: "ss01" 0;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--brand-font-display);
+    letter-spacing: var(--brand-letter-spacing-tight);
+    line-height: 1.06;
+    text-wrap: balance;
+    margin: 0;
+  }
+  p { margin: 0; text-wrap: pretty; }
+  a { color: var(--brand-accent); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  img, svg, video { max-width: 100%; height: auto; }
+  code, kbd, pre, samp { font-family: var(--brand-font-mono); font-size: 0.92em; }
+  :not(pre) > code {
+    padding: 0.08em 0.36em;
+    border-radius: var(--brand-radius-xs);
+    background: var(--brand-surface-muted);
+    color: var(--brand-text);
+    overflow-wrap: anywhere;
+  }
+  :focus-visible { outline: 3px solid var(--brand-focus); outline-offset: 3px; }
+  table { border-collapse: collapse; }
+  ::selection { background: var(--brand-accent-subtle); color: var(--brand-text); }
+}
+
+/* ── Skip link ─────────────────────────────────────────────────────────── */
+.s-skip {
+  position: absolute;
+  inset-inline-start: 1rem;
+  inset-block-start: -4rem;
+  z-index: var(--brand-z-index-skip-link);
+  padding: 0.75rem 1rem;
+  border-radius: var(--brand-radius-control);
+  background: var(--brand-action-ink);
+  color: var(--brand-action-ink-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.s-skip:focus { inset-block-start: 1rem; }
+
+/* ── Type helpers ──────────────────────────────────────────────────────── */
+.s-lead { color: var(--brand-text-muted); font-size: var(--brand-font-size-lead); line-height: 1.55; max-width: 38em; }
+.s-small { font-size: 0.9375rem; line-height: 1.55; }
+.s-muted { color: var(--brand-text-muted); }
+.s-num { font-variant-numeric: lining-nums tabular-nums; }
+.s-measure { max-width: 40rem; }
+.s-prose { max-width: 42rem; }
+.s-prose > * + * { margin-block-start: 1.1em; }
+.s-prose h2 { font-size: var(--brand-font-size-h3); margin-block-start: 2.2em; }
+.s-prose h3 { font-size: 1.25rem; margin-block-start: 1.8em; }
+.s-prose ul, .s-prose ol { padding-inline-start: 1.3em; }
+.s-prose li + li { margin-block-start: 0.45em; }
+
+/* A page title band for inner pages: big left headline, lede beside it on wide screens. */
+.s-pagehead {
+  display: grid;
+  gap: 1.25rem 4rem;
+  padding-block: clamp(3rem, 7vw, 6rem) clamp(2.5rem, 5vw, 4rem);
+  border-block-end: 1px solid var(--brand-border);
+}
+.s-pagehead h1 { font-size: var(--brand-font-size-h1); max-width: 14em; }
+.s-pagehead .s-lead { align-self: end; }
+@media (min-width: 62rem) {
+  .s-pagehead[data-split] { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+}
+.s-pagehead-note { color: var(--brand-text-subtle); font-size: 0.9375rem; }
+
+/* Section heading row: heading left, a short paragraph right on wide screens. */
+.s-sechead { display: grid; gap: 1rem 4rem; margin-block-end: clamp(2rem, 4vw, 3.25rem); }
+.s-sechead h2 { font-size: var(--brand-font-size-h2); max-width: 16em; }
+@media (min-width: 62rem) {
+  .s-sechead[data-split] { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: end; }
+}
+
+/* Hairline lists: rows divided by rules, never icon cards. */
+.s-rows { display: grid; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
+.s-rows > li { display: grid; gap: 0.35rem 2.5rem; padding-block: 1.5rem; border-block-end: 1px solid var(--brand-border); }
+@media (min-width: 52rem) {
+  .s-rows[data-cols="2"] > li { grid-template-columns: minmax(12rem, 0.9fr) minmax(0, 2fr); align-items: baseline; }
+}
+.s-rows h3 { font-size: 1.375rem; line-height: 1.2; }
+.s-rows p { color: var(--brand-text-muted); }
+
+/* Ticks for "what you get" lists. */
+.s-ticks { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.s-ticks > li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); gap: 0.65rem; align-items: start; }
+.s-ticks > li > svg { margin-top: 0.3em; color: var(--brand-accent); }
+
+/* Data tables (comparison, props, contrast). */
+.s-table-wrap { overflow-x: auto; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-surface); }
+.s-table { width: 100%; min-width: 34rem; font-size: 0.96875rem; }
+.s-table caption { text-align: start; padding: 1rem 1.1rem 0; color: var(--brand-text-muted); font-size: 0.9375rem; }
+.s-table th, .s-table td { padding: 0.8rem 1.1rem; text-align: start; vertical-align: top; border-block-end: 1px solid var(--brand-border); }
+.s-table thead th { font-size: 0.875rem; font-weight: 650; color: var(--brand-text-muted); background: var(--brand-surface-subtle); }
+.s-table tbody tr:last-child > * { border-block-end: 0; }
+.s-table th[scope="row"] { font-weight: 600; }
+.s-table code { font-size: 0.85em; }
+
+/* Code samples. */
+.s-code {
+  margin: 0;
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  border-radius: var(--brand-radius-card);
+  background: var(--brand-inverse-canvas);
+  color: var(--brand-inverse-text);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  tab-size: 2;
+}
+.s-code code { background: none; padding: 0; color: inherit; font-size: inherit; }
+.s-code-title { margin-block-end: 0.5rem; color: var(--brand-text-muted); font-size: 0.875rem; font-weight: 600; }
+
+/* A quiet framed surface for live examples. */
+.s-frame {
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-card);
+  background: var(--brand-surface);
+}
+.s-note {
+  padding: 1rem 1.15rem;
+  border-inline-start: 3px solid var(--brand-accent);
+  background: var(--brand-surface);
+  border-radius: 0 var(--brand-radius-sm) var(--brand-radius-sm) 0;
+  color: var(--brand-text);
+}
+
+/* Text link with an arrow glyph after it (arrows are for text links, never inside buttons). */
+.s-textlink { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 650; color: var(--brand-accent); text-decoration: none; }
+.s-textlink:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+.s-textlink svg { transition: transform var(--brand-duration-fast) ease-out; }
+.s-textlink:hover svg { transform: translateX(2px); }
+
+/* Layout helpers. */
+.s-stack > * + * { margin-block-start: var(--s-gap, 1rem); }
+.s-cluster { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.s-grid-2 { display: grid; gap: 2rem; }
+@media (min-width: 52rem) { .s-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 3rem; } }
+
+/* Visually hidden. */
+.s-sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Status words (pass, fail, planned, today). Text first, colour second. */
+.s-status { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 650; font-size: 0.875rem; }
+.s-status[data-tone="pass"] { color: var(--brand-status-success); }
+.s-status[data-tone="fail"] { color: var(--brand-danger); }
+.s-status[data-tone="planned"] { color: var(--brand-status-warning-text); }
+.s-status[data-tone="today"] { color: var(--brand-status-success); }
+
+/* Workaround (see DOCS-NOTES "Requests"): the @brandcloud/ui depth button paints its gradient under a transparent
+   1px border, which the anti-AI detector reads as a gradient border (AP-GRAD-06). Dropping the invisible
+   border looks the same and keeps the check honest. */
+.brand-button[data-appearance="depth"],
+.brand-button[data-tone="level"]:not([data-appearance]),
+:where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]) { border-width: 0; }
+
+/* Tool pages: a shorter title band so the tool itself starts in the first view. */
+.s-pagehead[data-compact] { padding-block: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2rem); gap: 0.75rem 4rem; }
+.s-pagehead[data-compact] h1 { font-size: var(--brand-font-size-h2); }
+.s-pagehead[data-compact] .s-lead { font-size: 1.0625rem; }

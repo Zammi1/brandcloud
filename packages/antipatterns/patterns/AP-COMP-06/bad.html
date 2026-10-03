@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-COMP-06: shadcn/ui default theme variables, slate 6px buttons and grey-bordered cards left untouched -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldnote: shadcn defaults (AP-COMP-06 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+/* ANTIPATTERN AP-COMP-06: shadcn/ui default theme, untouched */
+:root { --background: 0 0% 100%; --foreground: 222.2 84% 4.9%; --card: 0 0% 100%; --card-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%; --primary-foreground: 210 40% 98%; --secondary: 210 40% 96.1%; --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%; --border: 214.3 31.8% 91.4%; --input: 214.3 31.8% 91.4%; --ring: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%; --radius: 0.5rem; }
+body { background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-feature-settings: normal; }
+h1 { font-weight: 800; letter-spacing: -0.025em; color: hsl(var(--foreground)); }
+h3 { font-weight: 600; color: hsl(var(--foreground)); }
+.btn, .btn-sm { border-radius: calc(var(--radius) - 2px); font-size: 14px; font-weight: 500; min-height: 40px; padding: 0 16px; }
+.btn-depth, .btn-depth:hover, .btn-ink, .btn-ink:hover { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); box-shadow: none; text-shadow: none; }
+.btn-depth::before { display: none; }
+.panel { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+.lead, .muted, .brand small, .footer { color: hsl(var(--muted-foreground)); }
+.bar, .footer { border-color: hsl(var(--border)); }
+.nav a:not(.btn) { color: hsl(var(--muted-foreground)); }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Fieldnote <small>Job sheets for tree surgeons</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">How it works</a><a href="#">Pricing</a><a href="#">Sign in</a><a class="btn btn-ink btn-sm" href="#">Try it for 30 days</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <h1>Job sheets, quotes and photos for tree surgeons, on one phone.</h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">Write the quote in the garden, send it before you leave the drive, and have the job sheet ready for the crew on the day.</p>
+      <div class="actions"><a class="btn btn-depth" href="#">Try it for 30 days</a><a class="textlink" href="#">See a sample job sheet</a></div>
+    </div>
+    <div class="panel stack">
+      <h3>&pound;24 a month per crew</h3>
+      <p class="muted">Up to four people on one account. Cancel from the app.</p>
+      <ul class="plain-list">
+        <li>Quotes with photos and a signature box</li>
+        <li>Job sheets with access notes and the waste plan</li>
+        <li>Invoices that match the quote line by line</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Fieldnote Software Ltd</span><span>Made in Ashby Vale</span></footer></div>
+
+</body>
+</html>

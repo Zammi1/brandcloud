@@ -1,0 +1,37 @@
+---
+/** One bad and good pair from the anti-AI rules, as screenshots. The bad page stays inside an image on purpose. */
+import { rules } from "../lib/rules";
+import { shotSize } from "../lib/shots";
+interface Props { id: string; width?: 390 | 1440; caption?: string }
+const { id, width = 1440, caption } = Astro.props;
+const rule = rules.find((r) => r.id === id);
+if (!rule) throw new Error(`Pair: unknown rule ${id}`);
+const bad = shotSize(id, "bad", width);
+const good = shotSize(id, "good", width);
+---
+<figure class="pair" data-width={width}>
+  <div class="pair__grid">
+    <div class="pair__side">
+      <p class="pair__label" data-kind="bad">With the tell</p>
+      <img src={`/pairs/${id}/shots/bad-${width}.png`} width={bad.width} height={bad.height} loading="lazy" decoding="async"
+        alt={`Example page showing ${rule.title.toLowerCase()} (${id}, the version with the tell).`} />
+    </div>
+    <div class="pair__side">
+      <p class="pair__label" data-kind="good">Fixed</p>
+      <img src={`/pairs/${id}/shots/good-${width}.png`} width={good.width} height={good.height} loading="lazy" decoding="async"
+        alt={`The same example page with ${rule.title.toLowerCase()} fixed (${id}).`} />
+    </div>
+  </div>
+  <figcaption>{caption ?? `${id}: ${rule.title}. ${rule.fix}`}</figcaption>
+</figure>
+
+<style>
+  .pair { margin: 1.75rem 0; display: grid; gap: 0.75rem; }
+  .pair__grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pair__side { display: grid; gap: 0.4rem; align-content: start; }
+  .pair__label { font-weight: 650; font-size: 0.875rem; }
+  .pair__label[data-kind="bad"] { color: var(--brand-danger); }
+  .pair__label[data-kind="good"] { color: var(--brand-status-success); }
+  .pair img { display: block; inline-size: 100%; block-size: auto; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-sm); background: var(--brand-surface); }
+  .pair figcaption { color: var(--brand-text-muted); font-size: 0.9375rem; }
+</style>

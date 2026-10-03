@@ -1,0 +1,355 @@
+---
+import "@brandcloud/ui/public.css";
+import "../../../styles/components.css";
+import Dev from "../../../layouts/Dev.astro";
+import Code from "../../../components/Code.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import UiDemo from "../../../islands/UiDemo";
+import Button from "@brandcloud/astro/components/Button.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import TrustStrip from "@brandcloud/astro/components/TrustStrip.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Navbar from "@brandcloud/astro/components/Navbar.astro";
+import Footer from "@brandcloud/astro/components/Footer.astro";
+import EnquiryFormShell from "@brandcloud/astro/components/EnquiryFormShell.astro";
+import Icon from "@brandcloud/astro/components/Icon.astro";
+import { astroProps, uiProps } from "../../../lib/props";
+import { pkg } from "../../../lib/site";
+
+const tones = ["brand", "ink", "neutral", "danger", "whatsapp"] as const;
+const appearances = ["depth", "solid", "outline", "ghost"] as const;
+const levels = ["sky", "blue", "navy", "pearl", "obsidian"] as const;
+const icons = ["check", "plus", "menu", "close", "whatsapp", "phone", "email", "shield", "map-pin", "clock", "calendar", "arrow-right", "external"] as const;
+const steps = [
+  { title: "Book online", text: "Pick a slot that suits you.", meta: "Two minutes" },
+  { title: "Drop it off", text: "Leave the bike with us before 9am.", meta: "Same day" },
+  { title: "Collect it", text: "We text you when it is ready.", meta: "By 5pm" },
+];
+const faq = [
+  { question: "Do you need the bike all day?", answer: "Most services are done by 5pm on the day." },
+  { question: "Can I wait while you work?", answer: "Yes, for safety checks. They take about twenty minutes." },
+];
+
+type UiEntry = { name: string; file: string; type?: string; text: string };
+const uiGroups:
+  { id: string; title: string; demo: "button" | "forms" | "choices" | "overlays" | "structure" | "feedback" | "screens" | "experimental"; intro: string; items: UiEntry[] }[] = [
+  { id: "ui-button", title: "Button", demo: "button", intro: "Tone is the colour role, appearance the treatment. Without an appearance the brand decides.", items: [
+    { name: "Button", file: "button", text: "A real <button>, or any element through render or asChild. Loading sets aria-busy and keeps the width." },
+  ] },
+  { id: "ui-forms", title: "Form fields", demo: "forms", intro: "FormField wires the label, description and error to its control, so inputs inside it need no ids.", items: [
+    { name: "FormField", file: "form-field", text: "Label, description and error around one control. Setting error marks the control invalid." },
+    { name: "FormLabel", file: "form-field", text: "A label on its own, with an optional required marker." },
+    { name: "FormDescription", file: "form-field", text: "Help text under a control." },
+    { name: "FormError", file: "form-field", text: "The error message under a control." },
+    { name: "Input", file: "input", text: "A text input. invalid shows the error state without a FormField." },
+    { name: "Select", file: "select", text: "A native select with options as data and a placeholder." },
+    { name: "Textarea", file: "textarea", text: "Multi-line text, with the same states as Input." },
+  ] },
+  { id: "ui-choices", title: "Choices", demo: "choices", intro: "Native inputs underneath, so forms submit and validate without extra code.", items: [
+    { name: "Checkbox", file: "checkbox", text: "One checkbox with its label. Supports indeterminate." },
+    { name: "CheckboxGroup", file: "checkbox", text: "A fieldset of checkboxes with a legend, from data." },
+    { name: "Radio", file: "radio", text: "One radio with its label." },
+    { name: "RadioGroup", file: "radio", text: "A fieldset of radios with a legend, from data." },
+    { name: "Switch", file: "switch", text: "An on and off switch, a checkbox underneath." },
+  ] },
+  { id: "ui-overlays", title: "Overlays", demo: "overlays", intro: "Focus is trapped where it should be, Escape closes, and focus returns to the trigger.", items: [
+    { name: "Dialog", file: "dialog", text: "A modal with a title, description, content and actions. The trigger must be one real button." },
+    { name: "Drawer", file: "drawer", text: "A modal panel from the left or right edge." },
+    { name: "Menu", file: "menu", text: "The root of an actions menu.", type: "MenuProps" },
+    { name: "MenuTrigger", file: "menu", text: "The button that opens the menu." },
+    { name: "MenuPopover", file: "menu", text: "The menu panel." },
+    { name: "MenuItem", file: "menu", text: "One action. onSelect runs on click or Enter." },
+    { name: "MenuCheckboxItem", file: "menu", text: "An item that toggles." },
+    { name: "MenuGroup", file: "menu", text: "Groups items under a label." },
+    { name: "MenuLabel", file: "menu", text: "The label of a group." },
+    { name: "MenuSeparator", file: "menu", text: "A rule between groups." },
+    { name: "Popover", file: "popover", text: "Non-modal content anchored to a trigger." },
+    { name: "PopoverTrigger", file: "popover", text: "The button that opens it." },
+    { name: "PopoverContent", file: "popover", text: "The panel." },
+    { name: "Tooltip", file: "tooltip", text: "A short label on hover and keyboard focus. Never the only place for important text." },
+    { name: "TooltipTrigger", file: "tooltip", text: "The element the tooltip describes." },
+    { name: "TooltipContent", file: "tooltip", text: "The tooltip text." },
+    { name: "Toast", file: "toast", text: "A short status message that closes itself after duration." },
+  ] },
+  { id: "ui-structure", title: "Structure and identity", demo: "structure", intro: "Disclosure, tabs and layout pieces with the keyboard behaviour people expect.", items: [
+    { name: "Accordion", file: "accordion", text: "A set of disclosure sections, one or many open." },
+    { name: "AccordionItem", file: "accordion", text: "One section." },
+    { name: "AccordionTrigger", file: "accordion", text: "Its heading button. headingLevel keeps the outline right." },
+    { name: "AccordionPanel", file: "accordion", text: "Its content.", type: "AccordionPanelProps" },
+    { name: "Tabs", file: "tabs", text: "Tabs with automatic or manual activation." },
+    { name: "TabsList", file: "tabs", text: "The row of tabs. Give it an aria-label." },
+    { name: "TabsTab", file: "tabs", text: "One tab." },
+    { name: "TabsPanel", file: "tabs", text: "The panel for a tab value." },
+    { name: "Separator", file: "separator", text: "A rule, horizontal or vertical, real or decorative." },
+    { name: "Card", file: "card", text: "A surface for grouped content. elevated adds a shadow." },
+    { name: "Badge", file: "card", text: "A small label. Accepts span attributes.", type: "-" },
+    { name: "Container", file: "layout", text: "A centred column. Accepts div attributes.", type: "-" },
+    { name: "Stack", file: "layout", text: "Vertical spacing between children." },
+    { name: "Heading", file: "layout", text: "A heading with rank (as) and size set separately." },
+    { name: "VisuallyHidden", file: "layout", text: "Text for screen readers only. Accepts span attributes.", type: "-" },
+    { name: "Avatar", file: "avatar", text: "A photo or initials, with the name as its label." },
+    { name: "AvatarGroup", file: "avatar", text: "Overlapping avatars with one label for the group." },
+  ] },
+  { id: "ui-feedback", title: "Feedback", demo: "feedback", intro: "Status, progress and asking for feedback. Spinners stop spinning under reduced motion.", items: [
+    { name: "Notice", file: "notice", text: "An inline message in four tones, optionally dismissible." },
+    { name: "Meter", file: "meter", text: "A measured value in a range, with its accessible value text." },
+    { name: "Spinner", file: "loading", text: "Indeterminate loading with a label." },
+    { name: "Skeleton", file: "loading", text: "A placeholder shape while content loads." },
+    { name: "Progress", file: "loading", text: "Determinate progress." },
+    { name: "FeedbackPrompt", file: "feedback-prompt", text: "Yes or no, a 1 to 5 rating, or a 0 to 10 score, with an optional comment." },
+  ] },
+  { id: "ui-screens", title: "Screen parts", demo: "screens", intro: "Pieces for product screens.", items: [
+    { name: "PageHeader", file: "page-header", text: "A screen title with meta, description, actions and tabs in a fixed order." },
+    { name: "EmptyState", file: "empty-state", text: "What to show when there is nothing yet, no results, an error or no access." },
+    { name: "CodeBlock", file: "code-block", text: "Code with a copy button that reports success or failure." },
+  ] },
+  { id: "ui-experimental", title: "Experimental", demo: "experimental", intro: "On their own subpaths and may change before they are promoted to the stable root.", items: [
+    { name: "TextButton", file: "text-button", text: "A button presented as inline text. From /experimental/text-button." },
+    {
+      name: "StatusPillAction",
+      file: "annotated-action",
+      text: "A status note on a link or button you own. From /experimental/annotated-action. Not drawn here: its pill floats over the " +
+        "action, which the AI-look rules flag (AP-COMP-03), so use it sparingly.",
+    },
+    { name: "HandwrittenAction", file: "annotated-action", text: "A short note beside a link or button you own." },
+    { name: "FloatingField", file: "polish", text: "An input whose label moves above the text. From /experimental/polish." },
+    { name: "ActionList", file: "polish", text: "A removable list of items with optional tags." },
+    { name: "RangeSlider", file: "polish", text: "A two-handle range with an optional histogram." },
+    { name: "MilestoneSelector", file: "polish", text: "A single choice drawn as a row of milestones." },
+    { name: "FileDropzone", file: "polish", text: "Drop or choose files, with preview and status." },
+  ] },
+];
+const astroList = ["Button", "Container", "Section", "Heading", "Hero", "Steps", "TrustStrip", "Faq", "CtaBand", "Navbar", "Footer", "EnquiryFormShell", "Icon"];
+const ap = Object.fromEntries(astroList.map((n) => [n, astroProps(n)]));
+---
+<Dev title="Components" description="Every public Astro and React component, live, with generated props tables and the hover, focus, pressed, loading, disabled and invalid states."
+  lede={"Astro components render to HTML with no client JavaScript. React components are accessible primitives for interactive screens. Both read only the " +
+    "tokens, so everything below follows this site's brand."}>
+  <section class="dv-section" aria-labelledby="idx-title">
+    <h2 id="idx-title">On this page</h2>
+    <div class="cmp-index">
+      <div><p>Astro ({pkg("astro")})</p><ul>{astroList.map((n) => <li><a href={`#astro-${n.toLowerCase()}`}>{n}</a></li>)}</ul></div>
+      <div><p>React ({pkg("ui")})</p><ul>{uiGroups.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}</ul></div>
+    </div>
+    <p class="s-muted s-small">Props tables are generated from the packages at build time. Hover and focus are also shown with the pointer away, labelled, so you can see every state at
+      once.</p>
+  </section>
+
+  <section class="dv-section" aria-labelledby="astro-title">
+    <h2 id="astro-title">Astro components</h2>
+    <Code title="Import" code={`import Button from "${pkg("astro")}/components/Button.astro";`} />
+
+    <article class="cmp-comp" id="astro-button" aria-labelledby="astro-button-t">
+      <h3 id="astro-button-t">Button</h3>
+      <p>Same props as the React Button. A link when it has href, otherwise a button. No arrows inside; a channel glyph is the only icon allowed.</p>
+      <div class="ud">
+        {tones.map((t) => (
+          <div class="ud-row">
+            <p class="ud-row__label">tone="{t}"</p>
+            <div class="ud-row__items">{appearances.map((a) => <Button tone={t} appearance={a}>{a[0].toUpperCase() + a.slice(1)}</Button>)}</div>
+          </div>
+        ))}
+        <div class="ud-row"><p class="ud-row__label">tone="level"</p><div
+          class="ud-row__items">{levels.map((l) => <Button tone="level" level={l}>{l[0].toUpperCase() + l.slice(1)}</Button>)}</div></div>
+        <div class="ud-row"><p class="ud-row__label">size</p><div class="ud-row__items"><Button size="sm">Small</Button><Button>Medium</Button><Button size="lg">Large</Button></div></div>
+        <div class="ud-row"><p class="ud-row__label">channel</p><div class="ud-row__items"><Button tone="whatsapp" channel="whatsapp" href="#astro-button">WhatsApp us</Button><Button
+          tone="ink" channel="phone" href="#astro-button">Call</Button><Button tone="neutral" appearance="outline" channel="email" href="#astro-button">Email</Button></div></div>
+        <div class="ud-row"><p class="ud-row__label">States</p><div class="ud-row__items">
+          <span class="ud-state"><Button>Default</Button><small>default</small></span>
+          <span class="ud-state" data-force="hover"><Button>Hover</Button><small>hover</small></span>
+          <span class="ud-state" data-force="focus"><Button>Focus</Button><small>focus-visible</small></span>
+          <span class="ud-state" data-force="active"><Button>Pressed</Button><small>pressed (held)</small></span>
+          <span class="ud-state"><Button loading>Saving</Button><small>loading</small></span>
+          <span class="ud-state"><Button disabled>Disabled</Button><small>disabled</small></span>
+        </div></div>
+      </div>
+      <details class="cmp-props"><summary>Button props</summary><PropsTable table={ap.Button} label="Button" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-container" aria-labelledby="astro-container-t">
+      <h3 id="astro-container-t">Container</h3>
+      <p>A centred column with the brand's gutters.</p>
+      <div class="cmp-frame">
+        {(["narrow", "default", "wide"] as const).map((w) => <Container width={w}><div class="cmp-width"><div class="cmp-width__bar">width="{w}"</div></div></Container>)}
+      </div>
+      <details class="cmp-props"><summary>Container props</summary><PropsTable table={ap.Container} label="Container" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-section" aria-labelledby="astro-section-t">
+      <h3 id="astro-section-t">Section</h3>
+      <p>A page section. tone re-points the tokens for everything inside, so components on an ink or brand section take its colours. Use the brand tone once per page at most.</p>
+      <div class="cmp-frame">
+        {(["default", "muted", "raised", "ink", "brand"] as const).map((t) => (
+          <Section tone={t} space="tight" as="div"><p class="cmp-section-line">tone="{t}"</p><Button size="sm">A button on {t}</Button></Section>
+        ))}
+      </div>
+      <details class="cmp-props"><summary>Section props</summary><PropsTable table={ap.Section} label="Section" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-heading" aria-labelledby="astro-heading-t">
+      <h3 id="astro-heading-t">Heading</h3>
+      <p>Rank (as) and look (size) are set separately. These examples use as="p" so they do not add to this page's outline.</p>
+      <div class="cmp-frame cmp-pad cmp-headings">
+        {(["display", "h1", "h2", "h3", "h4"] as const).map((s) => <Heading as="p" size={s}>size="{s}"</Heading>)}
+      </div>
+      <details class="cmp-props"><summary>Heading props</summary><PropsTable table={ap.Heading} label="Heading" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-hero" aria-labelledby="astro-hero-t">
+      <h3 id="astro-hero-t">Hero</h3>
+      <p>Three layouts so two sites never share one look: split beside a real photo, field on a solid surface with key facts, and editorial.</p>
+      <div class="cmp-frame">
+        <p class="cmp-frame__label">variant="split" with media</p>
+        <Hero variant="split" headingLevel="h2" id="cmp-hero-split"
+          media={{ src: "/recipes/thumbs/campaign.jpg", alt: "The campaign recipe page for a made-up physio clinic.", width: 720, height: 450 }}
+          copy={{
+            heading: "Bikes serviced while you work",
+            lede: "Drop it off before nine, collect it by five.",
+            primary: { label: "Book a service", href: "#astro-hero" },
+            secondary: { label: "See prices", href: "#astro-hero" },
+          }} />
+      </div>
+      <div class="cmp-frame">
+        <p class="cmp-frame__label">variant="field"</p>
+        <Hero variant="field" headingLevel="h2" id="cmp-hero-field"
+          copy={{ heading: "Winter service week", lede: "Every bike checked for dark mornings.", primary: { label: "Book a slot", href: "#astro-hero" } }}
+          facts={[{ label: "Dates", value: "1 to 7 December" }, { label: "Price", value: "£45" }]} />
+      </div>
+      <div class="cmp-frame">
+        <p class="cmp-frame__label">variant="editorial"</p>
+        <Hero variant="editorial" headingLevel="h2" id="cmp-hero-editorial"
+          copy={{
+            heading: "A bike shop that explains the fix",
+            lede: "We show you what was worn and why it mattered.",
+            primary: { label: "Book a service", href: "#astro-hero" },
+            note: "Fictional example.",
+          }} />
+      </div>
+      <details class="cmp-props"><summary>Hero props</summary><PropsTable table={ap.Hero} label="Hero" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-steps" aria-labelledby="astro-steps-t">
+      <h3 id="astro-steps-t">Steps</h3>
+      <p>A real ordered list, numbered in text. Three layouts.</p>
+      {(["rail", "list", "split"] as const).map((v) => (
+        <div class="cmp-frame"><p class="cmp-frame__label">variant="{v}"</p><div class="cmp-pad"><Steps variant={v} heading="How a service works" headingLevel="h3" steps={steps}
+          id={`cmp-steps-${v}`} /></div></div>
+      ))}
+      <details class="cmp-props"><summary>Steps props</summary><PropsTable table={ap.Steps} label="Steps" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-truststrip" aria-labelledby="astro-truststrip-t">
+      <h3 id="astro-truststrip-t">TrustStrip</h3>
+      <p>Real credentials only. The logos layout keeps each name visible next to its logo; it needs real logos, so it is not drawn here.</p>
+      <div class="cmp-frame cmp-pad"><TrustStrip variant="rule" label="Example credentials"
+        items={[{ text: "Fixed prices before work starts" }, { text: "Twelve-month warranty on labour" }, { text: "Open six days a week" }]} /></div>
+      <div class="cmp-frame cmp-pad"><TrustStrip variant="inline" label="Example facts" items={[{ text: "Card and cash" }, { text: "Step-free entrance" }, { text: "Free parking" }]} /></div>
+      <details class="cmp-props"><summary>TrustStrip props</summary><PropsTable table={ap.TrustStrip} label="TrustStrip" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-faq" aria-labelledby="astro-faq-t">
+      <h3 id="astro-faq-t">Faq</h3>
+      <p>Native details and summary: works with no JavaScript and from the keyboard.</p>
+      <div class="cmp-frame cmp-pad"><Faq variant="split" heading="Questions" headingLevel="h3" items={faq} openFirst
+        ask={{ heading: "Still not sure?", text: "Ask us anything.", action: { label: "Send a question", href: "#astro-faq" } }} id="cmp-faq-split" /></div>
+      <div class="cmp-frame cmp-pad"><Faq variant="stacked" heading="Questions" headingLevel="h3" items={faq} id="cmp-faq-stacked" /></div>
+      <details class="cmp-props"><summary>Faq props</summary><PropsTable table={ap.Faq} label="Faq" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-ctaband" aria-labelledby="astro-ctaband-t">
+      <h3 id="astro-ctaband-t">CtaBand</h3>
+      <p>One clear next step. Urgency shows only with a real reason and an end date or policy.</p>
+      <div class="cmp-frame"><p class="cmp-frame__label">variant="band"</p><CtaBand variant="band" headingLevel="h3" id="cmp-cta-band"
+        copy={{ heading: "Book before the winter rush", primary: { label: "Book a service", href: "#astro-ctaband" }, secondary: { label: "See prices", href: "#astro-ctaband" } }} /></div>
+      <div class="cmp-frame"><p class="cmp-frame__label">variant="card"</p><CtaBand variant="card" headingLevel="h3" id="cmp-cta-card"
+        copy={{ heading: "Questions about your bike?", body: "We reply the same day.", primary: { label: "Ask a mechanic", href: "#astro-ctaband" } }} /></div>
+      <div class="cmp-frame"><p class="cmp-frame__label">variant="split" with an aside</p><CtaBand variant="split" headingLevel="h3" id="cmp-cta-split"
+        copy={{ heading: "Visit the workshop", body: "Open Monday to Saturday.", primary: { label: "Get directions", href: "#astro-ctaband" } }}><div slot="aside"
+        class="cmp-aside"><p><strong>Merewick Cycles</strong></p><p>8am to 6pm, fictional address.</p></div></CtaBand></div>
+      <details class="cmp-props"><summary>CtaBand props</summary><PropsTable table={ap.CtaBand} label="CtaBand" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-navbar" aria-labelledby="astro-navbar-t">
+      <h3 id="astro-navbar-t">Navbar</h3>
+      <p>The mobile menu is a native disclosure; a small script adds Escape, outside click and link-click close.</p>
+      <div class="cmp-frame"><p class="cmp-frame__label">layout="split"</p><Navbar brandName="Merewick Cycles" brandHref="#astro-navbar" sticky={false}
+        navLabel="Example navigation, split"
+        links={[{ label: "Services", href: "#astro-navbar" }, { label: "Prices", href: "#astro-navbar" }, { label: "Contact", href: "#astro-navbar" }]}
+        cta={{ label: "Book", href: "#astro-navbar" }} /></div>
+      <div class="cmp-frame"><p class="cmp-frame__label">layout="left", tone="ink"</p><Navbar brandName="Merewick Cycles" brandHref="#astro-navbar" sticky={false} layout="left"
+        tone="ink" navLabel="Example navigation, left" links={[{ label: "Services", href: "#astro-navbar" }, { label: "Prices", href: "#astro-navbar" }]}
+        cta={{ label: "Book", href: "#astro-navbar" }} /></div>
+      <details class="cmp-props"><summary>Navbar props</summary><PropsTable table={ap.Navbar} label="Navbar" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-footer" aria-labelledby="astro-footer-t">
+      <h3 id="astro-footer-t">Footer</h3>
+      <p>Columns or one simple row. Long email addresses wrap at the @ on phones.</p>
+      <div class="cmp-frame"><Footer brandName="Merewick Cycles" tagline="Bike servicing, made-up example."
+        columns={[{ heading: "Services", links: [{ label: "Full service", href: "#astro-footer" }, { label: "Safety check", href: "#astro-footer" }] }]}
+        contact={{ heading: "Contact", email: "workshop@merewick-cycles.example" }} legal={["Fictional business for this example."]} /></div>
+      <div class="cmp-frame"><Footer variant="simple" tone="muted" brandName="Merewick Cycles"
+        links={[{ label: "Services", href: "#astro-footer" }, { label: "Prices", href: "#astro-footer" }]} legal={["Fictional business for this example."]} /></div>
+      <details class="cmp-props"><summary>Footer props</summary><PropsTable table={ap.Footer} label="Footer" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-enquiryformshell" aria-labelledby="astro-enquiryformshell-t">
+      <h3 id="astro-enquiryformshell-t">EnquiryFormShell</h3>
+      <p>No backend: it posts natively to your action. The script adds inline errors and moves focus to the first problem. In preview mode it never sends. Consent is unticked and
+        separate.</p>
+      <div class="cmp-frame cmp-pad">
+        <EnquiryFormShell mode="preview" previewMessage="Preview only: nothing was sent." heading="Ask a mechanic" headingLevel="h3" id="cmp-form" fields={["name", "email", "message"]}
+          consent={{ label: "Email me about my booking only." }} />
+        <p class="cmp-invalid"><button type="button" class="ud-trigger" data-show-invalid="cmp-form">Show the invalid state</button> submits the empty form, so the component's own
+          validation shows its errors.</p>
+      </div>
+      <details class="cmp-props"><summary>EnquiryFormShell props</summary><PropsTable table={ap.EnquiryFormShell} label="EnquiryFormShell" /></details>
+    </article>
+
+    <article class="cmp-comp" id="astro-icon" aria-labelledby="astro-icon-t">
+      <h3 id="astro-icon-t">Icon</h3>
+      <p>Stroke icons in currentColor, decorative unless given a label. Arrows are for text links only.</p>
+      <ul class="cmp-icons">{icons.map((n) => <li><Icon name={n} size={22} /><code>{n}</code></li>)}</ul>
+      <details class="cmp-props"><summary>Icon props</summary><PropsTable table={ap.Icon} label="Icon" /></details>
+    </article>
+  </section>
+
+  {uiGroups.map((g) => (
+    <section class="dv-section" id={g.id} aria-labelledby={`${g.id}-t`}>
+      <h2 id={`${g.id}-t`}>React: {g.title}</h2>
+      <p>{g.intro}</p>
+      <UiDemo name={g.demo} client:visible />
+      {g.items.map((it) => {
+        const table = it.type === "-" ? null : uiProps(it.file, it.name, it.type);
+        return (
+          <article class="cmp-comp" id={`ui-${it.name.toLowerCase()}`} aria-labelledby={`ui-${it.name.toLowerCase()}-t`}>
+            <h3 id={`ui-${it.name.toLowerCase()}-t`}>{it.name}</h3>
+            <p>{it.text}</p>
+            {table && <details class="cmp-props"><summary>{it.name} props</summary><PropsTable table={table} label={it.name} /></details>}
+          </article>
+        );
+      })}
+    </section>
+  ))}
+</Dev>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-show-invalid]")) {
+    button.addEventListener("click", () => {
+      const form = document.getElementById(button.dataset.showInvalid ?? "") as HTMLFormElement | null;
+      form?.requestSubmit();
+    });
+  }
+</script>
+
+<style>
+  .cmp-section-line { font-family: var(--brand-font-mono); font-size: 0.8125rem; margin-block-end: 0.75rem; }
+  .cmp-headings { display: grid; gap: 0.75rem; }
+  .cmp-aside { padding: 1.25rem; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-surface); }
+  .cmp-invalid { margin-block-start: 1rem; color: var(--brand-text-muted); font-size: 0.9375rem; }
+</style>

@@ -1,0 +1,85 @@
+/* Components page: frames, rows and the forced state examples. Tokens only. */
+.cmp-frame { overflow: hidden; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-canvas); }
+.cmp-frame + .cmp-frame { margin-block-start: 1rem; }
+.cmp-frame__label { padding: 0.5rem 0.9rem; border-block-end: 1px solid var(--brand-border); background: var(--brand-surface); color: var(--brand-text-muted); font-size: 0.8125rem;
+  font-weight: 600; }
+.cmp-frame .ba-section { --brand-section-space-y: 2.5rem; }
+.cmp-frame .ba-hero { --brand-section-space-y: 3rem; }
+.cmp-pad { padding: 1.25rem; }
+.cmp-comp { display: grid; gap: 1rem; padding-block: 2rem; scroll-margin-top: 6rem; }
+.cmp-comp + .cmp-comp { border-block-start: 1px solid var(--brand-border); }
+.cmp-comp > h3 { font-size: 1.375rem; }
+.cmp-comp > h3 code { font-size: 0.9em; background: none; padding: 0; }
+.cmp-comp > p { max-width: 46rem; color: var(--brand-text-muted); }
+.cmp-props > summary { cursor: pointer; font-weight: 650; padding-block: 0.4rem; }
+.cmp-props[open] > summary { margin-block-end: 0.5rem; }
+.cmp-index { display: grid; gap: 1rem 2rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); font-size: 0.9375rem; }
+.cmp-index p { font-weight: 650; margin-block-end: 0.35rem; }
+.cmp-index ul { margin: 0; padding-inline-start: 1.1rem; display: grid; gap: 0.15rem; }
+.cmp-width { display: grid; gap: 0.5rem; padding-block: 1rem; }
+.cmp-width__bar { padding: 0.6rem 0.8rem; border: 1px dashed var(--brand-border-strong); border-radius: var(--brand-radius-xs); background: var(--brand-surface); font-size: 0.8125rem; }
+.cmp-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.cmp-icons li { display: grid; gap: 0.4rem; justify-items: start; padding: 0.75rem; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-sm);
+  background: var(--brand-surface); font-size: 0.8125rem; }
+
+/* Rows of examples, shared by the Astro and React demos. */
+.ud { display: grid; gap: 0; border-block-start: 1px solid var(--brand-border); }
+.ud-row { display: grid; gap: 0.6rem 1.5rem; padding-block: 1rem; border-block-end: 1px solid var(--brand-border); }
+@media (min-width: 52rem) { .ud-row { grid-template-columns: 11rem minmax(0, 1fr); align-items: center; } }
+.ud-row__label { color: var(--brand-text-muted); font-size: 0.8125rem; font-weight: 600; font-family: var(--brand-font-mono); }
+.ud-row__items { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; min-inline-size: 0; }
+.ud-state { display: inline-grid; gap: 0.35rem; justify-items: center; }
+.ud-state small { color: var(--brand-text-subtle); font-size: 0.75rem; }
+.ud-grid { display: grid; gap: 1.25rem; border: 0; }
+@media (min-width: 48rem) { .ud-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ud-stack { display: grid; gap: 0.6rem; align-content: start; }
+.ud-wide { flex: 1 1 100%; min-inline-size: 0; }
+.ud-inline { display: inline-flex; gap: 0.75rem; align-items: center; block-size: 1.5rem; }
+.ud-card { display: grid; gap: 0.5rem; padding: 1rem; min-inline-size: 13rem; }
+.ud-progress { min-inline-size: 12rem; }
+.ud-frame { border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); padding: 1rem; background: var(--brand-surface); }
+.ud-pop { max-inline-size: 18rem; }
+.ud-trigger {
+  min-block-size: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--brand-border-strong);
+  border-radius: var(--brand-radius-control);
+  background: var(--brand-surface);
+  color: var(--brand-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ud-trigger:hover { background: var(--brand-surface-muted); }
+
+/* ── Forced states: how a control looks on hover, keyboard focus and press, shown without the pointer. ── */
+/* Astro Button (the rules mirror @brandcloud/astro Button.astro). */
+[data-force="hover"] .ba-button:not([data-appearance]),
+[data-force="hover"] .ba-button[data-appearance="solid"] { background: var(--ba-btn-flat-hover); }
+[data-force="hover"] .ba-button[data-appearance="depth"],
+:where([data-button-appearance="depth"]) [data-force="hover"] .ba-button:not([data-appearance]) {
+  background:
+    radial-gradient(150% 100% at 50% 0%, var(--ba-btn-sheen) 0%, color-mix(in srgb, var(--ba-btn-sheen) 25%, transparent) 99%, transparent 100%) top / 100% 50% no-repeat,
+    radial-gradient(65.28% var(--ba-btn-glow-reach) at 50% 100%, var(--ba-btn-glow), transparent),
+    linear-gradient(var(--ba-btn-top), var(--ba-btn-bottom));
+  box-shadow: var(--ba-btn-shadow-hover);
+  filter: brightness(1.04);
+}
+[data-force="hover"] .ba-button[data-appearance="outline"] { box-shadow: inset 0 0 0 1px var(--ba-btn-line); }
+[data-force="hover"] .ba-button[data-appearance="ghost"] { background: color-mix(in srgb, var(--brand-text) 7%, transparent); }
+[data-force="focus"] .ba-button { outline: 3px solid var(--brand-focus); outline-offset: 4px; }
+[data-force="active"] .ba-button { transform: scale(0.96); }
+
+/* React Button (mirrors @brandcloud/ui button.css). */
+[data-force="hover"] .brand-button {
+  border-color: var(--brand-button-border-hover);
+  background: var(--brand-button-bg-hover);
+  box-shadow: var(--brand-button-shadow-hover);
+  color: var(--brand-button-fg-hover);
+  transform: translateY(-1px);
+}
+:where([data-button-appearance="depth"]) [data-force="hover"] .brand-button:not([data-appearance]),
+[data-force="hover"] .brand-button[data-appearance="depth"] { filter: brightness(1.04); transform: none; }
+[data-force="focus"] .brand-button { outline: 2px solid var(--brand-focus); outline-offset: 2px; }
+[data-force="active"] .brand-button { transform: scale(0.95); }
+[data-force="focus"] .brand-input, [data-force="focus"] input { outline: 2px solid var(--brand-focus); outline-offset: 2px; }

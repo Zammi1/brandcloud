@@ -1,0 +1,12 @@
+---
+/** Centred content column with brand gutters. width: narrow | default | wide | full. */
+import "../styles/base.css";
+interface Props {
+  width?: "narrow" | "default" | "wide" | "full";
+  as?: "div" | "section" | "header" | "footer" | "nav" | "main";
+  class?: string;
+  [key: `data-${string}`]: unknown;
+}
+const { width = "default", as: Tag = "div", class: className, ...rest } = Astro.props;
+---
+<Tag {...rest} class:list={["ba", "ba-container", className]} data-width={width === "default" ? undefined : width}><slot /></Tag>

@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-GRAD-01: AI gradient (purple to pink, indigo to cyan) vs tonal light-model depth gradient (#3b82f6 to #1d4ed8, sheen, same-hue shadow) -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbour &amp; Pine: fitted kitchens (AP-GRAD-01 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.offer { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.tile { border-radius: var(--r-md); padding: 24px; min-height: 168px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+.tile h3 { font-size: 19px; }
+.tile .price-sm { font-size: 28px; font-weight: 620; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.tile-paper { background: var(--card); border: 1px solid var(--line); }
+/* level tile: same tonal light model as the button, navy family */
+.tile-navy { color: #fff; background: linear-gradient(180deg, #24418f, #142a63);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 2px rgba(15, 31, 77, 0.3), 0 16px 28px -18px rgba(20, 42, 99, 0.7); }
+.tile-navy h3 { color: #fff; }
+.tile-navy p { color: #d9e1f5; }
+.btn-lg { min-height: 58px; padding: 0 30px; font-size: 17px; }
+@media (max-width: 520px) { .offer { grid-template-columns: 1fr; } .tile { min-height: 0; } }
+
+/* ANTIPATTERN AP-GRAD-01: hue-shifting purple to pink gradients with no light logic */
+.btn-depth, .btn-depth:hover { background: linear-gradient(90deg, #7c3aed, #db2777); box-shadow: 0 0 32px rgba(168, 85, 247, 0.55); text-shadow: none; }
+.btn-depth::before { display: none; }
+.tile-navy { background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #06b6d4 100%); box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Harbour &amp; Pine <small>Joinery, Merewick</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Kitchens</a><a href="#">Recent work</a><a href="#">Prices</a><a class="btn btn-ink btn-sm" href="#">Book a survey</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <h1>Solid oak and painted kitchens, made in our Merewick workshop.</h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">We measure, draw, build and fit. One team from survey to the last hinge, usually eight to ten weeks.</p>
+      <div class="actions"><a class="btn btn-depth btn-lg" href="#">Book a free survey</a><a class="textlink" href="#">See 2025 kitchens</a></div>
+    </div>
+    <div class="offer" aria-label="Two ways to work with us">
+      <div class="tile tile-paper"><h3>Design visit</h3><p class="muted">Measured drawing and a fixed quote.</p><span class="price-sm">&pound;180</span></div>
+      <div class="tile tile-navy"><h3>Full kitchen</h3><p>Built and fitted. Typical 3 metre run.</p><span class="price-sm">from &pound;14,500</span></div>
+    </div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Harbour &amp; Pine Joinery Ltd</span><span>Unit 4, Quay Road, Merewick MW19 8TX</span></footer></div>
+
+</body>
+</html>

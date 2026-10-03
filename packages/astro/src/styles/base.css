@@ -1,0 +1,146 @@
+/* @brandcloud/astro base: token aliases, section tones and shared helpers.
+ *
+ * Every component root carries the class "ba". The aliases below resolve on each component
+ * root, so a Section tone (which re-points --brand-* tokens) flows into nested components.
+ *
+ * Tokens: only @brandcloud/tokens custom properties. Newer tokens are read with a
+ * fallback to an existing token, so the package works with older token builds.
+ *
+ * Layers: the order below matches Tailwind v4, so Tailwind utilities can adjust components
+ * and Tailwind preflight never overrides them. Unlayered site CSS wins over this package:
+ * keep site-wide element styles (h1, a, button) in @layer base. */
+@layer theme, base, components, utilities;
+
+@layer components {
+  :where(.ba) {
+    --ba-font-display: var(--brand-font-display, var(--brand-font-sans, ui-sans-serif, system-ui, sans-serif));
+    --ba-font-body: var(--brand-font-body, var(--brand-font-sans, ui-sans-serif, system-ui, sans-serif));
+    --ba-fs-display: var(--brand-font-size-display, clamp(2.625rem, 1.7rem + 3.9vw, 4.75rem));
+    --ba-fs-h1: var(--brand-font-size-h1, clamp(2.375rem, 1.6rem + 3vw, 3.875rem));
+    --ba-fs-h2: var(--brand-font-size-h2, clamp(2rem, 1.4rem + 2.3vw, 3.25rem));
+    --ba-fs-h3: var(--brand-font-size-h3, clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem));
+    --ba-fs-lead: var(--brand-font-size-lead, clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem));
+    --ba-section-y: var(--brand-section-space-y, clamp(4.5rem, 9vw, 8.5rem));
+    --ba-content-max: var(--brand-content-max, var(--brand-content, 77.5rem));
+    --ba-content-narrow: var(--brand-content-narrow, 51.25rem);
+    --ba-gutter: clamp(1.25rem, 5vw, 4rem);
+    --ba-link: var(--brand-accent);
+    font-family: var(--ba-font-body);
+  }
+
+  /* ── Section surfaces (Section tone prop): re-point semantic tokens for everything inside ─────── */
+  :where(.ba[data-surface="muted"]) {
+    --brand-canvas: var(--brand-surface-muted);
+  }
+  :where(.ba[data-surface="raised"]) {
+    --brand-canvas: var(--brand-surface-raised);
+  }
+  :where(.ba[data-surface="ink"]) {
+    color-scheme: dark;
+    --brand-canvas: var(--brand-inverse-canvas);
+    --brand-surface: var(--brand-inverse-surface);
+    --brand-surface-muted: var(--brand-inverse-surface-muted);
+    --brand-surface-raised: var(--brand-inverse-surface);
+    --brand-text: var(--brand-inverse-text);
+    --brand-text-muted: var(--brand-inverse-text-muted);
+    --brand-border: var(--brand-inverse-border);
+    --brand-border-strong: color-mix(in srgb, var(--brand-inverse-text) 34%, transparent);
+    --brand-focus: var(--brand-inverse-text);
+    --ba-link: var(--brand-inverse-text);
+  }
+  /* One brand-colour field per page at most: a tonal, same-hue light model (the gradient rule). */
+  :where(.ba[data-surface="brand"]) {
+    color-scheme: dark;
+    --brand-canvas: var(--brand-action-depth-to, var(--brand-accent));
+    --brand-surface: color-mix(in srgb, var(--brand-accent-text) 10%, var(--brand-accent));
+    --brand-surface-muted: color-mix(in srgb, var(--brand-accent-text) 14%, var(--brand-accent));
+    --brand-surface-raised: color-mix(in srgb, var(--brand-accent-text) 10%, var(--brand-accent));
+    --brand-text: var(--brand-accent-text);
+    --brand-text-muted: color-mix(in srgb, var(--brand-accent-text) 86%, var(--brand-accent));
+    --brand-border: color-mix(in srgb, var(--brand-accent-text) 24%, transparent);
+    --brand-border-strong: color-mix(in srgb, var(--brand-accent-text) 45%, transparent);
+    --brand-focus: var(--brand-accent-text);
+    --ba-link: var(--brand-accent-text);
+  }
+  :where(.ba[data-surface]) {
+    background-color: var(--brand-canvas);
+    color: var(--brand-text);
+  }
+  :where(.ba[data-surface="brand"]) {
+    /* Lighter top, deeper bottom, same hue: the light model, never a hue shift. */
+    background-image: linear-gradient(180deg, var(--brand-action-depth-from, var(--brand-accent)), var(--brand-accent-hover));
+  }
+
+  /* ── Shared helpers ─────────────────────────────────────────────────────── */
+  .ba-sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .ba-container {
+    width: 100%;
+    max-width: calc(var(--ba-content-max) + var(--ba-gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--ba-gutter);
+  }
+  .ba-container[data-width="narrow"] { max-width: calc(var(--ba-content-narrow) + var(--ba-gutter) * 2); }
+  .ba-container[data-width="wide"] { max-width: calc(var(--ba-content-max) + 12rem + var(--ba-gutter) * 2); }
+  .ba-container[data-width="full"] { max-width: none; }
+
+  .ba-link {
+    color: var(--ba-link);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .ba-link:hover { text-decoration-thickness: 2px; }
+
+  .ba :where(a, button, summary, input, select, textarea):focus-visible {
+    outline: 3px solid var(--brand-focus, var(--brand-accent));
+    outline-offset: 3px;
+  }
+
+  .ba-lead {
+    margin: 0;
+    max-width: 34em;
+    color: var(--brand-text-muted);
+    font-size: var(--ba-fs-lead);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .ba-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  @media (max-width: 29.9375rem) {
+    .ba-actions[data-stack="sm"] { flex-direction: column; align-items: stretch; }
+  }
+
+  .ba-num { font-variant-numeric: lining-nums tabular-nums; }
+
+  .ba-tick-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ba-tick-list > li {
+    display: grid;
+    grid-template-columns: 1.125rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    line-height: 1.5;
+  }
+  .ba-tick-list > li > svg { margin-top: 0.2em; }
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-TRUST-02: band of big round unsourced stats (10x, 99.9%, 500+, 24/7) -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerline: numbers (AP-TRUST-02 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; border-top: 1px solid var(--ink); padding-top: 28px; }
+.stats strong { display: block; font-size: 52px; font-weight: 650; letter-spacing: -0.03em; }
+.stats span { color: var(--muted); }
+@media (max-width: 860px) { .stats { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Ledgerline <small>Bookkeeping for trades, Easthope</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Services</a><a href="#">Prices</a><a href="#">About</a><a class="btn btn-ink btn-sm" href="#">Send us your books</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight">
+  <h1>Bookkeeping for builders, electricians and plumbers in Wessex.</h1>
+  <p class="lead" style="margin-top:24px">Photograph your receipts and send them on WhatsApp. We do the rest and tell you what you owe before HMRC does.</p>
+  <div class="actions" style="margin-top:32px"><a class="btn btn-depth" href="#">Send us your books</a><a class="textlink" href="#">See prices</a></div>
+</section>
+<section class="wrap section">
+  <div class="stats">
+    <div><strong>10x</strong><span>faster bookkeeping</span></div>
+    <div><strong>99.9%</strong><span>accuracy</span></div>
+    <div><strong>500+</strong><span>happy clients</span></div>
+    <div><strong>24/7</strong><span>support</span></div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Ledgerline Bookkeeping Ltd</span><span>18 Bridge Street, Easthope EP11 1NX</span></footer></div>
+
+</body>
+</html>

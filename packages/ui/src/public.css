@@ -1,0 +1,12 @@
+/* Foundation presentation only. Full private-compatible entry remains styles.css. */
+@import "./polish.css";
+@import "./popover.css";
+@import "./menu.css";
+@import "./core.css";
+@import "./button.css";
+@import "./accordion.css";
+@import "./avatar.css";
+@import "./separator.css";
+@import "./page-header.css";
+@import "./empty-state.css";
+@import "./code-block.css";

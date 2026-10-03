@@ -1,0 +1,52 @@
+---
+import "@brandcloud/ui/public.css";
+import "../../styles/score.css";
+import Base from "../../layouts/Base.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import AiLookScore from "../../islands/AiLookScore";
+import ScoreBands from "../../components/ScoreBands.astro";
+import antipatternsPkg from "@brandcloud/antipatterns/package.json";
+import { rules, scoring, NODE_ONLY_CHECKS, ruleCounts } from "../../lib/rules";
+import type { ScoreRule } from "../../islands/AiLookScore";
+
+const slim: ScoreRule[] = rules.map((r) => ({
+  id: r.id,
+  title: r.title,
+  severity: r.severity,
+  check: r.detect.check,
+  params: (r.detect.params ?? {}) as Record<string, unknown>,
+  fix: r.fix,
+  category: r.category,
+  cliOnly: NODE_ONLY_CHECKS.has(r.detect.check),
+}));
+const detectBin = Object.keys(antipatternsPkg.bin ?? {})[0] ?? "detect";
+---
+<Base title="AI-look score"
+  description="Paste a page's HTML or upload the file and check it against the visual tells of AI-generated design. A score, the evidence and a fix for each rule. Runs in your browser."
+  current="/ai-look-score/">
+  <Container>
+    <header class="s-pagehead" data-split data-compact>
+      <h1>Does your page look AI-made?</h1>
+      <div class="s-stack">
+        <p class="s-lead">Check a page against {ruleCounts.visual} visual rules, from hue-shifting gradients to logo walls with nobody real behind them. Each rule that fires shows what
+          it found and how to fix it.</p>
+        <p class="s-pagehead-note">Free. The HTML stays in your browser: it is drawn in a sandboxed frame and checked here.</p>
+      </div>
+    </header>
+  </Container>
+  <Container>
+    <AiLookScore client:load rules={slim} scoring={scoring} detectBin={detectBin} />
+  </Container>
+  <Container>
+    <section class="ls-bands" aria-labelledby="bands-title">
+      <div class="s-sechead" data-split>
+        <h2 id="bands-title">How the score works</h2>
+        <p class="s-muted">Each rule has a severity. A high-severity rule adds {scoring.weights.high}, medium {scoring.weights.medium} and low {scoring.weights.low}, up to
+          {scoring.cap}. Aim for 0 to 9 with no high-severity rule. These are heuristics, not proof: a page made by hand can trip a rule, so read the evidence before you change
+          something you chose on purpose.</p>
+      </div>
+      <ScoreBands />
+      <p class="ls-more"><a class="s-textlink" href="/guides/not-ai-made/">Read the guide: how to make a page not look AI-made</a></p>
+    </section>
+  </Container>
+</Base>

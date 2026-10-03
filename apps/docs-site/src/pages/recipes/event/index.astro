@@ -1,0 +1,102 @@
+---
+/* Recipe: event page. Kingsport Night Market is a made-up event. Free components only. */
+import "../../../styles/recipe.css";
+import Base from "../../../layouts/Base.astro";
+import RecipeBar from "../../../components/RecipeBar.astro";
+import Navbar from "@brandcloud/astro/components/Navbar.astro";
+import Hero from "@brandcloud/astro/components/Hero.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Heading from "@brandcloud/astro/components/Heading.astro";
+import Steps from "@brandcloud/astro/components/Steps.astro";
+import TrustStrip from "@brandcloud/astro/components/TrustStrip.astro";
+import Faq from "@brandcloud/astro/components/Faq.astro";
+import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
+import Footer from "@brandcloud/astro/components/Footer.astro";
+
+const business = "Kingsport Night Market";
+---
+<Base title={`Recipe: event page (${business}, fictional)`} description="An event page recipe built from free components: a one-evening seafront market, made up for this example." bare
+  brand="marigold">
+  <Fragment slot="top">
+    <RecipeBar slug="event" />
+    <Navbar brandName={business} links={[{ label: "Running order", href: "#order" }, { label: "Getting there", href: "#there" }, { label: "Stalls", href: "#stalls" }]}
+      cta={{ label: "Book a stall", href: "#stalls" }} />
+  </Fragment>
+
+  <Hero
+    variant="field"
+    tone="brand"
+    copy={{
+      heading: "Forty stalls, hot food and live music on the seafront, one Friday night",
+      lede: "Local makers, street food and a brass band under the lights. Free to come in, dogs on leads welcome.",
+      primary: { label: "Plan your evening", href: "#order" },
+      secondary: { label: "Book a stall", href: "#stalls" },
+    }}
+    facts={[
+      { label: "Date", value: "Friday 13 November 2026" },
+      { label: "Time", value: "5pm to 10pm" },
+      { label: "Place", value: "Kingsport seafront, by the old pier" },
+      { label: "Entry", value: "Free" },
+    ]}
+  />
+
+  <Section space="tight" aria-label="Good to know">
+    <TrustStrip variant="inline" label="Good to know"
+      items={[{ text: "Run by volunteers" }, { text: "Card and cash at every stall" }, { text: "Step-free route from the bus stop" }, { text: "Toilets on site" }]} />
+  </Section>
+
+  <Section tone="muted" id="order" aria-labelledby="order-title">
+    <Steps
+      id="event-order"
+      heading="The running order"
+      intro="Arrive early for the best of the food, or late for the band and the lights over the water."
+      variant="split"
+      steps={[
+        { title: "Stalls and food open", text: "All forty stalls trade from the start.", meta: "5pm" },
+        { title: "Children's lantern walk", text: "Meet at the band stand. Lanterns are free while they last.", meta: "6pm" },
+        { title: "Brass band", text: "Two sets on the seafront stage, with a break for hot chocolate.", meta: "7pm to 9pm" },
+        { title: "Last orders", text: "Food stalls stop serving at half past nine.", meta: "9.30pm" },
+      ]}
+    />
+  </Section>
+
+  <Section id="there" aria-labelledby="there-title">
+    <div class="r-sechead" data-split>
+      <Heading as="h2" id="there-title">Getting there</Heading>
+      <p class="r-lead">The market is on the promenade, so parking is tight. The bus is the easy way in.</p>
+    </div>
+    <ul class="r-rows">
+      <li><h3>Bus</h3><p>The number 15 stops at the end of the promenade every twenty minutes until 11pm.</p><span class="r-from">2 min walk</span></li>
+      <li><h3>Bike</h3><p>Racks for sixty bikes by the band stand, watched by volunteers all evening.</p><span class="r-from">Free</span></li>
+      <li><h3>Car</h3><p>The seafront car park fills by six. Blue badge spaces are kept free by the entrance.</p><span class="r-from">Pay and display</span></li>
+    </ul>
+  </Section>
+
+  <Section tone="raised" aria-labelledby="event-faq-title">
+    <Faq
+      id="event-faq"
+      heading="Questions"
+      items={[
+        { question: "What if it rains?", answer: "The market goes ahead in light rain. If there is a weather warning we post a decision here by noon on the day." },
+        { question: "Can I bring my dog?", answer: "Yes, on a lead. There are water bowls at the information tent." },
+        { question: "Is there seating?", answer: "Yes, around the food stalls and by the stage, with some kept for people who need them." },
+      ]}
+    />
+  </Section>
+
+  <CtaBand
+    id="stalls"
+    copy={{
+      heading: "Selling something you made?",
+      body: "Stalls are £35 for the evening, with a table, a light and a spot on the map. Food stalls are allocated separately.",
+      primary: { label: "Book a stall, £35", href: "#stalls" },
+      secondary: { label: "Read the questions", href: "#event-faq" },
+      note: "Recipe preview: booking is not connected.",
+    }}
+  />
+
+  <Fragment slot="bottom">
+    <Footer variant="simple" brandName={business} links={[{ label: "Running order", href: "#order" }, { label: "Getting there", href: "#there" }, { label: "Stalls", href: "#stalls" }]}
+      legal={["Kingsport Night Market is a made-up event for this recipe.", "Example page built with free components."]} />
+  </Fragment>
+</Base>

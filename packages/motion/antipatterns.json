@@ -1,0 +1,470 @@
+{
+  "name": "@brandcloud/motion antipatterns",
+  "version": "1.0.0",
+  "updated": "2026-10-01",
+  "description": "Motion tells that make interfaces feel AI generated, with detection heuristics and fixes. Same shape as @brandcloud/antipatterns rules.json (category MOT). AP-MOT-01 to 09 match its ids and meaning; AP-MOT-20 onward are new from @brandcloud/motion. detect.kind is dom, css (static stylesheet scan), or runtime (needs a live page over time); checks a detector does not implement should be reported as manual.",
+  "rules": [
+    {
+      "id": "AP-MOT-01",
+      "slug": "fade-up-everything",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Everything fades up on scroll",
+      "description": "Most sections or cards start invisible and rise into place as they scroll into view.",
+      "whyAI": "Generators wrap every block in the same whileInView or AOS entrance. It hides content from fast scrollers, print and screenshots, and tells the visitor nothing.",
+      "heuristic": "Four or more elements in one page start with opacity 0 plus a translate and change on intersection (data-aos, .reveal, whileInView, IntersectionObserver class toggles).",
+      "detect": {
+        "kind": "dom",
+        "check": "fadeUpEverything",
+        "params": {
+          "minCount": 4
+        }
+      },
+      "fix": "Content visible by default. At most one or two reveals per page where arrival means something (a result, a proof figure). Use @brandcloud/motion reveal() which never hides content without JS and skips movement for reduced motion."
+    },
+    {
+      "id": "AP-MOT-02",
+      "slug": "stagger-every-card",
+      "category": "MOT",
+      "severity": "low",
+      "title": "Staggered entrance on every card",
+      "description": "Sibling cards animate in one after another with growing delays on scroll.",
+      "whyAI": "The stagger is the default polish a model adds to any repeated element. It slows reading and repeats on every list.",
+      "heuristic": "Three or more siblings with incrementing animation-delay or transition-delay that run on scroll rather than after a user action.",
+      "detect": {
+        "kind": "dom",
+        "check": "staggerSiblings",
+        "params": {
+          "minSiblings": 3
+        }
+      },
+      "fix": "Show lists at once. Stagger only when a user action produces the list (menu opens, results load), capped by stagger.maxItems and budget.maxStaggerTotal (300ms total)."
+    },
+    {
+      "id": "AP-MOT-03",
+      "slug": "hover-lift-everything",
+      "category": "MOT",
+      "severity": "low",
+      "title": "Hover lift and scale on every card",
+      "description": "Every card, image and tile lifts, scales or tilts on hover, including ones that are not links.",
+      "whyAI": "Hover lift is a free default in UI kits. When everything moves, nothing signals what is clickable.",
+      "heuristic": "Three or more non-interactive elements change transform on :hover.",
+      "detect": {
+        "kind": "dom",
+        "check": "hoverLift",
+        "params": {
+          "minCount": 3
+        }
+      },
+      "fix": "Only interactive things respond to hover, and only on (hover: hover) pointers. Offer tiles may lift 4px (distance.lift) because the whole tile is the action; plain cards do not move."
+    },
+    {
+      "id": "AP-MOT-04",
+      "slug": "endless-floating",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Endless floating and pulsing decoration",
+      "description": "Badges, icons, blobs or mock UI that float, bob, pulse or rotate forever.",
+      "whyAI": "Infinite idle loops are the easiest way to make a static layout look busy. They pull the eye from the content and fail WCAG 2.2.2 when they run past five seconds without a pause.",
+      "heuristic": "Two or more elements with animation-iteration-count: infinite that are not loading indicators.",
+      "detect": {
+        "kind": "dom",
+        "check": "infiniteDecor",
+        "params": {
+          "minCount": 2
+        }
+      },
+      "fix": "No idle loops. Infinite animation is for progress only (a spinner while something loads), and it becomes a pulse under reduced motion (.m-spinner)."
+    },
+    {
+      "id": "AP-MOT-05",
+      "slug": "logo-marquee",
+      "category": "MOT",
+      "severity": "high",
+      "title": "Infinite logo marquee",
+      "description": "An endlessly scrolling strip of client or partner logos, often logos the business has never worked with.",
+      "whyAI": "The auto-playing marquee of fake logos is the signature of template landing pages. It is also moving content without a pause control.",
+      "heuristic": "A horizontally translating, infinitely animated row of four or more images or SVGs.",
+      "detect": {
+        "kind": "dom",
+        "check": "logoMarquee",
+        "params": {
+          "minItems": 4
+        }
+      },
+      "fix": "Show a few real, named clients still, with a short line of what was done for each. If there is no real proof yet, leave it out."
+    },
+    {
+      "id": "AP-MOT-06",
+      "slug": "cursor-glow",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Cursor-following glow or spotlight",
+      "description": "A radial glow, spotlight or blob that follows the pointer across sections or card borders.",
+      "whyAI": "Spotlight cards and cursor glows came from component galleries and are now pasted everywhere. They do nothing on touch and nothing for meaning.",
+      "heuristic": "pointermove or mousemove listeners that write a CSS variable or transform used in a radial-gradient background, mask or blurred element.",
+      "detect": {
+        "kind": "dom",
+        "check": "cursorGlow",
+        "params": {}
+      },
+      "fix": "Remove it. Use real state feedback: hover, focus-visible and pressed states on actual controls."
+    },
+    {
+      "id": "AP-MOT-07",
+      "slug": "typewriter-headline",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Typewriter or rotating-word headline",
+      "description": "The headline types itself out, or a word in it keeps swapping.",
+      "whyAI": "It delays the one sentence that matters and was a stock pattern in AI landing templates. Screen readers may read partial text.",
+      "heuristic": "The h1 text content changes within the first 1200ms after load, or a caret element blinks inside it.",
+      "detect": {
+        "kind": "dom",
+        "check": "typewriter",
+        "params": {
+          "observeMs": 1200
+        }
+      },
+      "fix": "Static headline, readable in the first frame. Say the one thing plainly."
+    },
+    {
+      "id": "AP-MOT-08",
+      "slug": "parallax-decor",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Parallax-scrolling decorative shapes",
+      "description": "Blobs, grids or shapes that move at a different speed from the page as it scrolls.",
+      "whyAI": "Parallax decoration is depth with no object. It costs scroll performance and is a common vestibular trigger.",
+      "heuristic": "Decorative (aria-hidden or empty) elements whose transform changes by 20px or more during a 400px scroll.",
+      "detect": {
+        "kind": "dom",
+        "check": "parallaxDecor",
+        "params": {
+          "scrollPx": 400,
+          "minShiftPx": 20
+        }
+      },
+      "fix": "Remove decorative layers. If depth is needed, use the tonal light-model gradient and shadows on the real object (buttons, offer tiles)."
+    },
+    {
+      "id": "AP-MOT-09",
+      "slug": "spinning-3d-hero",
+      "category": "MOT",
+      "severity": "high",
+      "title": "Purposeless spinning 3D hero object",
+      "description": "A large 3D shape, globe or abstract blob that spins or drifts in the hero with no link to the offer.",
+      "whyAI": "Spline and Three.js scenes are a one-click way to look premium. With no meaning they are a heavy, battery-draining screensaver.",
+      "heuristic": "A canvas or 3D embed of 160px or more in the first viewport that animates continuously with no user input.",
+      "detect": {
+        "kind": "dom",
+        "check": "spinningHero",
+        "params": {
+          "minSizePx": 160
+        }
+      },
+      "fix": "3D only when it explains something (a product the user can turn, a logo mark at small size). Lazy-load, pause off screen and in hidden tabs, static image under reduced motion. See the motion-lab turntable."
+    },
+    {
+      "id": "AP-MOT-20",
+      "slug": "no-reduced-motion",
+      "category": "MOT",
+      "severity": "high",
+      "title": "No reduced-motion handling",
+      "description": "Transforms, parallax, auto-play or scroll effects run the same when the visitor has asked the OS for reduced motion.",
+      "whyAI": "Generated code adds motion by default and almost never adds the opposite case.",
+      "heuristic": "Stylesheets contain @keyframes or transform transitions but no prefers-reduced-motion query, and scripts start animations without checking matchMedia('(prefers-reduced-motion: reduce)').",
+      "detect": {
+        "kind": "css",
+        "check": "missingReducedMotion",
+        "params": {
+          "pattern": "@keyframes|transition[^;]*transform",
+          "requires": "prefers-reduced-motion"
+        }
+      },
+      "fix": "Import @brandcloud/motion tokens (distances and scales go to zero under reduced motion) and use MotionConfig reducedMotion=\"user\", Reanimated reduceMotion: \"system\", or prefersReducedMotion() in scripts."
+    },
+    {
+      "id": "AP-MOT-21",
+      "slug": "layout-property-animation",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Animating layout properties",
+      "description": "Transitions or keyframes on width, height, top, left, margin or padding.",
+      "whyAI": "Models reach for the property that describes the change, not the one the browser can animate cheaply. It causes layout on every frame and jank on phones.",
+      "heuristic": "transition or @keyframes that list width, height, top, right, bottom, left, margin or padding (max-height accordions included).",
+      "detect": {
+        "kind": "css",
+        "check": "layoutAnimation",
+        "params": {
+          "pattern": "transition(-property)?\\s*:[^;]*\\b(width|height|max-height|top|left|right|bottom|margin[a-z-]*|padding[a-z-]*)\\b"
+        }
+      },
+      "fix": "Animate transform and opacity. For accordions use grid-template-rows 0fr to 1fr, interpolate-size or the details element; for drawers translate."
+    },
+    {
+      "id": "AP-MOT-22",
+      "slug": "transition-all",
+      "category": "MOT",
+      "severity": "low",
+      "title": "transition: all",
+      "description": "A blanket transition on every property.",
+      "whyAI": "It is the default in snippets and UI kits. It animates colour, shadow and layout changes nobody designed and makes theme switches smear.",
+      "heuristic": "transition: all or transition-property: all in any rule.",
+      "detect": {
+        "kind": "css",
+        "check": "transitionAll",
+        "params": {
+          "pattern": "transition(-property)?\\s*:\\s*all\\b"
+        }
+      },
+      "fix": "List the properties: transform, opacity, filter, and colour only where intended."
+    },
+    {
+      "id": "AP-MOT-23",
+      "slug": "slow-ui-motion",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Slow interface motion",
+      "description": "Hovers, menus, dialogs and tab changes that take longer than half a second.",
+      "whyAI": "Long, floaty easing reads as a demo, not a tool. Users wait for the interface instead of the other way round.",
+      "heuristic": "Transition or animation durations above 500ms on interactive elements (count-up and scroll-linked timelines excepted).",
+      "detect": {
+        "kind": "css",
+        "check": "slowTransition",
+        "params": {
+          "maxMs": 500
+        }
+      },
+      "fix": "Use the duration tokens: instant 80, fast 140, normal 220, slow 320, slower 480 (page transitions only)."
+    },
+    {
+      "id": "AP-MOT-24",
+      "slug": "bounce-everywhere",
+      "category": "MOT",
+      "severity": "low",
+      "title": "Bouncy overshoot on everything",
+      "description": "Elastic or back easing, or bouncy springs, on menus, dialogs, page transitions and layout.",
+      "whyAI": "Bounce is the quickest way to make motion feel playful, so generators use it everywhere. On structural UI it feels cheap and unsettled.",
+      "heuristic": "cubic-bezier with a y value above 1 or below 0, easeOutBack, elastic or bounce easings, or springs with damping ratio below 0.5 on non-delight elements.",
+      "detect": {
+        "kind": "css",
+        "check": "overshootEasing",
+        "params": {
+          "pattern": "cubic-bezier\\([^)]*(-0\\.[1-9]|1\\.[0-9]*[1-9])",
+          "names": [
+            "easeOutBack",
+            "elastic",
+            "bounce"
+          ]
+        }
+      },
+      "fix": "Structural motion uses standard, enter, exit or the snappy and gentle springs. spring.bouncy is for one success moment per flow."
+    },
+    {
+      "id": "AP-MOT-25",
+      "slug": "scroll-jacking",
+      "category": "MOT",
+      "severity": "high",
+      "title": "Scroll hijacking and smooth-scroll libraries",
+      "description": "The page intercepts the wheel or touch scroll to apply its own inertia, snapping or pinned scenes.",
+      "whyAI": "Lenis and Locomotive-style scrolling are a stock premium effect. They break the user's own scroll speed, find-in-page, anchor links and assistive tech.",
+      "heuristic": "Scripts or classes from lenis, locomotive-scroll or similar; wheel listeners with preventDefault; long pinned scroll sections.",
+      "detect": {
+        "kind": "dom",
+        "check": "scrollJacking",
+        "params": {
+          "signatures": [
+            "lenis",
+            "locomotive-scroll",
+            "data-scroll-container"
+          ]
+        }
+      },
+      "fix": "Native scrolling. If a section needs scroll-linked motion, use CSS animation-timeline on a small element and keep the scroll itself untouched."
+    },
+    {
+      "id": "AP-MOT-26",
+      "slug": "hero-intro-sequence",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Choreographed hero intro",
+      "description": "The headline, sub-copy, buttons and image arrive in sequence after load, so the first readable frame comes late.",
+      "whyAI": "Intro timelines look good in a screen recording and badly in real use. They also delay Largest Contentful Paint.",
+      "heuristic": "The h1 or primary CTA has opacity 0 or an animation-delay above 200ms at first paint.",
+      "detect": {
+        "kind": "dom",
+        "check": "heroIntroDelay",
+        "params": {
+          "maxDelayMs": 200
+        }
+      },
+      "fix": "The hero is static on load. Motion starts with the user: hover, press, scroll, navigation."
+    },
+    {
+      "id": "AP-MOT-27",
+      "slug": "animated-gradient-background",
+      "category": "MOT",
+      "severity": "high",
+      "title": "Animated gradient or mesh background",
+      "description": "Large backgrounds whose gradient position, hue or mesh shifts continuously.",
+      "whyAI": "Moving aurora and mesh gradients are a 2024 to 2026 AI landing cliche and break the tonal gradient rule (no hue shift, no light logic).",
+      "heuristic": "Keyframes that change background-position, background-size or hue-rotate on elements wider than half the viewport.",
+      "detect": {
+        "kind": "css",
+        "check": "animatedBackground",
+        "params": {
+          "pattern": "@keyframes[^{]*\\{[^}]*(background-position|hue-rotate)"
+        }
+      },
+      "fix": "Still backgrounds. Gradients only as tonal light models on actions and offer tiles, from tokens."
+    },
+    {
+      "id": "AP-MOT-28",
+      "slug": "count-up-everything",
+      "category": "MOT",
+      "severity": "low",
+      "title": "Every number counts up",
+      "description": "All stats, prices or percentages tick up from zero when they appear.",
+      "whyAI": "Count-ups are a stock dashboard flourish. On prices they look like a gimmick, and screen readers can announce every step.",
+      "heuristic": "More than one count-up per view, or any count-up on a price.",
+      "detect": {
+        "kind": "dom",
+        "check": "countUpMany",
+        "params": {
+          "maxPerView": 1
+        }
+      },
+      "fix": "One hero figure at most, with the final value in accessible text and the animated digits aria-hidden. Prices never animate."
+    },
+    {
+      "id": "AP-MOT-29",
+      "slug": "cursor-tilt-cards",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Cursor-tilt and magnetic elements",
+      "description": "Cards tilt in 3D toward the pointer, or buttons pull toward the cursor.",
+      "whyAI": "vanilla-tilt and magnetic buttons are gallery effects copied into generated sites. They make targets move while the user aims at them.",
+      "heuristic": "data-tilt attributes, vanilla-tilt or atropos scripts, or pointermove handlers writing rotateX/rotateY or translate on controls.",
+      "detect": {
+        "kind": "dom",
+        "check": "cursorTilt",
+        "params": {
+          "signatures": [
+            "data-tilt",
+            "vanilla-tilt",
+            "atropos",
+            "magnetic"
+          ]
+        }
+      },
+      "fix": "Targets stay still under the pointer. Use the depth button hover (1px lift, 4% brighter) and the press scale."
+    },
+    {
+      "id": "AP-MOT-30",
+      "slug": "offscreen-loops",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Animation loops running off screen",
+      "description": "Canvas, WebGL, Lottie or Rive loops keep rendering when scrolled away or in a background tab.",
+      "whyAI": "Embeds are pasted with autoplay and no lifecycle. It drains batteries and steals frames from the visible page.",
+      "heuristic": "requestAnimationFrame callbacks or player.play state continuing while the element is not intersecting or document.visibilityState is hidden.",
+      "detect": {
+        "kind": "runtime",
+        "check": "offscreenRaf",
+        "params": {
+          "sampleMs": 1000
+        }
+      },
+      "fix": "Start and stop loops with whenVisible() from @brandcloud/motion/dom (IntersectionObserver plus visibilitychange). Render one static frame for reduced motion."
+    },
+    {
+      "id": "AP-MOT-31",
+      "slug": "text-split-reveal",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Letter-by-letter or blur-in headline",
+      "description": "Headlines split into letters or words that fade, blur or slide in one by one.",
+      "whyAI": "Split-text and blur-in reveals are a popular 2025 to 2026 template effect. They delay reading and fragment text for screen readers.",
+      "heuristic": "A heading with five or more inline children carrying their own animation or transition-delay, or filter: blur() in an entrance keyframe on text.",
+      "detect": {
+        "kind": "dom",
+        "check": "splitTextReveal",
+        "params": {
+          "minParts": 5
+        }
+      },
+      "fix": "Headlines appear whole. If a heading must change, cross-fade the whole line."
+    },
+    {
+      "id": "AP-MOT-32",
+      "slug": "preloader-splash",
+      "category": "MOT",
+      "severity": "high",
+      "title": "Preloader or splash animation",
+      "description": "A logo animation, progress counter or curtain that covers the page before content shows.",
+      "whyAI": "Agency-template preloaders are a premium signal in screenshots and pure waiting time for visitors.",
+      "heuristic": "A fixed full-viewport element present at load that animates and is removed after a timer.",
+      "detect": {
+        "kind": "dom",
+        "check": "preloader",
+        "params": {
+          "minCoverage": 0.8
+        }
+      },
+      "fix": "No preloaders. Ship fast pages; show skeletons only for data that is actually loading."
+    },
+    {
+      "id": "AP-MOT-33",
+      "slug": "autoplay-no-pause",
+      "category": "MOT",
+      "severity": "high",
+      "title": "Auto-playing motion with no pause",
+      "description": "Carousels, tickers, videos or animations that move for more than five seconds with no way to pause.",
+      "whyAI": "Auto-advance is a default in carousel and marquee components. It fails WCAG 2.2.2 Pause, Stop, Hide.",
+      "heuristic": "An element that changes on a timer for over 5s without a visible pause or stop control and without stopping on hover and focus.",
+      "detect": {
+        "kind": "runtime",
+        "check": "autoplayNoPause",
+        "params": {
+          "maxMs": 5000
+        }
+      },
+      "fix": "No auto-advance. If something must play, give it a pause button, stop on hover and focus, and do not start under reduced motion."
+    },
+    {
+      "id": "AP-MOT-34",
+      "slug": "hover-only-meaning",
+      "category": "MOT",
+      "severity": "medium",
+      "title": "Meaning only available on hover",
+      "description": "Details, prices or actions that appear only when a card is hovered.",
+      "whyAI": "Hover reveals look slick in a desktop demo and hide content on touch and from keyboard users.",
+      "heuristic": "Content with opacity 0 or visibility hidden that becomes visible only through :hover, with no :focus-within or touch equivalent.",
+      "detect": {
+        "kind": "css",
+        "check": "hoverOnlyReveal",
+        "params": {}
+      },
+      "fix": "Show the content. Hover may add emphasis, never information."
+    },
+    {
+      "id": "AP-MOT-35",
+      "slug": "blur-glass-entrance",
+      "category": "MOT",
+      "severity": "low",
+      "title": "Blur and glass entrances",
+      "description": "Elements arrive by un-blurring (filter: blur to 0) or with animated backdrop blur.",
+      "whyAI": "Blur-in is a current AI-template signature, and animating blur is one of the most expensive things a browser can paint.",
+      "heuristic": "Keyframes or transitions on filter: blur() or backdrop-filter for entrances.",
+      "detect": {
+        "kind": "css",
+        "check": "blurEntrance",
+        "params": {
+          "pattern": "(@keyframes|transition)[^}]*blur\\("
+        }
+      },
+      "fix": "Opacity and a small translate (presets.reveal), or nothing."
+    }
+  ]
+}

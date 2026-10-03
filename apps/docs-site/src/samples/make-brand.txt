@@ -1,0 +1,5 @@
+node packages/tokens/scripts/make-brand.mjs --name acme --label "Acme Roofing" \
+  --accent "#0f766e" --ink "#111827" --paper "#fbfaf7" \
+  --font-body "'Hanken Grotesk Variable', Arial, sans-serif" \
+  --font-display "'Fraunces Variable', Georgia, serif"
+# or: --input brief.json (same keys), --dry-run, --report report.json, --appearance solid|depth

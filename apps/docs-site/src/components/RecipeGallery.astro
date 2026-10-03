@@ -1,0 +1,43 @@
+---
+/** Thumbnail gallery of the page recipes. Thumbnails are screenshots of the built recipe pages. */
+import { recipes } from "../lib/recipes";
+interface Props { headingLevel?: "h3" | "h2" }
+const { headingLevel = "h3" } = Astro.props;
+const H = headingLevel;
+---
+<ul class="rg">
+  {recipes.map((r) => (
+    <li class="rg__item">
+      <a class="rg__link" href={`/recipes/${r.slug}/`}>
+        <img class="rg__shot" src={`/recipes/thumbs/${r.slug}.jpg`} width="720" height="450" loading="lazy" decoding="async"
+          alt={`The ${r.kind.toLowerCase()} recipe for ${r.business}, a fictional business, in the ${r.brandLabel} brand.`} />
+        <H class="rg__title">{r.kind}</H>
+      </a>
+      <p class="rg__meta">{r.business} (fictional), {r.brandLabel} brand</p>
+      <p class="rg__summary">{r.summary}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .rg { display: grid; gap: 2.25rem 2rem; margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 46rem) { .rg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .rg__item { display: grid; gap: 0.4rem; align-content: start; }
+  .rg__link { display: grid; gap: 1rem; color: inherit; text-decoration: none; border-radius: var(--brand-radius-card); }
+  .rg__shot {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    border-radius: var(--brand-radius-card);
+    border: 1px solid var(--brand-border);
+    background: var(--brand-surface);
+    box-shadow: var(--brand-shadow-card);
+  }
+  .rg__title { font-size: 1.375rem; line-height: 1.2; }
+  .rg__link:hover .rg__title { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 2px; }
+  .rg__meta { color: var(--brand-text-muted); font-size: 0.875rem; }
+  .rg__summary { color: var(--brand-text-muted); }
+</style>

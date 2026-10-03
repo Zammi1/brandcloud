@@ -1,0 +1,46 @@
+---
+/**
+ * Page section: background surface, vertical rhythm and a Container.
+ *   tone   default | muted | raised | ink | brand   (surface; re-points tokens for everything inside)
+ *   space  none | tight | default | loose
+ *   width  narrow | default | wide | full           (inner Container width)
+ * `appearance` (neutral | brand | inverse) is accepted as an alias so props copied from
+ * @brandcloud/blocks keep working. Use tone="brand" at most once per page.
+ */
+import "../styles/base.css";
+import Container from "./Container.astro";
+export type SectionTone = "default" | "muted" | "raised" | "ink" | "brand";
+interface Props {
+  tone?: SectionTone;
+  appearance?: "neutral" | "brand" | "inverse";
+  space?: "none" | "tight" | "default" | "loose";
+  width?: "narrow" | "default" | "wide" | "full";
+  as?: "section" | "div" | "aside" | "header" | "footer";
+  /** Set false to render children without the inner Container (full-bleed layouts). */
+  contained?: boolean;
+  id?: string;
+  class?: string;
+  "aria-labelledby"?: string;
+  "aria-label"?: string;
+  [key: `data-${string}`]: unknown;
+}
+const { tone, appearance, space = "default", width = "default", as: Tag = "section", contained = true, class: className, ...rest } = Astro.props;
+const fromAppearance = { neutral: "default", brand: "brand", inverse: "ink" } as const;
+const surface: SectionTone = tone ?? (appearance ? fromAppearance[appearance] : "default");
+---
+<Tag {...rest} class:list={["ba", "ba-section", className]} data-surface={surface} data-space={space}>
+  {contained ? <Container width={width}><slot /></Container> : <slot />}
+</Tag>
+
+<style is:global>
+@layer components {
+  .ba-section { position: relative; padding-block: var(--ba-section-y); }
+  .ba-section[data-space="tight"] { padding-block: calc(var(--ba-section-y) * 0.6); }
+  .ba-section[data-space="loose"] { padding-block: calc(var(--ba-section-y) * 1.3); }
+  .ba-section[data-space="none"] { padding-block: 0; }
+  /* Two neighbours on the same surface share one gap, not two (DESIGN-REVIEW T7). */
+  .ba-section[data-surface="default"]:not([data-space="none"]) + .ba-section[data-surface="default"],
+  .ba-section[data-surface="muted"]:not([data-space="none"]) + .ba-section[data-surface="muted"],
+  .ba-section[data-surface="raised"]:not([data-space="none"]) + .ba-section[data-surface="raised"] { padding-top: 0; }
+}
+</style>

@@ -1,0 +1,57 @@
+@layer components {
+  .brand-accordion { border-block-start: 1px solid var(--brand-border); color: var(--brand-text); }
+  .brand-accordion__item { border-block-end: 1px solid var(--brand-border); }
+  .brand-accordion__header { margin: 0; font: inherit; }
+  .brand-accordion__trigger {
+    display: flex;
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--brand-spacing-4);
+    border: 0;
+    padding-block: var(--brand-spacing-4);
+    padding-inline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: start;
+    cursor: pointer;
+  }
+  .brand-accordion__trigger:hover:not([data-disabled]) { color: var(--brand-accent); }
+  .brand-accordion__trigger:focus-visible { outline: 2px solid var(--brand-focus); outline-offset: 2px; border-radius: var(--brand-radius-sm); }
+  .brand-accordion__trigger[data-disabled] { color: var(--brand-text-muted); cursor: not-allowed; }
+  .brand-accordion__icon { position: relative; inline-size: 0.875rem; block-size: 0.875rem; flex: none; }
+  .brand-accordion__icon::before,
+  .brand-accordion__icon::after {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: 1.5px;
+    background: currentColor;
+    content: "";
+    transform: translateY(-50%);
+    transition: transform var(--brand-duration-fast);
+  }
+  .brand-accordion__icon::after { transform: translateY(-50%) rotate(90deg); }
+  .brand-accordion__trigger[data-panel-open] .brand-accordion__icon::after { transform: translateY(-50%) rotate(0deg); }
+  .brand-accordion__panel {
+    overflow: hidden;
+    block-size: var(--accordion-panel-height);
+    transition: block-size var(--brand-duration-normal) ease;
+  }
+  .brand-accordion__panel[data-starting-style],
+  .brand-accordion__panel[data-ending-style] { block-size: 0; }
+  .brand-accordion__content { padding-block-end: var(--brand-spacing-4); color: var(--brand-text-muted); line-height: 1.55; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-accordion__panel,
+    .brand-accordion__icon::before,
+    .brand-accordion__icon::after { transition: none; }
+  }
+  @media (forced-colors: active) {
+    .brand-accordion__trigger:focus-visible { outline-color: Highlight; }
+  }
+}

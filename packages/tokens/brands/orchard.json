@@ -1,0 +1,13 @@
+{
+  "$comment": "Example brand for demos, generated with make-brand from four inputs. Fictional.",
+  "name": "orchard",
+  "label": "Orchard",
+  "accent": "#3b6a1d",
+  "ink": "#1a1c14",
+  "paper": "#f5f3ea",
+  "fonts": {
+    "body": "'Hanken Grotesk Variable', Arial, sans-serif",
+    "display": "'Source Serif 4 Variable', Georgia, serif"
+  },
+  "appearance": "depth"
+}
