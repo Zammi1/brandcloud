@@ -7,7 +7,7 @@ import Button from "@brandcloud/astro/components/Button.astro";
 import Steps from "@brandcloud/astro/components/Steps.astro";
 import Faq from "@brandcloud/astro/components/Faq.astro";
 import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
-import EnquiryFormShell from "@brandcloud/astro/components/EnquiryFormShell.astro";
+import ProInterest from "../../components/ProInterest.astro";
 import Icon from "@brandcloud/astro/components/Icon.astro";
 import { PRODUCT, PRO_NAME, M1_STUDIO } from "../../lib/site";
 
@@ -18,7 +18,7 @@ const parts: { name: string; what: string; status: Status }[] = [
   {
     name: "The copywriting workflow",
     what: "Guided questions that turn your answers into headline, offer, guarantee, FAQ and call to action drafts. " +
-      "The frameworks, typed copy slots and the copy linter it runs on are built; the guided workflow on top is planned.",
+      "The frameworks, typed copy slots, copy linter and a private brief-to-draft workbench are built. Customer access and release delivery are still being prepared.",
     status: "partly",
   },
   { name: "Signature theme pack", what: "The crafted look as a set: luminous level tiles, sheen and glow recipes, curated starter palettes and premium dark themes.", status: "planned" },
@@ -34,16 +34,16 @@ const parts: { name: string; what: string; status: Status }[] = [
 ];
 
 const compare: { row: string; free: string; pro: string }[] = [
-  { row: "Copywriting workflow and anti-AI copy rules", free: "Not included", pro: "Included" },
-  { row: "Brand builder, brand files and contrast checks", free: "Included", pro: "Included" },
-  { row: "AI-look score and the visual detector", free: "Included", pro: "Included" },
-  { row: "Core components for Astro and React", free: "Included", pro: "Included" },
-  { row: "Motion library, every preset", free: "Included", pro: "Included" },
-  { row: "Page recipes", free: "Four recipes", pro: "Four, plus premium recipes" },
-  { row: "Selling sections", free: "Not included", pro: "Included" },
-  { row: "Signature theme pack", free: "Not included", pro: "Included" },
-  { row: "Guided selling", free: "Not included", pro: "Included" },
-  { row: "App sections and agent UI", free: "Not included", pro: "Included" },
+  { row: "Copywriting workflow and anti-AI copy rules", free: "Not included", pro: "Planned release" },
+  { row: "Brand builder, brand files and contrast checks", free: "Included", pro: "Uses the free core" },
+  { row: "AI-look score and the visual detector", free: "Included", pro: "Uses the free core" },
+  { row: "Core components for Astro and React", free: "Included", pro: "Uses the free core" },
+  { row: "Motion library, every preset", free: "Included", pro: "Uses the free core" },
+  { row: "Page recipes", free: "Four recipes", pro: "Four; premium recipes planned" },
+  { row: "Selling sections", free: "Not included", pro: "Planned release" },
+  { row: "Signature theme pack", free: "Not included", pro: "Planned release" },
+  { row: "Guided selling", free: "Not included", pro: "Planned release" },
+  { row: "App sections and agent UI", free: "Not included", pro: "Planned release" },
   { row: "Licence", free: "MIT, free forever", pro: "One-off lifetime licence" },
 ];
 
@@ -90,7 +90,7 @@ const tiers = [
       <h1>Write the page that sells, then build it from the same kit</h1>
       <div class="s-stack">
         <p class="s-lead">{PRO_NAME} turns the copywriting system into a guided workflow. Answer who the page is for, what outcome they want, what proof you have and what the offer is.
-          You get drafts of the headline, offer, guarantee, FAQ and call to action, checked so they never read as AI.</p>
+          You get drafts of the headline, offer, guarantee, FAQ and call to action, checked against the copy rules for you to review.</p>
         <p class="p-status"><strong>Not on sale yet.</strong> Pro opens with the first public release. <a href="#updates">Get an email when it opens</a>.</p>
       </div>
     </header>
@@ -100,7 +100,7 @@ const tiers = [
     <Steps
       id="workflow"
       heading="Four questions in, five drafts out"
-      intro="The workflow asks the questions a good copywriter asks before writing a word. Each draft comes from a written framework and passes the copy rules before you see it."
+      intro="The workflow asks the questions a good copywriter asks before writing a word. The private workbench builds editable slots from your answers and flags copy that needs review."
       variant="split"
       steps={[
         { title: "Who is it for?", text: "The person, their situation and what they have already tried.", meta: "You answer" },
@@ -192,7 +192,7 @@ const tiers = [
     <div class="p-licence">
       <div class="s-stack">
         <Heading as="h2" id="licence-title">The licence in plain English</Heading>
-        <p class="s-muted">A summary, not the licence itself. The full text ships with the first release.</p>
+        <p class="s-muted">Pro terms are still under review. This summary does not grant a licence. The final licence will be available before any sale.</p>
       </div>
       <ul class="s-ticks">
         <li><Icon name="check" />Use Pro in as many projects as you like, for yourself and for clients.</li>
@@ -209,19 +209,10 @@ const tiers = [
     <div class="p-updates">
       <div class="s-stack">
         <Heading as="h2" id="updates-title">Get an email when Pro opens</Heading>
-        <p class="s-lead">One email when Pro goes on sale, and release notes after that if you want them. Leave the box unticked and nothing is sent.</p>
-        <p class="p-preview-note"><strong>This form does not send yet.</strong> It is a preview until sign-up is connected, so nothing you type here is stored.</p>
+        <p class="s-lead">Choose whether you would like one launch announcement. The free tools stay available without signing up.</p>
+
       </div>
-      <EnquiryFormShell
-        mode="preview"
-        previewMessage="Preview: nothing was sent and you have not been added to any list. Sign-up opens with the first public release."
-        layout="panel"
-        id="pro-updates"
-        fields={["name", "email"]}
-        required={["email"]}
-        labels={{ name: "First name", submit: "Tell me when it opens" }}
-        consent={{ label: `Yes, email me when ${PRO_NAME} opens. I can unsubscribe from any email.`, required: true }}
-      />
+      <ProInterest />
     </div>
   </Section>
 

@@ -31,5 +31,5 @@ ${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).joi
 </urlset>
 `;
 writeFileSync(path.join(dist, "sitemap.xml"), xml);
-writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /pairs/\n\nSitemap: ${site}/sitemap.xml\n`);
+writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /pairs/\nDisallow: /app/\n\nSitemap: ${site}/sitemap.xml\n`);
 console.log(`sitemap: ${urls.length} pages, robots.txt written for ${site}`);

@@ -18,10 +18,11 @@
     "fixtures": "node scripts/fixtures.mjs",
     "docs:dev": "pnpm --filter docs-site dev",
     "docs:build": "pnpm --filter docs-site build",
-    "check": "pnpm check:boundaries && pnpm scan && pnpm build && pnpm typecheck && pnpm test",
+    "check": "pnpm check:boundaries && pnpm scan && pnpm build && pnpm typecheck && pnpm test && pnpm test:site",
     "changeset": "changeset",
     "rename": "node scripts/rename.mjs",
-    "packs": "pnpm build && mkdir -p packs && pnpm --filter \"./packages/*\" exec npm pack --ignore-scripts --pack-destination ../../packs"
+    "packs": "pnpm build && mkdir -p packs && pnpm --filter \"./packages/*\" exec npm pack --ignore-scripts --pack-destination ../../packs",
+    "test:site": "node --test apps/docs-site/test/*.test.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.0",

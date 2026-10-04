@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "project": {
+    "name": "brandcloud-workspace",
+    "productType": null,
+    "stack": [
+      "Astro",
+      "React islands"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "packages/tokens",
+      "apps/docs-site/src/styles/site.css"
+    ],
+    "components": [],
+    "assets": [],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "unknown",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Preserve docs brand, account-free local tools, MIT/private boundary",
+      "Reuse @brandcloud/astro primitives"
+    ],
+    "avoid": [
+      "New catalogue components without package intake",
+      "Private Pro code in public bundles"
+    ]
+  },
+  "decisions": [
+    "Existing Astro Button and form semantics reused; 21st search did not find a relevant improvement."
+  ],
+  "evidence": [],
+  "generatedAt": "2026-10-04T12:37:58.776Z"
+}

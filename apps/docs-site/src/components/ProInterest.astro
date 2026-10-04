@@ -1,0 +1,45 @@
+---
+import Button from '@brandcloud/astro/components/Button.astro';
+import { captureEndpoint } from '../lib/pro-capture.mjs';
+const endpoint=captureEndpoint(import.meta.env.PUBLIC_BRANDCLOUD_CAPTURE_ENDPOINT);
+---
+<form id="pro-interest" data-endpoint={endpoint ?? ''} class="interest" aria-label="BrandCloud Pro launch email">
+ <p>One email when Pro is available. This does not subscribe you to release notes or create a CRM account.</p>
+ {!endpoint && <p class="availability">Online sign-up is not available yet. You can still use the free tools without an account.</p>}
+ <label for="interest-name">First name (optional)</label>
+ <input id="interest-name" name="firstName" autocomplete="given-name" maxlength="80" disabled={!endpoint} />
+ <label for="interest-email">Email</label>
+ <input id="interest-email" name="email" type="email" autocomplete="email" maxlength="254" required disabled={!endpoint} />
+ <label class="permission"><input name="consent" type="checkbox" required disabled={!endpoint} /><span>I would like one email when BrandCloud Pro is available.</span></label>
+ <p class="s-small">Read <a href="/privacy/">how we use your details</a>. You can withdraw your request before launch.</p>
+ <Button type="submit" disabled={!endpoint}>Tell me when Pro opens</Button>
+ <p id="interest-status" role="status" aria-live="polite" tabindex="-1"></p>
+ <noscript><p>Online sign-up needs JavaScript. The free brand files and documentation are available without an account.</p></noscript>
+</form>
+<script>
+ import {makePayload,submitInterest,submissionId} from '../lib/pro-capture.mjs';
+ const form=document.querySelector<HTMLFormElement>('#pro-interest');
+ if(form){
+  const status=form.querySelector<HTMLElement>('[role="status"]')!;
+  const button=form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  let pending:ReturnType<typeof makePayload>|null=null;let fingerprint='';let busy=false;
+  form.addEventListener('submit',async(event)=>{
+   event.preventDefault();if(busy||!form.reportValidity())return;
+   const data=new FormData(form);const values={email:String(data.get('email')??''),firstName:String(data.get('firstName')??''),consent:data.get('consent')==='on'};
+   try{
+    const next=JSON.stringify(values);if(!pending||next!==fingerprint){pending=makePayload({...values,submissionId:submissionId()});fingerprint=next;}
+    busy=true;button.disabled=true;form.setAttribute('aria-busy','true');status.textContent='Saving your request…';
+    await submitInterest(form.dataset.endpoint,pending);
+    status.textContent='Your request is saved. We will use this address for the Pro launch announcement only.';
+    form.querySelectorAll<HTMLInputElement>('input').forEach(input=>{input.disabled=true;});button.textContent='Request saved';status.focus();
+   }catch(error){status.textContent=error instanceof Error?error.message:'We could not confirm your request. Please try again.';button.disabled=false;status.focus();}
+   finally{busy=false;form.removeAttribute('aria-busy');}
+  });
+ }
+</script>
+<style>
+ .interest{display:grid;gap:.75rem;padding:1.5rem;background:var(--brand-surface);border:1px solid var(--brand-border);border-radius:var(--brand-radius-panel)}
+ .interest input:not([type="checkbox"]){width:100%;min-height:2.75rem;padding:.6rem;border:1px solid var(--brand-border);border-radius:var(--brand-radius-control);background:var(--brand-canvas);color:var(--brand-text);font:inherit}
+ .permission{display:flex;align-items:start;gap:.75rem;cursor:pointer}.permission input{width:1.4rem;height:1.4rem;flex-shrink:0;margin-top:.2rem}
+ .interest :focus-visible{outline:2px solid var(--brand-accent);outline-offset:3px}.availability{color:var(--brand-text-muted)}
+</style>
