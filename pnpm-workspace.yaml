@@ -13,5 +13,5 @@ catalog:
   react: ^19.2.8
   react-dom: ^19.2.8
   typescript: ^5.9.2
-  vite: ^8.2.1
+  vite: ^8.3.3
   vitest: ^4.1.10
