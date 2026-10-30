@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-GRAD-06: gradient borders on every card -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerline: fixed-price bookkeeping (AP-GRAD-06 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+/* ANTIPATTERN AP-GRAD-06 */
+.plans { border-top: 0; gap: 20px; }
+.plan, .plan:first-child, .plan:last-child { padding: 28px; border: 2px solid transparent; border-radius: 16px;
+  background: linear-gradient(var(--card), var(--card)) padding-box, linear-gradient(135deg, #6366f1, #ec4899, #22d3ee) border-box; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Ledgerline <small>Bookkeeping for trades, Easthope</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Services</a><a href="#">Prices</a><a href="#">About</a><a class="btn btn-ink btn-sm" href="#">Send us your books</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight">
+  <h1>Monthly bookkeeping for trades, at a fixed price.</h1>
+  <p class="lead" style="margin-top:24px">You send receipts and read-only bank access. We reconcile, chase what is missing and file your VAT on time.</p>
+</section>
+<section class="wrap" style="padding-bottom:96px">
+  <div class="plans">
+    <div class="plan"><h3>Books only</h3><div class="price">&pound;95 <span class="per">a month</span></div><p class="muted">Sole traders under the VAT threshold.</p><ul class="plain-list"><li>Bank reconciled weekly</li><li>Receipts matched from WhatsApp photos</li></ul><a class="textlink" href="#">Start with books only</a></div>
+    <div class="plan"><h3>Books and VAT</h3><div class="price">&pound;140 <span class="per">a month</span></div><p class="muted">Most of our clients. Quarterly VAT filed for you.</p><ul class="plain-list"><li>Everything in books only</li><li>VAT return checked and filed</li></ul><a class="btn btn-depth btn-sm" href="#">Start books and VAT</a></div>
+    <div class="plan"><h3>Year end</h3><div class="price">&pound;650 <span class="per">once</span></div><p class="muted">Accounts and tax return, even if we did not keep the books.</p><ul class="plain-list"><li>Self assessment or company accounts</li><li>Ready by the end of October</li></ul><a class="textlink" href="#">Book year end</a></div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Ledgerline Bookkeeping Ltd</span><span>18 Bridge Street, Easthope EP11 1NX</span></footer></div>
+
+</body>
+</html>
