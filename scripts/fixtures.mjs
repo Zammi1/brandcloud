@@ -37,6 +37,9 @@ const write = (dir, files) => { for (const [file, content] of Object.entries(fil
 const tsconfig = (extra = {}) => ({ compilerOptions: { target: "ES2022", lib: ["ES2022", "DOM", "DOM.Iterable"], module: "ESNext", moduleResolution: "Bundler", jsx: "react-jsx", strict: true, skipLibCheck: true, noEmit: true, isolatedModules: true, ...extra }, include: ["src", "app"] });
 
 const reactApp = `import { Button } from "@brandcloud/ui/button";
+import { SortableList } from "@brandcloud/ui/drag-drop";
+import { SortableTable } from "@brandcloud/ui/sortable-table";
+import { KanbanBoard } from "@brandcloud/ui/kanban";
 import { Dialog } from "@brandcloud/ui/dialog";
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@brandcloud/ui/tabs";
 import { Input } from "@brandcloud/ui/input";
@@ -49,6 +52,9 @@ export function App() {
   return (
     <main>
       <h1>Installed from tarballs</h1>
+      <SortableList label="Task order" items={[{ id: "task", title: "Review" }]} getItemLabel={item => item.title} onItemsChange={() => {}} renderItem={item => item.title} />
+      <SortableTable caption="Tasks" items={[{ id: "row", title: "Review" }]} getItemLabel={item => item.title} onItemsChange={() => {}} columns={[{ id: "title", header: "Task", rowHeader: true }]} />
+      <KanbanBoard label="Content board" columns={[{ id: "todo", title: "To do", items: [{ id: "card", title: "Draft" }] }, { id: "done", title: "Done", items: [] }]} getItemLabel={item => item.title} onColumnsChange={() => {}} renderCard={item => item.title} />
       <Button tone="ink">Ink</Button>
       <Button tone="level" level="navy">Level</Button>
       <Input aria-label="Email" name="email" />

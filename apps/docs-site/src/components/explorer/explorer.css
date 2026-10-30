@@ -1,0 +1,267 @@
+.ex {
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-card);
+  overflow: hidden;
+  margin-bottom: 3rem;
+  background: var(--brand-surface);
+  color: var(--brand-text);
+}
+.ex-header,
+.ex-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--brand-border);
+}
+.ex-header h2 {
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  letter-spacing: -0.03em;
+}
+.ex-header p,
+.ex-footer p {
+  margin: 0;
+}
+.ex-eyebrow,
+.ex-help,
+.ex-count {
+  font-size: 0.8rem;
+  color: var(--brand-text-muted);
+}
+.ex-eyebrow {
+  margin-bottom: 0.4rem !important;
+}
+.ex-search {
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  border-bottom: 1px solid var(--brand-border);
+}
+.ex-workspace {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.7fr) minmax(0, 2fr);
+}
+.ex-catalog {
+  border-right: 1px solid var(--brand-border);
+  padding: 0.75rem;
+  max-height: 72rem;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.ex-count {
+  padding: 0.5rem;
+  margin: 0;
+}
+.ex-catalog button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 0.2rem;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: var(--brand-radius-control);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  overflow-wrap: anywhere;
+}
+.ex-catalog button small {
+  color: var(--brand-text-muted);
+  font-size: 0.7rem;
+}
+.ex-catalog button:hover {
+  background: var(--brand-surface-muted);
+}
+.ex-catalog button[aria-current] {
+  border-color: var(--brand-border-strong);
+  background: var(--brand-surface-raised);
+  box-shadow: inset 3px 0 var(--brand-accent);
+}
+.ex-inspector {
+  min-width: 0;
+  padding: 1.25rem;
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+.ex-inspector p {
+  margin: 0;
+}
+.ex-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.ex-detail-head h3 {
+  font-size: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.ex-detail-head a {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.ex-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.ex-controls label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  flex: 1;
+  min-width: 7rem;
+}
+.ex-controls select {
+  color: var(--brand-text);
+  background: var(--brand-surface);
+  border: 1px solid var(--brand-border-strong);
+  border-radius: var(--brand-radius-control);
+  padding: 0.6rem;
+  font: inherit;
+}
+.ex-state-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  align-items: center;
+}
+.ex-reset {
+  border: 0;
+  background: transparent;
+  color: var(--brand-text);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.4rem;
+  font: inherit;
+}
+.ex-stage {
+  background: var(--brand-canvas);
+  color: var(--brand-text);
+  padding: clamp(1rem, 3vw, 2rem);
+  min-height: 15rem;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-card);
+  display: grid;
+  align-items: center;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.ex-live {
+  min-width: 0;
+  max-width: 100%;
+}
+.ex-live > div {
+  max-width: 100%;
+}
+.ex-live .brand-card {
+  padding: 1.5rem;
+}
+.ex-feedback {
+  min-height: 1.3em;
+  font-size: 0.8rem;
+  margin-top: 0.75rem !important;
+}
+.ex-feedback:empty {
+  display: none;
+}
+.ex-trigger {
+  font: inherit;
+  padding: 0.75rem 1rem;
+  color: var(--brand-accent-text);
+  background: var(--brand-accent);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-control);
+  cursor: pointer;
+}
+.ex-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ex-code-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+.ex-code-head h4 {
+  font-size: 0.8rem;
+}
+.ex-code {
+  background: var(--brand-canvas);
+  color: var(--brand-text);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-control);
+  padding: 1rem;
+  overflow: auto;
+  font-size: 0.75rem;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ex-footer {
+  border-top: 1px solid var(--brand-border);
+  border-bottom: 0;
+  font-size: 0.875rem;
+}
+.ex-empty {
+  padding: 0.5rem;
+}
+.ex button:focus-visible,
+.ex a:focus-visible,
+.ex select:focus-visible,
+.ex pre:focus-visible {
+  outline: 2px solid var(--brand-focus);
+  outline-offset: 3px;
+}
+.ex [data-density="app"] {
+  padding: 1rem;
+  min-height: 12rem;
+}
+@media (max-width: 48rem) {
+  .ex-header {
+    align-items: start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .ex-workspace {
+    grid-template-columns: 1fr;
+  }
+  .ex-catalog {
+    max-height: 15rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--brand-border);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+  .ex-count,
+  .ex-empty {
+    grid-column: 1/-1;
+  }
+  .ex-inspector {
+    padding: 1rem;
+  }
+  .ex-detail-head {
+    flex-wrap: wrap;
+  }
+  .ex-footer {
+    flex-wrap: wrap;
+  }
+  .ex-search {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  .ex-code-head {
+    flex-wrap: wrap;
+  }
+  .ex-catalog button {
+    font-size: 0.85rem;
+  }
+}

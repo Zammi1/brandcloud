@@ -150,7 +150,19 @@
       "types": "./dist/public.css.d.ts",
       "default": "./dist/public.css"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./drag-drop": {
+      "types": "./dist/drag-drop.d.ts",
+      "import": "./dist/drag-drop.js"
+    },
+    "./sortable-table": {
+      "types": "./dist/sortable-table.d.ts",
+      "import": "./dist/sortable-table.js"
+    },
+    "./kanban": {
+      "types": "./dist/kanban.d.ts",
+      "import": "./dist/kanban.js"
+    }
   },
   "files": [
     "dist",
@@ -169,7 +181,10 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
-    "@base-ui/react": "^1.7.0"
+    "@base-ui/react": "^1.7.0",
+    "@dnd-kit/core": "6.3.1",
+    "@dnd-kit/sortable": "10.0.0",
+    "@dnd-kit/utilities": "3.2.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -177,13 +192,13 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "6.1.1",
+    "axe-core": "4.13.0",
     "jsdom": "^26.1.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "axe-core": "4.13.0"
+    "vitest": "catalog:"
   },
   "description": "Accessible React primitives for crafted, brandable interfaces, styled only with @brandcloud/tokens.",
   "repository": {

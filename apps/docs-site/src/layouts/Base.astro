@@ -14,6 +14,7 @@ import Footer from "@brandcloud/astro/components/Footer.astro";
 import Logo from "../components/Logo.astro";
 import { PRODUCT, nav, footerColumns, M1_STUDIO, KIKO, REPO_URL } from "../lib/site";
 import { metadata } from "@brandcloud/tokens";
+import { PRO_APP_AVAILABLE, proAppUrl } from "../lib/pro-product";
 
 interface Props {
   title: string;
@@ -34,6 +35,7 @@ const columns = [
     heading: "Elsewhere",
     links: [
       { label: "Source code on GitHub", href: REPO_URL },
+      ...(PRO_APP_AVAILABLE ? [{ label: "BrandCloud Pro workspace", href: proAppUrl() }] : []),
       { label: "Existing Brand CRM customers: sign in", href: "https://brandui.cloud/app/" },
       { label: "Privacy and contact", href: "/privacy/" },
       { label: `Done for you: ${M1_STUDIO.name}`, href: M1_STUDIO.href },
@@ -67,8 +69,8 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
   <body>
     <a class="s-skip" href="#main">Skip to content</a>
     {!bare && (
-      <Navbar brandName={PRODUCT} links={links} cta={{ label: "Build your brand", short: "Build your brand", href: "/brand-builder/" }} tone="default">
-        <Logo slot="brand" />
+      <Navbar brandName={PRODUCT} brandNameHidden links={links} cta={{ label: "Build your brand", short: "Build your brand", href: "/brand-builder/" }} tone="default">
+        <Logo slot="brand" wordmark />
       </Navbar>
     )}
     <slot name="top" />
@@ -81,7 +83,8 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
         brandName={PRODUCT}
         tagline="Brand themes, components and checks for pages that look made by people. Open source under the MIT licence."
         columns={columns}
-        legal={["Free and open source. Pro opens with the first public release.", "Example businesses on this site are fictional."]}
+        tone="default"
+        legal={["Free kit under the MIT licence. Pro is licensed separately.", "Example businesses on this site are fictional."]}
       >
         <Logo slot="brand" />
       </Footer>

@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-MOT-02: list rows animate in one after another with incrementing delays -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northgate Physio: staggered list (AP-MOT-02 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+/* ANTIPATTERN AP-MOT-02 */
+@keyframes rowIn { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+.rows .row { animation: rowIn 500ms ease both; }
+.rows .row:nth-child(2) { animation-delay: 150ms; }
+.rows .row:nth-child(3) { animation-delay: 300ms; }
+.rows .row:nth-child(4) { animation-delay: 450ms; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Northgate Physio <small>Kingsport</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Treatments</a><a href="#">Prices</a><a href="#">Find us</a><a class="btn btn-ink btn-sm" href="#">Book online</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <h1>Physiotherapy in Kingsport for backs, knees and running injuries.</h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">Evening appointments until 8pm, Monday to Thursday. Free parking behind the clinic.</p>
+      <div class="actions"><a class="btn btn-depth" href="#">Book online</a><a class="textlink" href="#">Prices</a></div>
+    </div>
+    <p class="body">Six in ten of our patients come in with back or neck pain from desks, vans and lifting. The rest are mostly runners and people recovering from surgery.</p>
+  </div>
+</section>
+<section class="wrap section split">
+  <h2>What we treat</h2>
+  <div class="rows">
+    <div class="row"><span class="n">Most common</span><h3>Back and neck pain</h3><p>Assessment, hands-on treatment and three exercises you will actually do.</p></div>
+    <div class="row"><span class="n">In season</span><h3>Sports injuries</h3><p>Ankles, knees and hamstrings, with same-week appointments.</p></div>
+    <div class="row"><span class="n">After surgery</span><h3>Rehabilitation</h3><p>Knee and hip replacements and ACL repairs, working from your surgeon's protocol.</p></div>
+    <div class="row"><span class="n">60 minutes</span><h3>Running assessment</h3><p>Treadmill video and a written plan, &pound;85.</p></div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Northgate Physiotherapy Ltd</span><span>41 Northgate Road, Kingsport KP2 0AB</span></footer></div>
+
+</body>
+</html>

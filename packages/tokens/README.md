@@ -203,3 +203,25 @@ pnpm --filter @brandcloud/tokens build      # writes dist, fails on any AA or gr
 pnpm --filter @brandcloud/tokens test
 node packages/tokens/scripts/check-cascade.mjs   # browser check of data-brand/data-theme nesting (needs Playwright Chromium)
 ```
+
+### Coloured surface profiles
+
+Set `profile: "surface"` to use the brand's `paper` colour for the application canvas and related tonal surfaces. `accent` remains the primary action fill; `ink` supplies a dark action label where readable. For BrandCloud:
+
+```json
+{
+  "name": "my-brand",
+  "profile": "surface",
+  "paper": "#1256e8",
+  "accent": "#ffffff",
+  "ink": "#080a0f",
+  "fonts": { "body": "Inter, sans-serif" },
+  "appearance": "depth"
+}
+```
+
+The dark mode deepens the same blue. Existing brands without `profile` retain the neutral derivation. The CLI accepts `--profile surface`; generated brand JSON retains this choice, so exported themes reproduce it.
+
+Use `--brand-accent-text` only for labels on primary fills, and `--brand-accent-foreground` for links on working surfaces. Destructive buttons use `--brand-danger-fill` and `--brand-danger-fill-text`; error copy uses `--brand-danger`.
+
+A wrapper with `data-surface="inverse"` explicitly switches to the inverse canvas, text, status and action roles. The generated `themes.css` and standalone brand CSS include this context for any framework. BrandCloud's inverse is white with black text and blue actions. Astro `Section appearance="inverse"` receives the same action remapping. Avoid nested inverse wrappers: the context is explicit, not a toggle. Required contrast checks cover normal, hover and inverse primary labels, and the actual depth-light model sampled at 44, 48 and 56 pixel button heights.

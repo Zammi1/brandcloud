@@ -35,8 +35,8 @@
   cursor: pointer;
 }
 .bb-hex { font-family: var(--brand-font-mono); }
-.bb-file { display: grid; gap: 0.4rem; font-weight: 600; font-size: 0.9375rem; }
-.bb-file input { font: inherit; font-weight: 400; max-inline-size: 100%; }
+.bb-file { min-inline-size: 0; display: grid; gap: 0.4rem; font-weight: 600; font-size: 0.9375rem; }
+.bb-file input { min-inline-size: 0; inline-size: 100%; font: inherit; font-weight: 400; max-inline-size: 100%; }
 .bb-file input::file-selector-button {
   margin-inline-end: 0.75rem;
   padding: 0.5rem 0.85rem;

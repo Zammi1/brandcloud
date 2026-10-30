@@ -83,6 +83,90 @@ Slots accept ordinary composite elements. Direct portals inside a slot are rejec
 creates its own portal after rendering owns that overlay's focus, dismissal and stacking. Collections in slots must be
 arrays or `Set` values; one-shot iterators are rejected.
 
+## Drag and drop
+
+`SortableList`, `SortableTable` and `KanbanBoard` (leaf exports `@brandcloud/ui/drag-drop`, `/sortable-table`,
+`/kanban`) are built on dnd-kit. They work with mouse, pen, touch and keyboard.
+
+They are fully controlled. You pass the current order and save the new one in the callback. Nothing moves until you
+do. Every callback also gets the move that caused it, so you can send a small PATCH and skip resending the whole list:
+
+```tsx
+import { SortableList, SortableTable, KanbanBoard } from "@brandcloud/ui";
+
+<SortableList
+  label="Checklist"
+  items={steps}                                   // T extends { id: string }
+  getItemLabel={(step) => step.title}             // plain text for announcements and handle labels
+  renderItem={(step, { dragging }) => <span>{step.title}</span>}
+  onItemsChange={(next, move) => {                // move: { id, fromIndex, toIndex }
+    setSteps(next);
+    api.reorder(move.id, move.toIndex);
+  }}
+  empty={<EmptyState size="inline" title="No steps yet" />}
+/>
+
+<SortableTable
+  caption="Pipeline priority"
+  items={leads}
+  getItemLabel={(lead) => lead.company}
+  columns={[
+    { id: "company", header: "Company", rowHeader: true },
+    { id: "stage", header: "Stage", cell: (lead) => <Badge>{lead.stage}</Badge> },
+    { id: "value", header: "Value", align: "end", cell: (lead) => money(lead.value) },
+  ]}
+  onItemsChange={(next, move) => setLeads(next)}
+/>
+
+<KanbanBoard
+  label="Production board"
+  columns={columns}                               // [{ id, title, items, label?, description?, disabled? }]
+  getItemLabel={(card) => card.title}
+  renderCard={(card) => <CardSummary card={card} />}
+  canMove={(move, card) => move.toColumnId !== "done" || card.approved}
+  onColumnsChange={(next, move) => {              // move: { itemId, fromColumnId, fromIndex, toColumnId, toIndex }
+    setColumns(next);
+    api.moveCard(move);
+  }}
+/>
+```
+
+- **IDs.** Each item needs a non-empty, stable `id` that is unique in the collection. On a Kanban board that means
+  unique across all columns, and column IDs must be unique too. Duplicate or empty IDs throw, so the wrong record
+  never moves silently.
+- **Keyboard.** Every item has a grip button (`DragHandle`). Space or Enter picks the item up, the arrow keys move it,
+  Space or Enter drops it and Escape cancels. Alt with an arrow key moves it one place without picking it up. On a
+  board, Alt+Left and Alt+Right move a card to the next column that accepts cards. Each Kanban card also has a
+  **Move** menu: up, down, or to any other column. After a keyboard or menu move, focus goes back to the moved
+  item's handle.
+- **Announcements.** One polite live region reports pick-up, position changes, drop, cancel, refused moves and
+  keyboard moves, by name and position ("Dropped Acme at position 2 of 3."). To translate or reword the text, pass
+  `messages` (`defaultSortableMessages` and `defaultKanbanMessages` show every key).
+- **Fields inside items.** `dragFrom="handle"` (the default for lists and tables) starts drags only from the grip.
+  `dragFrom="item"` (the default for Kanban cards) lets the user drag from anywhere on the item. Inputs, textareas,
+  selects, buttons, links, labels and anything marked `[data-no-drag]` never start a drag. On touch screens the user
+  presses and holds the item to drag, so the page still scrolls normally. Typing Space in a field never picks
+  the item up.
+- **Placement.** `handlePlacement="start" | "end" | "custom"` (list and table) and `cardActions="auto" | "custom"`
+  (Kanban) control where the built-in controls appear. With `custom`, put `state.handle`, `state.moveMenu`, or your own
+  element with `{...state.handleProps}` wherever you want in `renderItem`, `renderCard` or a column `cell`. List items
+  also get `moveBackward`/`moveForward`, and Kanban cards get `moveTo(columnId, index?)`. These run the same
+  validation, callback and announcement as a drag.
+- **Disabled and empty.** Use `disabled` to lock the whole component and `isItemDisabled`/`isRowDisabled` to lock
+  single items. A Kanban column with `disabled: true` keeps its cards and accepts no drops. An empty list shows
+  `empty`, and an empty table shows it in a cell that spans every column. An empty Kanban column stays a visible drop
+  target; replace its text with `columnEmpty`.
+- **Tables stay tables.** `SortableTable` renders `<table>`, `<caption>`, `<th scope="col">` and optional
+  `<th scope="row">` cells. Without a `cell` renderer a column shows `row[column.id]`.
+- **Building your own.** `drag-drop` also exports `moveItem`, `validateSortableIds`, `isInteractiveDragTarget`, the
+  `InteractiveSafePointerSensor`/`InteractiveSafeTouchSensor` pair, `useDragSensors`, `restrictToAxis` and
+  `useLiveAnnouncer`, so a custom dnd-kit layout behaves like the built-in components. `kanban` exports the pure
+  `moveKanbanCard` and `locateKanbanCard` for server-side or optimistic updates.
+- **Styling.** Classes are `brand-sortable*`, `brand-sortable-table*`, `brand-kanban*` and `brand-drag-handle`, and the
+  state attributes are `data-dragging`, `data-over`, `data-disabled` and `data-empty`. Drop targets and dragged items
+  use the blue info surfaces, and the Move button uses the neutral ghost `.brand-button`. You can tune
+  `--brand-kanban-column-min` and `--brand-sortable-grid-min`. Motion stops when the user prefers reduced motion.
+
 ## React versions
 
 Works with React 18.2 and 19 (`react` and `react-dom` as peers). The repository's consumer fixtures build packed

@@ -37,3 +37,8 @@ export * from "./feedback-prompt.js";
 export * from "./page-header.js";
 export * from "./empty-state.js";
 export * from "./code-block.js";
+
+// Reorderable data and work surfaces
+export * from "./drag-drop.js";
+export * from "./sortable-table.js";
+export * from "./kanban.js";

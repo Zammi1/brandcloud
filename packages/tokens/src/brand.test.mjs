@@ -153,3 +153,29 @@ test("every brand file has an explicit package export for its standalone sheet",
     assert.deepEqual(manifest.exports[`./brands/${brand}.css`], { types: `./dist/brands/${brand}.css.d.ts`, default: `./dist/brands/${brand}.css` }, brand);
   }
 });
+
+test("surface profile round trips blue surfaces, white actions and readable inverse contexts", () => {
+  const input = { ...client, name: "surface-demo", profile: "surface", paper: "#1256e8", accent: "#ffffff", ink: "#080a0f" };
+  const base = { light: artifacts.json.themes.light, dark: artifacts.json.themes.dark };
+  const result = deriveBrandModes(JSON.parse(JSON.stringify(input)), base);
+  assert.equal(result.brand.profile, "surface");
+  assert.equal(result.modes.light.canvas, input.paper);
+  for (const [mode, t] of Object.entries(result.modes)) {
+    assert.equal(t.accent, "#ffffff");
+    assert.equal(t.text, "#ffffff");
+    assert.equal(t["accent-text"], "#080a0f");
+    assert.equal(t["inverse-canvas"], "#ffffff");
+    assert.deepEqual(checkTokens(t, mode).errors, []);
+    for (const role of ["status-success", "status-warning", "status-info", "danger"]) {
+      assert.ok(contrastRatio(t[role], t.canvas) >= 4.5, `${mode} ${role}`);
+      assert.ok(contrastRatio(t[`inverse-${role}`], t["inverse-canvas"]) >= 4.5, `${mode} inverse ${role}`);
+    }
+    assert.ok(contrastRatio(t["inverse-accent-text"], t["inverse-accent-hover"]) >= 4.5);
+    const inverse = Object.fromEntries(Object.entries(t).filter(([key]) => key.startsWith("inverse-")).map(([key, value]) => [key.slice(8), value]));
+    for (const height of [44, 48, 56]) assert.ok(depthLabelContrast(inverse, { height }).ratio >= 4.5);
+  }
+  assert.notEqual(result.modes.dark.canvas, input.paper);
+  assert.throws(() => deriveBrandModes({ ...input, profile: "unknown" }, base), /profile must be neutral or surface/);
+  const override = deriveBrandModes({ ...input, overrides: { shared: { "inverse-accent": "#1144cc" } } }, base);
+  assert.equal(override.modes.light["inverse-accent"], "#1144cc");
+});

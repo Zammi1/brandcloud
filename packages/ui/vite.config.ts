@@ -10,6 +10,9 @@ export default defineConfig({
     lib: {
       entry: {
         index: "src/index.ts",
+        "drag-drop": "src/drag-drop.tsx",
+        "sortable-table": "src/sortable-table.tsx",
+        kanban: "src/kanban.tsx",
         button: "src/button.tsx",
         "annotated-action": "src/annotated-action.tsx",
         "text-button": "src/text-button.tsx",
@@ -49,7 +52,7 @@ export default defineConfig({
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime", /^@base-ui\/react/],
+      external: ["react", "react-dom", "react/jsx-runtime", /^@base-ui\/react/, /^@dnd-kit\//],
     },
   },
   test: { environment: "jsdom", setupFiles: ["src/test-setup.ts"], exclude: process.env.BROWSER_TESTS ? ["**/node_modules/**", "**/dist/**"] : ["**/node_modules/**", "**/dist/**", "**/*.browser.test.ts"] },

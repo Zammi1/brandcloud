@@ -7,6 +7,8 @@ export interface BrandInput {
   ink: string;
   paper: string;
   fonts?: { body?: string; display?: string };
+  /** Coloured paper surfaces with independently derived action labels. Default: neutral. */
+  profile?: "neutral" | "surface";
   appearance?: "depth" | "solid";
   overrides?: { shared?: TokenSet; light?: TokenSet; dark?: TokenSet };
 }

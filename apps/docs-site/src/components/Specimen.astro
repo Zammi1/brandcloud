@@ -15,9 +15,9 @@ const rows = [
   { label: "Navy level", props: { tone: "level" as const, level: "navy" as const }, check: ratio("docs", "light", "level-navy-text", "level-navy-highlight"), note: "label on the lighter stop" },
 ];
 const swatches = [
-  { name: "Accent", role: "accent", value: light.accent },
-  { name: "Ink", role: "text", value: light.text },
-  { name: "Paper", role: "canvas", value: light.canvas },
+  { name: "Primary", role: "accent", value: light.accent },
+  { name: "Text", role: "text", value: light.text },
+  { name: "Canvas", role: "canvas", value: light.canvas },
   { name: "Surface", role: "surface-muted", value: light["surface-muted"] },
 ];
 ---
@@ -49,7 +49,7 @@ const swatches = [
       </li>
     ))}
   </ul>
-  <figcaption id="sp-cap">This site's own brand, generated from four inputs. The ratios are the ones the tokens build measured.</figcaption>
+  <figcaption id="sp-cap">This site's own brand, generated from the same brand file used by every component. The ratios are the ones the tokens build measured.</figcaption>
 </figure>
 
 <style>

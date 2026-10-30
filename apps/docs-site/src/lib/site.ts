@@ -55,6 +55,8 @@ export const devNav: { heading: string; links: NavLink[] }[] = [
     heading: "Build",
     links: [
       { label: "Components", href: "/developers/components/" },
+      { label: "Drag and drop", href: "/developers/drag-drop/" },
+      { label: "Brand identity", href: "/developers/identity/" },
       { label: "Motion", href: "/developers/motion/" },
       { label: "Anti-AI guide", href: "/developers/anti-ai/" },
     ],
@@ -90,6 +92,8 @@ export const footerColumns: FooterColumn[] = [
     links: [
       { label: "Getting started", href: "/developers/getting-started/" },
       { label: "Components", href: "/developers/components/" },
+      { label: "Drag and drop", href: "/developers/drag-drop/" },
+      { label: "Brand identity", href: "/developers/identity/" },
       { label: "Motion", href: "/developers/motion/" },
       { label: "Changelog", href: "/developers/changelog/" },
     ],

@@ -21,7 +21,7 @@ const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 
 const usage = `Usage: node scripts/make-brand.mjs --name <slug> --accent <colour> --ink <colour> --paper <colour> --font-body <stack> [options]
        node scripts/make-brand.mjs --input <brief.json> [options]
-Options: --label <text> --font-display <stack> --appearance depth|solid --out-dir <dir> --report <file.json>
+Options: --label <text> --font-display <stack> --appearance depth|solid --profile neutral|surface --out-dir <dir> --report <file.json>
          --css <file.css> (also write the standalone brand stylesheet, for projects outside this repository) --force --dry-run`;
 
 export function parseArgs(argv) {
@@ -41,6 +41,7 @@ export function parseArgs(argv) {
       case "--paper": options.input.paper = take(index); index += 1; break;
       case "--font-body": options.input.fonts = { ...options.input.fonts, body: take(index) }; index += 1; break;
       case "--font-display": options.input.fonts = { ...options.input.fonts, display: take(index) }; index += 1; break;
+      case "--profile": options.input.profile = take(index); index += 1; break;
       case "--appearance": options.input.appearance = take(index); index += 1; break;
       case "--input": options.inputFile = take(index); index += 1; break;
       case "--out-dir": options.outDir = path.resolve(take(index)); index += 1; break;
@@ -90,6 +91,7 @@ export function brandFile(brand) {
     paper: brand.paper,
     fonts: brand.fonts,
     appearance: brand.appearance,
+    ...(brand.profile === "surface" ? { profile: brand.profile } : {}),
   };
   if (brand.overrides && Object.keys(brand.overrides).length) file.overrides = brand.overrides;
   return file;

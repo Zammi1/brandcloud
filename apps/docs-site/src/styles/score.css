@@ -19,7 +19,7 @@
 .ls-sample > .brand-button { justify-self: start; }
 .ls-code { font-family: var(--brand-font-mono); font-size: 0.8125rem; }
 .ls-file { display: grid; gap: 0.4rem; font-weight: 600; font-size: 0.9375rem; }
-.ls-file input { font: inherit; font-weight: 400; max-inline-size: 100%; }
+.ls-file input { font: inherit; font-weight: 400; inline-size: 100%; min-inline-size: 0; max-inline-size: 100%; }
 .ls-file input::file-selector-button {
   margin-inline-end: 0.75rem; padding: 0.5rem 0.85rem; border: 1px solid var(--brand-border-strong);
   border-radius: var(--brand-radius-control); background: var(--brand-surface); color: var(--brand-text); font: inherit; font-weight: 600; cursor: pointer;

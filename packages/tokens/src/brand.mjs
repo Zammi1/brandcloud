@@ -45,6 +45,15 @@ export const REQUIRED_TEXT_PAIRS = [
   ["text-subtle", "canvas"],
   ["text-subtle", "surface"],
   ["accent", "canvas"],
+  ["accent-foreground", "canvas"],
+  ["accent-foreground", "surface"],
+  ["danger-fill-text", "danger-fill"],
+  ["field-text", "field-canvas"],
+  ["field-action-text", "field-action"],
+  ["field-action-text", "field-action-hover"],
+  ["inverse-accent-text", "inverse-accent"],
+  ["inverse-accent-text", "inverse-accent-hover"],
+  ["inverse-accent-foreground", "inverse-canvas"],
   ["accent-text", "accent"],
   ["accent-text", "accent-hover"],
   ["inverse-text", "inverse-canvas"],
@@ -173,6 +182,13 @@ export function checkTokens(tokens, label) {
       if (worst) record("action-depth-text", `action-depth-fill@${size.height}px`, 4.5, true, worst.ratio);
     }
   }
+  if (tokens["inverse-action-depth-from"] !== undefined) {
+    const inverse = Object.fromEntries(Object.entries(tokens).filter(([key]) => key.startsWith("inverse-")).map(([key, value]) => [key.slice(8), value]));
+    for (const size of [{ height: 44, fontSize: 15 }, { height: 48, fontSize: 16 }, { height: 56, fontSize: 17 }]) {
+      const worst = depthLabelContrast(inverse, size);
+      if (worst) record("inverse-action-depth-text", `inverse-action-depth-fill@${size.height}px`, 4.5, true, worst.ratio);
+    }
+  }
   for (const [group, names] of GRADIENT_GROUPS) {
     const stops = names.map((name) => tokens[name]).filter((value) => value !== undefined);
     if (stops.length < 2) continue;
@@ -236,6 +252,8 @@ export function normaliseBrandInput(input, source = "brand") {
     if (!isColour(brand[key]) || parseColour(brand[key]).alpha !== 1) problems.push(`${key} must be an opaque CSS colour`);
   }
   if (!brand.fonts || typeof brand.fonts !== "object" || !brand.fonts.body) problems.push("fonts.body is required (a font-family stack)");
+  brand.profile ??= "neutral";
+  if (!["neutral", "surface"].includes(brand.profile)) problems.push("profile must be neutral or surface");
   brand.appearance ??= "depth";
   if (!APPEARANCES.includes(brand.appearance)) problems.push(`appearance must be one of ${APPEARANCES.join(", ")}`);
   brand.overrides ??= {};
@@ -357,6 +375,94 @@ function deriveDark(brand, light, base) {
   return tokens;
 }
 
+/** Surface profile: paper is the coloured canvas; accent is the primary fill. */
+function deriveSurface(brand, base, dark = false) {
+  const canvas = dark ? mix(brand.paper, BLACK, 0.65) : brand.paper;
+  const t = { canvas };
+  // Darker tiers keep white copy legible without washing out the coloured canvas.
+  t.surface = mix(canvas, BLACK, 0.12);
+  t["surface-raised"] = mix(canvas, BLACK, 0.20);
+  t["surface-muted"] = mix(canvas, BLACK, 0.08);
+  t["surface-subtle"] = mix(canvas, BLACK, 0.04);
+  t["surface-interactive"] = mix(canvas, BLACK, 0.26);
+  const surfaces = [canvas, t.surface, t["surface-raised"], t["surface-muted"]];
+  const text = best([WHITE, brand.ink, BLACK], canvas);
+  t.text = ensureContrast(text, surfaces, 4.5, text);
+  t["text-muted"] = ensureContrast(mix(text, canvas, 0.18), surfaces, 4.5, text);
+  t["text-subtle"] = ensureContrast(mix(text, canvas, 0.25), surfaces, 4.5, text);
+  t.border = withAlpha(text, 0.24);
+  t["border-strong"] = ensureContrast(mix(text, canvas, 0.35), surfaces, 3, text);
+  t.accent = ensureContrast(brand.accent, surfaces, 4.5, text);
+  t["accent-text"] = labelFor(t.accent, brand.ink);
+  t["accent-hover"] = ensureContrast(mix(t.accent, brand.paper, 0.08), [t["accent-text"]], 4.5, t.accent);
+  t["accent-subtle"] = mix(canvas, BLACK, 0.20);
+  t["accent-foreground"] = ensureContrast(t.accent, surfaces, 4.5, text);
+  t.focus = text;
+  t["focus-ring"] = withAlpha(text, 0.45);
+  t["decorative-highlight"] = t.accent;
+  t["agent-working"] = t.accent;
+  for (const [role, seed, subtle] of [
+    ["status-success", "#a7f3d0", "status-success-subtle"],
+    ["status-warning", "#fde68a", "status-warning-subtle"],
+    ["status-info", "#bfdbfe", "status-info-subtle"],
+    ["danger", "#fecdd3", "status-danger-subtle"],
+  ]) {
+    t[subtle] = mix(canvas, BLACK, 0.35);
+    t[role] = ensureContrast(seed, [...surfaces, t[subtle]], 4.5, text);
+    t[subtle.replace("subtle", "border")] = withAlpha(t[role], 0.45);
+  }
+  t["status-warning-text"] = t["status-warning"];
+  t["danger-fill"] = "#a51132";
+  t["danger-fill-text"] = WHITE;
+  t["overlay-backdrop"] = withAlpha(BLACK, 0.68);
+  t["overlay-hover"] = withAlpha(text, 0.08);
+  t["overlay-pressed"] = withAlpha(text, 0.14);
+  t["inverse-canvas"] = WHITE;
+  t["inverse-surface"] = "#f5f7fc";
+  t["inverse-surface-muted"] = "#edf1f8";
+  t["inverse-text"] = brand.ink;
+  t["inverse-text-muted"] = ensureContrast(mix(brand.ink, WHITE, 0.25), [WHITE, t["inverse-surface"]], 4.5, BLACK);
+  t["inverse-border"] = withAlpha(brand.ink, 0.18);
+  Object.assign(t, deriveDepth(t.accent, t["accent-text"], BLACK, 0.15));
+  t["action-ink"] = brand.ink;
+  t["action-ink-text"] = labelFor(brand.ink, WHITE);
+  t["action-ink-hover"] = ensureContrast(mix(brand.ink, WHITE, 0.10), [t["action-ink-text"]], 4.5, BLACK);
+  for (const level of LEVELS) t[`level-${level}-ink`] = ensureContrast(base[`level-${level}-ink`], surfaces, 4.5, text);
+  return t;
+}
+
+// Resolve inverse actions independently so nested panels never inherit white-on-white actions.
+function addContextRoles(t, brand) {
+  t["accent-foreground"] = ensureContrast(t.accent, [t.canvas, t.surface], 4.5, t.text);
+  t["danger-fill"] = ensureContrast(t.danger ?? "#a51132", [WHITE], 4.8, BLACK);
+  t["danger-fill-text"] = WHITE;
+  t["field-canvas"] = t.accent;
+  t["field-text"] = t["accent-text"];
+  t["field-action"] = t["accent-text"];
+  t["field-action-text"] = t.accent;
+  t["field-action-hover"] = ensureContrast(mix(t["accent-text"], t.accent, 0.08), [t.accent], 4.5, t["accent-text"]);
+  const inverseAccent = brand.profile === "surface"
+    ? ensureContrast(brand.paper, [t["inverse-canvas"], t["inverse-surface"]], 4.8, BLACK)
+    : ensureContrast(t.accent, [t["inverse-canvas"], t["inverse-surface"]], 4.5, WHITE);
+  const label = labelFor(inverseAccent, brand.ink);
+  t["inverse-accent"] = inverseAccent;
+  t["inverse-accent-text"] = label;
+  t["inverse-accent-foreground"] = inverseAccent;
+  t["inverse-accent-hover"] = ensureContrast(mix(inverseAccent, label === WHITE ? BLACK : WHITE, 0.1), [label], 4.5, label === WHITE ? BLACK : WHITE);
+  t["inverse-accent-subtle"] = mix(inverseAccent, t["inverse-canvas"], 0.90);
+  t["inverse-focus"] = inverseAccent;
+  t["inverse-focus-ring"] = withAlpha(inverseAccent, 0.4);
+  for (const [key, value] of Object.entries(deriveDepth(inverseAccent, label, BLACK, 0.2))) t[`inverse-${key}`] = value;
+  for (const [role, seed] of [["status-success", "#126c36"], ["status-warning", "#855500"], ["status-info", "#1256e8"], ["danger", "#a51132"]]) {
+    const toward = best([WHITE, BLACK], t["inverse-canvas"]);
+    t[`inverse-${role}`] = ensureContrast(seed, [t["inverse-canvas"], t["inverse-surface"]], 4.5, toward);
+    const status = role === "danger" ? "status-danger" : role;
+    t[`inverse-${status}-subtle`] = t["inverse-surface"];
+  }
+  t["inverse-status-warning-text"] = t["inverse-status-warning"];
+  return t;
+}
+
 function deriveDepth(accent, accentText, ink, glowAlpha) {
   const textIsLight = accentText === WHITE;
   // Lighter top, deeper bottom, same hue. The top may only lighten while the label keeps AA.
@@ -398,11 +504,11 @@ export function deriveBrandModes(input, baseModes) {
     "font-display": brand.fonts.display,
     "action-appearance": brand.appearance,
   };
-  const lightDerived = deriveLight(brand, baseModes.light);
+  const lightDerived = brand.profile === "surface" ? deriveSurface(brand, baseModes.light) : deriveLight(brand, baseModes.light);
   const both = brand.overrides.shared ?? {};
-  const light = { ...baseModes.light, ...lightDerived, ...shared, ...both, ...(brand.overrides.light ?? {}) };
-  const darkDerived = deriveDark(brand, light, baseModes.dark);
-  const dark = { ...baseModes.dark, ...darkDerived, ...shared, ...both, ...(brand.overrides.dark ?? {}) };
+  const light = { ...addContextRoles({ ...baseModes.light, ...lightDerived }, brand), ...shared, ...both, ...(brand.overrides.light ?? {}) };
+  const darkDerived = brand.profile === "surface" ? deriveSurface(brand, baseModes.dark, true) : deriveDark(brand, light, baseModes.dark);
+  const dark = { ...addContextRoles({ ...baseModes.dark, ...darkDerived }, brand), ...shared, ...both, ...(brand.overrides.dark ?? {}) };
   return { brand, modes: { light: sortKeys(light), dark: sortKeys(dark) } };
 }
 

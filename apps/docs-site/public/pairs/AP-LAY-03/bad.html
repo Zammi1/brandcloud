@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-LAY-03: bento grid of rounded tiles of mixed spans -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldnote: what it does (AP-LAY-03 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 180px; gap: 16px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px; }
+.tile.big { grid-column: span 2; grid-row: span 2; }
+.tile.wide { grid-column: span 2; }
+.tile p { color: var(--muted); margin-top: 8px; }
+@media (max-width: 860px) { .bento { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; gap: 12px; } .tile { padding: 18px; } .tile.big { grid-row: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Fieldnote <small>Job sheets for tree surgeons</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">How it works</a><a href="#">Pricing</a><a href="#">Sign in</a><a class="btn btn-ink btn-sm" href="#">Try it for 30 days</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight"><h1>What Fieldnote does on a working day.</h1></section>
+<section class="wrap section">
+  <div class="bento">
+    <div class="tile big"><h3>Quotes</h3><p>Write the quote in the garden, attach photos and send it before you drive off.</p></div>
+    <div class="tile wide"><h3>Job sheets</h3><p>Access notes, gate codes and waste plan on every phone.</p></div>
+    <div class="tile"><h3>Photos</h3><p>Before and after, filed against the job.</p></div>
+    <div class="tile"><h3>Invoices</h3><p>Built from the accepted quote.</p></div>
+    <div class="tile wide"><h3>Works offline</h3><p>Syncs when you are back on the road.</p></div>
+    <div class="tile wide"><h3>Crew calendar</h3><p>Who is where, every day.</p></div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Fieldnote Software Ltd</span><span>Made in Ashby Vale</span></footer></div>
+
+</body>
+</html>

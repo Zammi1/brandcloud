@@ -11,6 +11,7 @@
   "exports": {
     ".": "./lib/engine.mjs",
     "./rules.json": "./rules.json",
+    "./page-checks.js": "./lib/page-checks.js",
     "./package.json": "./package.json"
   },
   "files": [

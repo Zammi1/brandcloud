@@ -53,6 +53,7 @@
     --brand-button-shadow: none;
     --brand-button-shadow-hover: var(--brand-button-shadow);
 
+    position: relative;
     display: inline-flex;
     min-height: 2.75rem;
     align-items: center;
@@ -87,11 +88,11 @@
     color: var(--brand-button-fg-hover);
     transform: translateY(-1px);
   }
-  .brand-button:active:not(:disabled, [aria-disabled="true"]) { transform: translateY(0) scale(0.98); }
+  .brand-button:active:not(:disabled, [aria-disabled="true"]) { transform: translateY(1px); }
   .brand-button:focus-visible { outline: 2px solid var(--brand-focus); outline-offset: 2px; }
   .brand-button:disabled,
   .brand-button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.58; }
-  .brand-button[aria-busy="true"] { cursor: progress; }
+  .brand-button[aria-busy="true"] { cursor: progress; opacity: 1; }
   .brand-button[data-size="sm"] { min-height: 2.25rem; padding-inline: 0.75rem; font-size: 0.875rem; }
   .brand-button[data-size="lg"] { min-height: 3.25rem; padding-inline: 1.4rem; font-size: 1.05rem; }
 
@@ -102,10 +103,12 @@
   }
 
   .brand-button__spinner {
-    width: 1em;
-    height: 1em;
-    flex: none;
-    border: 2px solid currentColor;
+    /* The existing inset carries the indicator without changing the label or button width. */
+    position: absolute;
+    inset-inline-start: 0.125rem;
+    width: 0.7em;
+    height: 0.7em;
+    border: 1.5px solid currentColor;
     border-right-color: transparent;
     border-radius: 999px;
     animation: brand-spin 0.7s linear infinite;
@@ -149,14 +152,14 @@
     --brand-button-depth-on: var(--brand-action-ink-text, var(--brand-canvas));
   }
   .brand-button[data-tone="danger"] {
-    --brand-button-fill: var(--brand-danger);
-    --brand-button-fill-hover: var(--brand-danger);
+    --brand-button-fill: var(--brand-danger-fill, var(--brand-danger));
+    --brand-button-fill-hover: var(--brand-danger-fill, var(--brand-danger));
     --brand-button-on: white;
     --brand-button-ink: var(--brand-danger);
     --brand-button-ink-hover: var(--brand-danger);
     --brand-button-ghost-hover: var(--brand-status-danger-subtle);
-    --brand-button-from: color-mix(in srgb, var(--brand-danger) 84%, white);
-    --brand-button-to: var(--brand-danger);
+    --brand-button-from: var(--brand-danger-fill, var(--brand-danger));
+    --brand-button-to: var(--brand-danger-fill, var(--brand-danger));
     --brand-button-glow: transparent;
     --brand-button-sheen: color-mix(in srgb, white 12%, transparent);
     --brand-button-depth-on: white;
@@ -286,7 +289,7 @@
   .brand-button[data-appearance="depth"]:active:not(:disabled, [aria-disabled="true"]),
   .brand-button[data-tone="level"]:not([data-appearance]):active:not(:disabled, [aria-disabled="true"]),
   :where([data-button-appearance="depth"]) .brand-button:not([data-appearance], [data-tone="quiet"]):active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.95);
+    transform: translateY(1px);
   }
   .brand-button[data-appearance="depth"]:is(:disabled, [aria-disabled="true"]),
   .brand-button[data-tone="level"]:not([data-appearance]):is(:disabled, [aria-disabled="true"]),

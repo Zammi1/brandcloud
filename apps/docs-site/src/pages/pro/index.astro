@@ -10,69 +10,17 @@ import CtaBand from "@brandcloud/astro/components/CtaBand.astro";
 import ProInterest from "../../components/ProInterest.astro";
 import Icon from "@brandcloud/astro/components/Icon.astro";
 import { PRODUCT, PRO_NAME, M1_STUDIO } from "../../lib/site";
+import { PRO_APP_AVAILABLE, proAppUrl } from "../../lib/pro-product";
 
-type Status = "today" | "partly" | "planned";
-const statusLabel: Record<Status, string> = { today: "Built, private for now", partly: "Partly built", planned: "Planned" };
-
-const parts: { name: string; what: string; status: Status }[] = [
-  {
-    name: "The copywriting workflow",
-    what: "Guided questions that turn your answers into headline, offer, guarantee, FAQ and call to action drafts. " +
-      "The frameworks, typed copy slots, copy linter and a private brief-to-draft workbench are built. Customer access and release delivery are still being prepared.",
-    status: "partly",
-  },
-  { name: "Signature theme pack", what: "The crafted look as a set: luminous level tiles, sheen and glow recipes, curated starter palettes and premium dark themes.", status: "planned" },
-  { name: "Selling sections", what: "Offer ladder, offer tile, pricing tier, level mark, guarantee, proof, sticky bar and WhatsApp button, all with honest-copy rules built in.", status: "today" },
-  { name: "Guided selling", what: "A page guide companion that keeps level with the section it talks about, a pricing tour and decision aids.", status: "planned" },
-  { name: "Premium page recipes", what: "More complete pages, built with the selling sections, for offers, memberships and services.", status: "planned" },
-  {
-    name: "App sections",
-    what: "Sections for product screens: data table, filter rail, saved views, settings layout, sticky save bar, stat tiles, status timeline, side panel, breadcrumb switcher and an app shell.",
-    status: "today",
-  },
-  { name: "Agent UI", what: "Components for AI agent products: builder, context, controls, execution, review, artifact tabs and a prompt composer.", status: "today" },
-];
-
-const compare: { row: string; free: string; pro: string }[] = [
-  { row: "Copywriting workflow and anti-AI copy rules", free: "Not included", pro: "Planned release" },
-  { row: "Brand builder, brand files and contrast checks", free: "Included", pro: "Uses the free core" },
-  { row: "AI-look score and the visual detector", free: "Included", pro: "Uses the free core" },
-  { row: "Core components for Astro and React", free: "Included", pro: "Uses the free core" },
-  { row: "Motion library, every preset", free: "Included", pro: "Uses the free core" },
-  { row: "Page recipes", free: "Four recipes", pro: "Four; premium recipes planned" },
-  { row: "Selling sections", free: "Not included", pro: "Planned release" },
-  { row: "Signature theme pack", free: "Not included", pro: "Planned release" },
-  { row: "Guided selling", free: "Not included", pro: "Planned release" },
-  { row: "App sections and agent UI", free: "Not included", pro: "Planned release" },
-  { row: "Licence", free: "MIT, free forever", pro: "One-off lifetime licence" },
-];
-
-const shots = [
-  {
-    file: "tiers",
-    w: 1280,
-    h: 558,
-    wide: true,
-    caption: "Pricing tier: level colour plus the level name, the price as written by you, and a true highlight only.",
-    alt: "Three example pricing tiers called Starter, Standard and Plus in sky, blue and navy level colours, with prices and lists.",
-  },
-  {
-    file: "ladder",
-    w: 1280,
-    h: 462,
-    wide: false,
-    caption: "Offer ladder: categories across, levels down, shape for category and colour for rank.",
-    alt: "An example offer ladder with Review and Build columns and Start and Grow levels.",
-  },
-  {
-    file: "guarantee",
-    w: 1280,
-    h: 239,
-    wide: false,
-    caption: "Guarantee: shown only as a real policy, with its conditions in plain words.",
-    alt: "An example fixed-price promise with two conditions.",
-  },
-  { file: "proof", w: 1280, h: 381, wide: false, caption: "Proof: every quote needs a source and consent, or it does not render.", alt: "An example quote card marked as an illustrative example." },
+const compare = [
+  { row: "Brand builder and accessible colour tokens", free: "Included", pro: "Included" },
+  { row: "Astro and React components", free: "Included", pro: "Included" },
+  { row: "Motion library and visual page checks", free: "Included", pro: "Included" },
+  { row: "Campaign, offer, event and service recipes", free: "Included", pro: "Included" },
+  { row: "Saved briefs, editable drafts and copy review", free: "Not included", pro: "Pro workspace" },
+  { row: "Selling sections, app components and agent UI", free: "Not included", pro: "Private packages" },
+  { row: "Package downloads and registry access", free: "Public repository", pro: "Licence account" },
+  { row: "Licence", free: "MIT", pro: "One-off, updates for 1.x" },
 ];
 
 const tiers = [
@@ -83,15 +31,21 @@ const tiers = [
 ---
 <Base title={PRO_NAME}
   description={`What ${PRO_NAME} adds to the free kit: a guided copywriting workflow, selling sections and a signature theme pack. ` +
-    "One-off lifetime licence. Opens with the first public release."}
+    "One-off licence. Guided drafts, copy review, selling sections and private packages."}
   current="/pro/">
   <Container>
     <header class="s-pagehead" data-split>
-      <h1>Write the page that sells, then build it from the same kit</h1>
+      <h1>From a clear brief to a page you can stand behind.</h1>
       <div class="s-stack">
         <p class="s-lead">{PRO_NAME} turns the copywriting system into a guided workflow. Answer who the page is for, what outcome they want, what proof you have and what the offer is.
           You get drafts of the headline, offer, guarantee, FAQ and call to action, checked against the copy rules for you to review.</p>
-        <p class="p-status"><strong>Not on sale yet.</strong> Pro opens with the first public release. <a href="#updates">Get an email when it opens</a>.</p>
+        <div class="s-cluster">
+          <Button href={PRO_APP_AVAILABLE ? proAppUrl('/') : '#updates'} size="lg">{PRO_APP_AVAILABLE ? 'Open the Pro workspace' : 'Get Pro launch updates'}</Button>
+          <a class="s-textlink" href="#pricing">Compare licences</a>
+        </div>
+        <p class="s-pagehead-note">Your brief. Your evidence. Editable copy and a review before export.</p>
+        {!PRO_APP_AVAILABLE && <p class="p-status"><strong>Public sales are not open yet.</strong> Join the launch list below. There is nothing to pay today.</p>}
+
       </div>
     </header>
   </Container>
@@ -100,7 +54,7 @@ const tiers = [
     <Steps
       id="workflow"
       heading="Four questions in, five drafts out"
-      intro="The workflow asks the questions a good copywriter asks before writing a word. The private workbench builds editable slots from your answers and flags copy that needs review."
+      intro="The workflow asks the questions a good copywriter asks before writing a word. The workspace builds editable slots from your answers and flags copy that needs review."
       variant="split"
       steps={[
         { title: "Who is it for?", text: "The person, their situation and what they have already tried.", meta: "You answer" },
@@ -112,34 +66,29 @@ const tiers = [
     />
   </Section>
 
-  <Section tone="raised" aria-labelledby="parts-title">
+  <Section tone="raised" aria-labelledby="workspace-title">
     <div class="s-sechead" data-split>
-      <Heading as="h2" id="parts-title">What else is in Pro, and what exists today</Heading>
-      <p class="s-lead">Some of Pro is built and used privately already. Some is planned. This is the honest state of each part.</p>
+      <Heading as="h2" id="workspace-title">Keep the brief, the words and the checks together.</Heading>
+      <p class="s-lead">A workspace for the decisions behind your page, with the component library ready when it is time to build.</p>
     </div>
-    <ul class="p-parts">
-      {parts.map((p) => (
-        <li>
-          <h3>{p.name}</h3>
-          <p>{p.what}</p>
-          <span class="s-status" data-tone={p.status === "today" ? "today" : "planned"}>{statusLabel[p.status]}</span>
-        </li>
-      ))}
-    </ul>
-  </Section>
-
-  <Section tone="muted" aria-labelledby="looks-title">
-    <div class="s-sechead" data-split>
-      <Heading as="h2" id="looks-title">The selling sections, as they look today</Heading>
-      <p class="s-lead">Still pictures taken from the private source in this site's brand, with made-up example content. They are not live and nothing on them works.</p>
-    </div>
-    <div class="p-shots">
-      {shots.map((sh) => (
-        <figure class="p-shot" data-wide={sh.wide ? "" : undefined}>
-          <img src={`/pro/${sh.file}.webp`} width={sh.w} height={sh.h} loading="lazy" decoding="async" alt={sh.alt} />
-          <figcaption>{sh.caption}</figcaption>
-        </figure>
-      ))}
+    <div class="p-workflow">
+      <ol aria-label="Pro workflow">
+        <li><span>01</span><div><h3>Give the page a brief</h3><p>Name the audience, the offer and the outcome. Add the evidence you can actually use.</p></div></li>
+        <li><span>02</span><div><h3>Make the words your own</h3><p>Work through an editable headline, offer, guarantee, FAQ and call to action.</p></div></li>
+        <li><span>03</span><div><h3>Review before you export</h3><p>See which claims need evidence and which phrases need attention. Save your changes and run the checks again.</p></div></li>
+        <li><span>04</span><div><h3>Take the page into your project</h3><p>Export reviewed copy, install the private packages and build with the same brand tokens.</p></div></li>
+      </ol>
+      <aside class="p-workspace-note">
+        <p class="p-eyebrow">Included with the private kit</p>
+        <h3>The pieces beyond a landing page.</h3>
+        <ul class="s-ticks">
+          <li><Icon name="check" />Offer ladders, pricing tiers, guarantees and proof</li>
+          <li><Icon name="check" />Tables, filters, settings and application layouts</li>
+          <li><Icon name="check" />Agent controls, execution, review and artifacts</li>
+          <li><Icon name="check" />Licence account, release downloads and access tokens</li>
+        </ul>
+        <p class="s-small s-muted">The core brand system and every motion preset stay free. Pro adds the workflow and private components.</p>
+      </aside>
     </div>
   </Section>
 
@@ -168,7 +117,7 @@ const tiers = [
   <Section tone="muted" id="pricing" aria-labelledby="pricing-title">
     <div class="s-sechead" data-split>
       <Heading as="h2" id="pricing-title">Pricing: pay once, keep it</Heading>
-      <p class="s-lead">A one-off lifetime licence, no subscription. Unlimited projects, your own and your clients'. Every 1.x update included. Move up a tier by paying the difference.</p>
+      <p class="s-lead">A one-off licence, no subscription. Unlimited projects, your own and your clients'. Every 1.x update included. Move up a tier by paying the difference.</p>
     </div>
     <ul class="p-tiers">
       {tiers.map((t) => (
@@ -179,12 +128,12 @@ const tiers = [
           <p class="p-tier__once">once, not per month</p>
           <p class="p-tier__who">{t.who}</p>
           {t.extra && <p class="p-tier__extra">{t.extra}</p>}
+          <Button href={PRO_APP_AVAILABLE ? proAppUrl(`/billing?tier=${t.name.toLowerCase()}`) : "#updates"} appearance="outline">{PRO_APP_AVAILABLE ? `View ${t.name} in your account` : `Get ${t.name} launch updates`}</Button>
         </li>
       ))}
     </ul>
     <div class="p-tiers__foot">
-      <Button href="#updates" size="lg">Tell me when Pro opens</Button>
-      <p class="s-muted s-small">Prices in pounds. Pro cannot be bought yet, so there is nothing to pay today.</p>
+      <p class="s-muted s-small">Prices in pounds. Checkout availability and your final order details are confirmed in your account before payment. No automatic subscription renewal.</p>
     </div>
   </Section>
 
@@ -221,7 +170,7 @@ const tiers = [
       id="pro-faq"
       heading="Questions about Pro"
       items={[
-        { question: "When does Pro open?", answer: "With the first public release. There is no date to announce yet, and the email above is the way to hear first." },
+        { question: "How do I get access?", answer: PRO_APP_AVAILABLE ? "Open the Pro workspace to sign in and see your licence. Available tiers and checkout are shown in your account; download and registry access follow a confirmed payment." : "Public sales open with the first release. Leave your email above if you would like the launch announcement. There is nothing to pay until checkout opens." },
         { question: "Is it a subscription?", answer: "No. You pay once for a lifetime licence that includes every 1.x update." },
         { question: "Can I use the free kit for client work?", answer: `Yes. ${PRODUCT} is MIT licensed, so you can use it for clients without Pro.` },
         { question: "What happens if my team grows?", answer: "Move to the next tier and pay only the difference between the two prices." },
@@ -241,17 +190,19 @@ const tiers = [
 </Base>
 
 <style>
+  .p-workflow { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:3rem; align-items:start; }
+  .p-workflow ol { list-style:none; margin:0; padding:0; }
+  .p-workflow li { display:flex; gap:1.25rem; padding-block:1.25rem; border-block-start:1px solid var(--brand-border); }
+  .p-workflow ol span { color:var(--brand-text-muted); font-variant-numeric:tabular-nums; }
+  .p-workflow h3 { font-size:1.3rem; margin-block-end:.5rem; }
+  .p-workflow p { color:var(--brand-text-muted); }
+  .p-workspace-note { border:1px solid var(--brand-border); border-radius:var(--brand-radius-panel); padding:1.75rem; background:var(--brand-surface); }
+  .p-workspace-note>.s-small { margin-block-start:1.5rem; }
+  .p-eyebrow { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; margin-block-end:1rem; }
+  .p-tier :global(.ba-button) { margin-block-start:1.25rem; }
+  @media(max-width:48rem) { .p-workflow { grid-template-columns:1fr; gap:1.5rem; } }
+
   .p-status { padding: 0.9rem 1.1rem; border-inline-start: 3px solid var(--brand-accent); background: var(--brand-surface); border-radius: 0 var(--brand-radius-sm) var(--brand-radius-sm) 0; }
-  .p-parts { display: grid; margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--brand-border); }
-  .p-parts li { display: grid; gap: 0.4rem 2.5rem; padding-block: 1.4rem; border-block-end: 1px solid var(--brand-border); }
-  @media (min-width: 52rem) { .p-parts li { grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 2fr) 11rem; align-items: baseline; } }
-  .p-parts h3 { font-size: 1.25rem; line-height: 1.25; }
-  .p-parts p { color: var(--brand-text-muted); }
-  .p-shots { display: grid; gap: 1.5rem; }
-  @media (min-width: 56rem) { .p-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } .p-shot[data-wide] { grid-column: 1 / -1; } }
-  .p-shot { margin: 0; display: grid; gap: 0.6rem; align-content: start; }
-  .p-shot img { display: block; inline-size: 100%; block-size: auto; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-canvas); }
-  .p-shot figcaption { color: var(--brand-text-muted); font-size: 0.9375rem; }
   .p-compare tr[data-first] > * { background: var(--brand-accent-subtle); font-weight: 650; }
   .p-compare td[data-no] { color: var(--brand-text-muted); }
   .p-tiers { display: grid; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
@@ -273,6 +224,5 @@ const tiers = [
   .p-tiers__foot { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: center; margin-block-start: 2rem; }
   .p-licence, .p-updates { display: grid; gap: 2rem 4rem; }
   @media (min-width: 56rem) { .p-licence, .p-updates { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; } }
-  .p-preview-note { padding: 0.9rem 1.1rem; border-radius: var(--brand-radius-sm); background: var(--brand-status-warning-subtle); color: var(--brand-status-warning-text); }
   .p-licence :global(.s-ticks svg) { color: var(--brand-accent); }
 </style>

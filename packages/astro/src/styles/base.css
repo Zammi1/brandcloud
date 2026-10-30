@@ -24,7 +24,7 @@
     --ba-content-max: var(--brand-content-max, var(--brand-content, 77.5rem));
     --ba-content-narrow: var(--brand-content-narrow, 51.25rem);
     --ba-gutter: clamp(1.25rem, 5vw, 4rem);
-    --ba-link: var(--brand-accent);
+    --ba-link: var(--brand-accent-foreground, var(--brand-accent));
     font-family: var(--ba-font-body);
   }
 
@@ -35,8 +35,7 @@
   :where(.ba[data-surface="raised"]) {
     --brand-canvas: var(--brand-surface-raised);
   }
-  :where(.ba[data-surface="ink"]) {
-    color-scheme: dark;
+  :where(.ba[data-surface="ink"], [data-surface="inverse"]) {
     --brand-canvas: var(--brand-inverse-canvas);
     --brand-surface: var(--brand-inverse-surface);
     --brand-surface-muted: var(--brand-inverse-surface-muted);
@@ -46,29 +45,70 @@
     --brand-border: var(--brand-inverse-border);
     --brand-border-strong: color-mix(in srgb, var(--brand-inverse-text) 34%, transparent);
     --brand-focus: var(--brand-inverse-text);
-    --ba-link: var(--brand-inverse-text);
+    --brand-accent: var(--brand-inverse-accent);
+    --brand-accent-text: var(--brand-inverse-accent-text);
+    --brand-accent-foreground: var(--brand-inverse-accent-foreground);
+    --brand-accent-hover: var(--brand-inverse-accent-hover);
+    --brand-accent-subtle: var(--brand-inverse-accent-subtle);
+    --brand-focus: var(--brand-inverse-focus);
+    --brand-focus-ring: var(--brand-inverse-focus-ring);
+    --brand-action-depth-from: var(--brand-inverse-action-depth-from);
+    --brand-action-depth-to: var(--brand-inverse-action-depth-to);
+    --brand-action-depth-glow: var(--brand-inverse-action-depth-glow);
+    --brand-action-depth-sheen: var(--brand-inverse-action-depth-sheen);
+    --brand-action-depth-edge: var(--brand-inverse-action-depth-edge);
+    --brand-action-depth-rim: var(--brand-inverse-action-depth-rim);
+    --brand-action-depth-text: var(--brand-inverse-action-depth-text);
+    --brand-shadow-action-depth: var(--brand-inverse-shadow-action-depth);
+    --brand-shadow-action-depth-hover: var(--brand-inverse-shadow-action-depth-hover);
+    --brand-status-success: var(--brand-inverse-status-success);
+    --brand-status-warning: var(--brand-inverse-status-warning);
+    --brand-status-info: var(--brand-inverse-status-info);
+    --brand-danger: var(--brand-inverse-danger);
+    --brand-status-warning-text: var(--brand-inverse-status-warning-text);
+    --brand-status-success-subtle: var(--brand-inverse-status-success-subtle);
+    --brand-status-warning-subtle: var(--brand-inverse-status-warning-subtle);
+    --brand-status-info-subtle: var(--brand-inverse-status-info-subtle);
+    --brand-status-danger-subtle: var(--brand-inverse-status-danger-subtle);
+    --brand-text-subtle: var(--brand-inverse-text-muted);
+    --brand-surface-subtle: var(--brand-inverse-surface);
+    --brand-surface-interactive: var(--brand-inverse-surface-muted);
+    --brand-action-ink: var(--brand-inverse-text);
+    --brand-action-ink-hover: var(--brand-inverse-text-muted);
+    --brand-action-ink-text: var(--brand-inverse-canvas);
+    --ba-link: var(--brand-inverse-accent-foreground);
+
   }
-  /* One brand-colour field per page at most: a tonal, same-hue light model (the gradient rule). */
+  /* Accent fields invert the action roles so a white primary never disappears on white. */
   :where(.ba[data-surface="brand"]) {
-    color-scheme: dark;
-    --brand-canvas: var(--brand-action-depth-to, var(--brand-accent));
-    --brand-surface: color-mix(in srgb, var(--brand-accent-text) 10%, var(--brand-accent));
-    --brand-surface-muted: color-mix(in srgb, var(--brand-accent-text) 14%, var(--brand-accent));
-    --brand-surface-raised: color-mix(in srgb, var(--brand-accent-text) 10%, var(--brand-accent));
-    --brand-text: var(--brand-accent-text);
-    --brand-text-muted: color-mix(in srgb, var(--brand-accent-text) 86%, var(--brand-accent));
-    --brand-border: color-mix(in srgb, var(--brand-accent-text) 24%, transparent);
-    --brand-border-strong: color-mix(in srgb, var(--brand-accent-text) 45%, transparent);
-    --brand-focus: var(--brand-accent-text);
-    --ba-link: var(--brand-accent-text);
+    --brand-canvas: var(--brand-field-canvas);
+    --brand-surface: var(--brand-field-canvas);
+    --brand-surface-muted: var(--brand-field-canvas);
+    --brand-surface-raised: var(--brand-field-canvas);
+    --brand-surface-subtle: var(--brand-field-canvas);
+    --brand-surface-interactive: var(--brand-field-canvas);
+    --brand-text: var(--brand-field-text);
+    --brand-text-muted: var(--brand-field-text);
+    --brand-text-subtle: var(--brand-field-text);
+    --brand-border: color-mix(in srgb, var(--brand-field-text) 24%, transparent);
+    --brand-border-strong: color-mix(in srgb, var(--brand-field-text) 65%, transparent);
+    --brand-focus: var(--brand-field-text);
+    --brand-focus-ring: color-mix(in srgb, var(--brand-field-text) 40%, transparent);
+    --brand-accent: var(--brand-field-action);
+    --brand-accent-hover: var(--brand-field-action-hover);
+    --brand-accent-text: var(--brand-field-action-text);
+    --brand-accent-foreground: var(--brand-field-text);
+    --brand-accent-subtle: var(--brand-field-canvas);
+    --brand-action-depth-from: var(--brand-field-action);
+    --brand-action-depth-to: var(--brand-field-action);
+    --brand-action-depth-text: var(--brand-field-action-text);
+    --brand-action-depth-sheen: transparent;
+    --brand-action-depth-glow: transparent;
+    --ba-link: var(--brand-field-text);
   }
-  :where(.ba[data-surface]) {
+  :where(.ba[data-surface], [data-surface="inverse"]) {
     background-color: var(--brand-canvas);
     color: var(--brand-text);
-  }
-  :where(.ba[data-surface="brand"]) {
-    /* Lighter top, deeper bottom, same hue: the light model, never a hue shift. */
-    background-image: linear-gradient(180deg, var(--brand-action-depth-from, var(--brand-accent)), var(--brand-accent-hover));
   }
 
   /* ── Shared helpers ─────────────────────────────────────────────────────── */

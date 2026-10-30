@@ -1,0 +1,33 @@
+---
+import Dev from "../../../layouts/Dev.astro";
+---
+<Dev title="BrandCloud identity" description="Original modular-cloud logo, path-based SVG assets and usage guidance."
+  lede="Three connected modules form a cloud. The mark represents reusable pieces working as one system.">
+  <section class="dv-section" aria-labelledby="identity-main">
+    <h2 id="identity-main">The logo</h2>
+    <div class="identity-proof">
+      <img src="/brand/brandcloud-lockup-horizontal-white.svg" alt="BrandCloud" width="400" height="100" />
+    </div>
+    <div class="identity-proof identity-proof--inverse">
+      <img src="/brand/brandcloud-lockup-horizontal-black.svg" alt="BrandCloud on white" width="400" height="100" />
+    </div>
+    <p>Use the white lockup on blue surfaces and the black lockup on white document panels. All SVG lettering is drawn as paths and works without a font installation.</p>
+    <p><a href="/brand/brandcloud-logo-assets.zip" download>Download the complete logo pack</a> · <a href="/brand/brand-logo-guidelines.md" download>Download usage guidelines</a></p>
+  </section>
+  <section class="dv-section" aria-labelledby="identity-small">
+    <h2 id="identity-small">Small spaces</h2>
+    <div class="identity-sizes">
+      <span class="identity-small-mark" role="img" aria-label="Small cloud mark"></span>
+      <img src="/brand/brandcloud-mark-white.svg" alt="Cloud mark at 48 pixels" width="48" height="48" />
+      <img src="/brand/brandcloud-mark-white.svg" alt="Cloud mark at 96 pixels" width="96" height="96" />
+    </div>
+    <p>Use the simplified small mark for compact controls. The pack includes SVG marks, horizontal and stacked lockups, PNG app icons and a favicon.</p>
+  </section>
+</Dev>
+<style>
+.identity-proof { padding: clamp(1.5rem, 5vw, 3rem); border: 1px solid var(--brand-border); margin-block: 1rem; }
+.identity-proof img { display: block; max-width: 100%; height: auto; }
+.identity-proof--inverse { background: var(--brand-inverse-canvas); }
+.identity-sizes { display: flex; align-items: center; gap: 2rem; padding-block: 1rem; }
+.identity-small-mark { display: block; width: 24px; height: 24px; background: var(--brand-text); mask: url("/brand/brandcloud-mark-small-currentcolor.svg") center / contain no-repeat; }
+</style>

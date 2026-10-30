@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-COMP-02: a wall of pill-shaped chips -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northgate Physio: conditions we treat (AP-COMP-02 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.chip { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 15px; }
+.groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 8px; }
+.groups h3 { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
+@media (max-width: 860px) { .groups { grid-template-columns: 1fr; gap: 28px; } }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Northgate Physio <small>Kingsport</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">Treatments</a><a href="#">Prices</a><a href="#">Find us</a><a class="btn btn-ink btn-sm" href="#">Book online</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero hero-tight">
+  <h1>Physiotherapy in Kingsport for backs, knees and running injuries.</h1>
+</section>
+<section class="wrap section">
+  <h2>What people come to us with</h2>
+  <div class="chips">
+    <span class="chip">Lower back pain</span>
+    <span class="chip">Sciatica</span>
+    <span class="chip">Neck pain</span>
+    <span class="chip">Whiplash</span>
+    <span class="chip">Runner's knee</span>
+    <span class="chip">Shin splints</span>
+    <span class="chip">Achilles pain</span>
+    <span class="chip">Plantar fasciitis</span>
+    <span class="chip">Ankle sprains</span>
+    <span class="chip">Hamstring strains</span>
+    <span class="chip">Tennis elbow</span>
+    <span class="chip">Golfer's elbow</span>
+    <span class="chip">Knee replacement</span>
+    <span class="chip">Hip replacement</span>
+    <span class="chip">ACL rehab</span>
+    <span class="chip">Frozen shoulder</span>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Northgate Physiotherapy Ltd</span><span>41 Northgate Road, Kingsport KP2 0AB</span></footer></div>
+
+</body>
+</html>

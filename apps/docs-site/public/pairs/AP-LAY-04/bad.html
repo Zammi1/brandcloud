@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-LAY-04: hero, logos, features, testimonials, pricing, FAQ, closing CTA, in the template order -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldnote: home page (AP-LAY-04 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+.logos { display: flex; flex-wrap: wrap; gap: 40px; margin-top: 20px; color: var(--muted); font-weight: 620; font-size: 18px; }
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-top: 36px; }
+details { border-bottom: 1px solid var(--line); padding: 16px 0; }
+summary { font-weight: 600; cursor: pointer; }
+details p { margin-top: 10px; color: var(--ink-2); max-width: 60ch; }
+.inline-quote { border-left: 2px solid var(--ink); padding-left: 20px; margin: 0; max-width: 56ch; }
+@media (max-width: 860px) { .three { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Fieldnote <small>Job sheets for tree surgeons</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">How it works</a><a href="#">Pricing</a><a href="#">Sign in</a><a class="btn btn-ink btn-sm" href="#">Try it for 30 days</a></nav>
+  </header></div>
+<main>
+<section class="wrap hero">
+  <div class="stack-lg">
+    <h1>Job sheets, quotes and photos for tree surgeons, on one phone.</h1>
+    <p class="lead">Write the quote in the garden and send it before you leave the drive.</p>
+    <div class="actions"><a class="btn btn-depth" href="#">Try it for 30 days</a></div>
+  </div>
+</section>
+<section class="wrap section"><p class="small">Trusted by crews at</p><div class="logos"><span>Pryor Tree Care</span><span>Oakline</span><span>Southdown Arb</span><span>Canopy Works</span><span>Treewise</span></div></section>
+<section class="wrap section"><h2>Everything you need to run your jobs</h2><div class="three"><div><h3>Quotes</h3><p class="muted">Send quotes in minutes.</p></div><div><h3>Job sheets</h3><p class="muted">Keep your crew in sync.</p></div><div><h3>Invoices</h3><p class="muted">Get paid faster.</p></div></div></section>
+<section class="wrap section"><h2>What our customers say</h2><div class="three"><blockquote><p>We used to quote on Sunday nights. Now the quote is in their inbox before we have strapped the ladders on.</p><p class="cite">Dan P.</p></blockquote><blockquote><p>Fieldnote saves us hours every week.</p><p class="cite">Chris M.</p></blockquote></div></section>
+<section class="wrap section"><h2>Simple, transparent pricing</h2><div class="three"><div class="panel"><h3>Crew</h3><p class="price">&pound;24</p><p class="muted">per month</p></div></div></section>
+<section class="wrap section"><h2>Frequently asked questions</h2><div>
+  <details><summary>Does it work without signal?</summary><p>Yes. Everything syncs when you are back in range.</p></details>
+  <details><summary>Can I bring my old customers?</summary><p>Send us the spreadsheet and we import it.</p></details>
+  <details><summary>Who owns the data?</summary><p>You do.</p></details></div></section>
+<section class="wrap section"><h2>Ready to get started?</h2><div class="actions" style="margin-top:24px"><a class="btn btn-depth" href="#">Try it for 30 days</a></div></section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Fieldnote Software Ltd</span><span>Made in Ashby Vale</span></footer></div>
+
+</body>
+</html>

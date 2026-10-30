@@ -6,7 +6,7 @@
  * Nothing is uploaded: the HTML never leaves this browser.
  */
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import pageChecksSource from "@antipatterns-lib/page-checks.js?raw";
+import pageChecksSource from "@brandcloud/antipatterns/page-checks.js?raw";
 import { Button } from "@brandcloud/ui/button";
 import { FormField } from "@brandcloud/ui/form-field";
 import { Textarea } from "@brandcloud/ui/textarea";

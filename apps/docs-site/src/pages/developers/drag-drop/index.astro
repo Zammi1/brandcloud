@@ -1,0 +1,225 @@
+---
+/**
+ * Drag and drop: SortableList, SortableTable and KanbanBoard from @brandcloud/ui, live, with copyable
+ * examples. The examples are React islands with local state; Save writes to this browser only.
+ * React useId pins the package drag-context IDs across server rendering and hydration.
+ */
+import "@brandcloud/ui/public.css";
+import Base from "../../../layouts/Base.astro";
+import Section from "@brandcloud/astro/components/Section.astro";
+import Container from "@brandcloud/astro/components/Container.astro";
+import Code from "../../../components/Code.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import DragDropGallery from "../../../components/drag-drop/DragDropGallery";
+import { uiProps } from "../../../lib/props";
+import { pkg, tgz, PACK_STEPS, NPM_NOTE } from "../../../lib/site";
+
+const ui = pkg("ui");
+const install = `pnpm add ${tgz("ui")} ${tgz("tokens")} react react-dom`;
+const styles = `import "${pkg("tokens")}/css";
+import "${ui}/public.css"; // includes the list, table, board and handle styles`;
+
+const listCode = `import { useState } from "react";
+import { SortableList } from "${ui}/drag-drop";
+
+type Ticket = { id: string; title: string };
+
+export function Queue({ initial }: { initial: Ticket[] }) {
+  const [tickets, setTickets] = useState(initial);
+  return (
+    <SortableList
+      label="Support queue"
+      items={tickets}
+      getItemLabel={(t) => t.title}
+      onItemsChange={(next) => setTickets(next)}
+      handlePlacement="custom"
+      renderItem={(t, state) => (
+        <>
+          {state.handle}
+          <span>{t.title}</span>
+          <button type="button" onClick={state.moveBackward} disabled={!state.moveBackward}>Up</button>
+          <button type="button" onClick={state.moveForward} disabled={!state.moveForward}>Down</button>
+        </>
+      )}
+    />
+  );
+}`;
+
+const tableCode = `import { useState } from "react";
+import { SortableTable, type SortableTableColumn } from "${ui}/sortable-table";
+
+type Task = { id: string; task: string; owner: string };
+
+const columns: SortableTableColumn<Task>[] = [
+  { id: "task", header: "Task", rowHeader: true },
+  { id: "owner", header: "Owner" },
+];
+
+export function Checklist({ initial }: { initial: Task[] }) {
+  const [rows, setRows] = useState(initial);
+  return (
+    <SortableTable
+      caption="Launch checklist"
+      items={rows}
+      columns={columns}
+      getItemLabel={(row) => row.task}
+      onItemsChange={(next, move) => {
+        setRows(next);
+        // move = { id, fromIndex, toIndex }
+      }}
+    />
+  );
+}`;
+
+const kanbanCode = `import { useState } from "react";
+import { KanbanBoard, type KanbanColumn } from "${ui}/kanban";
+
+type Card = { id: string; title: string };
+
+export function Board({ initial }: { initial: KanbanColumn<Card>[] }) {
+  const [columns, setColumns] = useState(initial);
+  return (
+    <KanbanBoard
+      label="Content board"
+      columns={columns}
+      getItemLabel={(card) => card.title}
+      onColumnsChange={(next, move) => setColumns(next)}
+      // Veto a move: here, Review holds two cards at most.
+      canMove={(move) =>
+        move.toColumnId !== "review" ||
+        move.fromColumnId === "review" ||
+        (columns.find((c) => c.id === "review")?.items.length ?? 0) < 2
+      }
+      renderCard={(card) => <p>{card.title}</p>}
+    />
+  );
+}`;
+
+const persistCode = `import { SortableList, type SortableMove } from "${ui}/drag-drop";
+
+// The components never store anything. Persist in the callback, then keep your state in step.
+async function persist(next: Block[], move: SortableMove) {
+  const previous = blocks;
+  setBlocks(next); // optimistic
+  try {
+    await fetch("/api/page/sections", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ order: next.map((b) => b.id), moved: move.id }),
+    });
+  } catch {
+    setBlocks(previous); // put it back and tell the user
+  }
+}
+
+<SortableList items={blocks} onItemsChange={persist} getItemLabel={(b) => b.kind} renderItem={renderBlock} />`;
+
+const examples = [
+  { id: "sortable-table", title: "Sortable table" },
+  { id: "kanban", title: "Kanban board" },
+  { id: "sortable-list", title: "Sortable list with buttons" },
+  { id: "page-sections", title: "Page sections with autosave" },
+];
+const props = {
+  list: uiProps("drag-drop", "SortableList"),
+  table: uiProps("sortable-table", "SortableTable"),
+  column: uiProps("sortable-table", "SortableTableColumn", "SortableTableColumn"),
+  board: uiProps("kanban", "KanbanBoard"),
+  lane: uiProps("kanban", "KanbanColumn", "KanbanColumn"),
+};
+---
+<Base title="Drag and drop" current="/developers/" description="Sortable lists, sortable tables and kanban boards from the React package: pointer, touch and keyboard, with live examples you can edit, reorder and save in your browser.">
+  <Section space="tight" aria-labelledby="dd-title" class="dd-head">
+    <p class="dd-crumb"><a href="/developers/">For developers</a> / <a href="/developers/components/">Components</a></p>
+    <h1 id="dd-title">Drag and drop</h1>
+    <p class="s-lead">Three ready-made components in {ui}: a sortable list, a sortable table and a kanban board. They work with a mouse, a finger and a keyboard, announce every move to
+      screen readers, and leave saving to you.</p>
+    <nav aria-label="Examples on this page">
+      <ul class="dd-jump">{examples.map((e) => <li><a href={`#${e.id}`}>{e.title}</a></li>)}<li><a href="#install">Install</a></li><li><a href="#api">Props</a></li></ul>
+    </nav>
+  </Section>
+
+  <Section space="tight" aria-labelledby="dd-how">
+    <h2 id="dd-how">How to move things</h2>
+    <ul class="dd-how">
+      <li><strong>Mouse or pen.</strong> Drag the grip <span aria-hidden="true">⠿</span> button. On kanban cards you can drag anywhere on the card except its buttons and fields.</li>
+      <li><strong>Touch.</strong> Drag the grip straight away, or press and hold a kanban card for a moment, then move. A quick swipe still scrolls the page.</li>
+      <li><strong>Keyboard.</strong> Tab to a grip, press Space or Enter to pick it up, use the arrow keys, then Space or Enter to drop. Escape puts it back. Alt with an arrow moves one place
+        without picking up.</li>
+      <li><strong>No dragging at all.</strong> Kanban cards have a Move menu. The list example has Up and Down buttons, built from the render state.</li>
+    </ul>
+    <p class="s-muted s-small">These examples keep their data in this page. Save in this browser writes to your browser's local storage on this device only; nothing is sent to a server.
+      Reset example clears it.</p>
+  </Section>
+
+  <Section space="tight" id="sortable-table" aria-labelledby="dd-table">
+    <h2 id="dd-table">Sortable table</h2>
+    <p class="dd-intro">A real <code>&lt;table&gt;</code> with a caption, column headers and a row header, so it reads as a table. Rename and remove rows while you reorder them.</p>
+    <DragDropGallery name="table" client:load><p slot="fallback" class="dd-fallback">Loading the sortable table example. It needs JavaScript.</p></DragDropGallery>
+    <Code title={`${ui}/sortable-table`} code={tableCode} />
+  </Section>
+
+  <Section space="tight" id="kanban" aria-labelledby="dd-kanban">
+    <h2 id="dd-kanban">Kanban board</h2>
+    <p class="dd-intro">Cards move within and between columns. <code>canMove</code> vetoes a move, here a limit of two cards in Review; a refused move snaps back and is announced. Tick
+      Lock Published to see a locked column: nothing moves in or out of it.</p>
+    <DragDropGallery name="kanban" client:load><p slot="fallback" class="dd-fallback">Loading the kanban board example. It needs JavaScript.</p></DragDropGallery>
+    <Code title={`${ui}/kanban`} code={kanbanCode} />
+  </Section>
+
+  <Section space="tight" id="sortable-list" aria-labelledby="dd-list">
+    <h2 id="dd-list">Sortable list with buttons</h2>
+    <p class="dd-intro">A support queue. <code>handlePlacement="custom"</code> lets each row place the grip itself, and <code>moveBackward</code> and <code>moveForward</code> give
+      plain buttons the same move and announcement as a drag.</p>
+    <DragDropGallery name="queue" client:load><p slot="fallback" class="dd-fallback">Loading the sortable list example. It needs JavaScript.</p></DragDropGallery>
+    <Code title={`${ui}/drag-drop`} code={listCode} />
+  </Section>
+
+  <Section space="tight" id="page-sections" aria-labelledby="dd-sections">
+    <h2 id="dd-sections">Page sections with autosave</h2>
+    <p class="dd-intro">The same SortableList, typed to page sections. Reorder or hide a section and the preview follows. With autosave on, the <code>onItemsChange</code> callback
+      saves every change in this browser, and the log shows each call. Swap that save for your own API, as in the code below.</p>
+    <DragDropGallery name="blocks" client:load><p slot="fallback" class="dd-fallback">Loading the page sections example. It needs JavaScript.</p></DragDropGallery>
+    <Code title="Persist in the callback" code={persistCode} />
+  </Section>
+
+  <Section space="tight" id="install" aria-labelledby="dd-install">
+    <h2 id="dd-install">Install</h2>
+    <p class="dd-intro">{NPM_NOTE}</p>
+    <Code title="Pack the packages (once)" code={PACK_STEPS} />
+    <Code title="Add them to your project" code={install} />
+    <Code title="Load the styles once" code={styles} />
+    <p class="s-muted s-small">The drag engine (<code>@dnd-kit/core</code>, <code>@dnd-kit/sortable</code>, <code>@dnd-kit/utilities</code>) comes in as a dependency of {ui}, pinned to exact
+      versions. Each component also has its own entry: <code>{ui}/drag-drop</code>, <code>{ui}/sortable-table</code> and <code>{ui}/kanban</code>.</p>
+  </Section>
+
+  <Section space="tight" id="api" aria-labelledby="dd-api">
+    <h2 id="dd-api">Props</h2>
+    <p class="dd-intro">Generated from the package at build time. Every component is controlled: pass the items, get the new order back, store it yourself. Item ids must be stable,
+      unique strings.</p>
+    <Container width="full" class="dd-props">
+      <details open><summary>SortableList</summary><PropsTable table={props.list} label="SortableList" /></details>
+      <details><summary>SortableTable</summary><PropsTable table={props.table} label="SortableTable" /></details>
+      <details><summary>SortableTableColumn</summary><PropsTable table={props.column} label="SortableTableColumn" /></details>
+      <details><summary>KanbanBoard</summary><PropsTable table={props.board} label="KanbanBoard" /></details>
+      <details><summary>KanbanColumn</summary><PropsTable table={props.lane} label="KanbanColumn" /></details>
+    </Container>
+  </Section>
+</Base>
+
+<style>
+  .dd-head h1 { font-size: var(--brand-font-size-h1); margin-block: 0.5rem 1rem; }
+  .dd-crumb { font-size: 0.875rem; color: var(--brand-text-muted); }
+  .dd-crumb a, .dd-jump a { color: inherit; }
+  .dd-jump { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 1.5rem 0 0; padding: 0; list-style: none; font-weight: 600; }
+  .dd-how { display: grid; gap: 0.6rem; max-inline-size: 46rem; padding-inline-start: 1.2rem; margin-block: 1rem; }
+  h2 { font-size: var(--brand-font-size-h3); margin-block-end: 0.75rem; scroll-margin-top: 6rem; }
+  .dd-intro { max-inline-size: 46rem; margin-block-end: 1.25rem; }
+  .dd-fallback { display: grid; place-items: center; min-block-size: 18rem; padding: 1.5rem; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card);
+    background: var(--brand-surface); color: var(--brand-text-muted); text-align: center; }
+  .dd-props { display: grid; gap: 0.75rem; padding-inline: 0; }
+  .dd-props summary { padding: 0.75rem 1rem; border: 1px solid var(--brand-border); border-radius: var(--brand-radius-control); font-weight: 650; cursor: pointer; background: var(--brand-surface); }
+  .dd-props details { min-inline-size: 0; }
+  .dd-props details[open] > summary { margin-block-end: 0.75rem; }
+  .dd-props :global(.pt__extends), .dd-props :global(.pt__extends code) { overflow-wrap: anywhere; white-space: normal; }
+</style>

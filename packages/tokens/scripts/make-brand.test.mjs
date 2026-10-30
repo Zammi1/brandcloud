@@ -102,3 +102,19 @@ test("--css writes the standalone brand stylesheet next to the brand file", asyn
   assert.match(css, /\[data-brand="acme"\]/);
   assert.match(css, /--brand-canvas: #fbfaf7/);
 });
+
+test("surface CLI export retains its profile and regenerates the same palette", async () => {
+  const outDir = await fs.mkdtemp(path.join(os.tmpdir(), "surface-brand-"));
+  const css = path.join(outDir, "surface.css");
+  const result = await run("--name", "blue-surface", "--profile", "surface", "--accent", "#ffffff", "--ink", "#080a0f", "--paper", "#1256e8", "--font-body", "Inter, sans-serif", "--out-dir", outDir, "--css", css);
+  assert.equal(result.code, 0, result.output);
+  const input = JSON.parse(await fs.readFile(path.join(outDir, "blue-surface.json"), "utf8"));
+  assert.equal(input.profile, "surface");
+  const generated = await makeBrand(input);
+  assert.equal(generated.failed, false);
+  assert.equal(generated.modes.light.canvas, "#1256e8");
+  assert.equal(generated.modes.light["accent-text"], "#080a0f");
+  const stylesheet = await fs.readFile(css, "utf8");
+  assert.match(stylesheet, /\[data-surface="inverse"\]/);
+  assert.match(stylesheet, /--brand-accent: var\(--brand-inverse-accent\)/);
+});

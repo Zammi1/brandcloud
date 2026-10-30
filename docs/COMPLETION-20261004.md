@@ -24,16 +24,15 @@ A browser fixture can replace transport, but that is not evidence of a database 
 
 ## Deployment and existing CRM access
 
-Root `vercel.json` preserves the current production headers and `/app` proxy, confirmed
-against deployment `dpl_6uAH1fgr5sGZ1VxW8VYBfEfc1LZj` on4October2026. It adds explicit
+Root `vercel.json` preserves the current production headers and `/app` proxy. It adds explicit
 repository-root build/output settings. Run deployments from this repository root so the
 config is included; root integration owns releases. Static-output-only manual deployment
 must deliberately copy the routing config, omitting repo build fields, rather than lose it.
 
 Do not remove `/app/(.*)`: it carries CRM routes **and assets**. Keep its noindex header and
 robots exclusion. Verify sign-in/deep links after any deployment. The source backup before
-the Oct3 repair does not contain the current rewrites; `/tmp/bc-deploy/vercel.json` and the
-current deployment inspect agree on the repaired config.
+the earlier routing repair does not contain the current rewrites. Keep the reviewed root
+configuration with the static output and verify the deployed routing after a release.
 
 ## Package consumption
 

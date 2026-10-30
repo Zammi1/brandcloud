@@ -33,7 +33,10 @@
     "src/feedback-prompt.tsx",
     "src/page-header.tsx",
     "src/empty-state.tsx",
-    "src/code-block.tsx"
+    "src/code-block.tsx",
+    "src/drag-drop.tsx",
+    "src/sortable-table.tsx",
+    "src/kanban.tsx"
   ],
   "compilerOptions": {
     "declaration": true,

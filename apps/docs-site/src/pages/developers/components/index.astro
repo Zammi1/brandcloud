@@ -5,6 +5,7 @@ import Dev from "../../../layouts/Dev.astro";
 import Code from "../../../components/Code.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import UiDemo from "../../../islands/UiDemo";
+import ComponentExplorer from "../../../components/explorer/ComponentExplorer";
 import Button from "@brandcloud/astro/components/Button.astro";
 import Container from "@brandcloud/astro/components/Container.astro";
 import Section from "@brandcloud/astro/components/Section.astro";
@@ -108,6 +109,11 @@ const uiGroups:
     { name: "EmptyState", file: "empty-state", text: "What to show when there is nothing yet, no results, an error or no access." },
     { name: "CodeBlock", file: "code-block", text: "Code with a copy button that reports success or failure." },
   ] },
+  { id: "ui-drag-drop", title: "Drag and drop", demo: "screens", intro: "Controlled components with pointer, touch and keyboard movement. Your app owns the saved order.", items: [
+    { name: "SortableList", file: "drag-drop", type: "SortableListProps", text: "Reorder lists, queues and grids with safe drag handles, announcements and cancellation." },
+    { name: "SortableTable", file: "sortable-table", type: "SortableTableProps", text: "Reorder semantic table rows with configurable columns, cell renderers and row headers." },
+    { name: "KanbanBoard", file: "kanban", type: "KanbanBoardProps", text: "Move cards within and between columns, including empty columns. Includes a Move menu and keyboard controls." },
+  ] },
   { id: "ui-experimental", title: "Experimental", demo: "experimental", intro: "On their own subpaths and may change before they are promoted to the stable root.", items: [
     { name: "TextButton", file: "text-button", text: "A button presented as inline text. From /experimental/text-button." },
     {
@@ -130,6 +136,8 @@ const ap = Object.fromEntries(astroList.map((n) => [n, astroProps(n)]));
 <Dev title="Components" description="Every public Astro and React component, live, with generated props tables and the hover, focus, pressed, loading, disabled and invalid states."
   lede={"Astro components render to HTML with no client JavaScript. React components are accessible primitives for interactive screens. Both read only the " +
     "tokens, so everything below follows this site's brand."}>
+  <p class="s-note"><a href="/developers/drag-drop/">Try the drag-and-drop components: Kanban, sortable tables and reorderable lists.</a></p>
+  <ComponentExplorer entries={uiGroups.flatMap(g => g.items.map(it => ({ ...it, group: g.title, demo: g.demo, anchor: `ui-${it.name.toLowerCase()}` })))} client:load />
   <section class="dv-section" aria-labelledby="idx-title">
     <h2 id="idx-title">On this page</h2>
     <div class="cmp-index">
@@ -323,7 +331,7 @@ const ap = Object.fromEntries(astroList.map((n) => [n, astroProps(n)]));
     <section class="dv-section" id={g.id} aria-labelledby={`${g.id}-t`}>
       <h2 id={`${g.id}-t`}>React: {g.title}</h2>
       <p>{g.intro}</p>
-      <UiDemo name={g.demo} client:visible />
+      {g.id === "ui-drag-drop" ? <p><a href="/developers/drag-drop/">Open the interactive table, Kanban, queue and page-block examples.</a></p> : <UiDemo name={g.demo} client:visible />}
       {g.items.map((it) => {
         const table = it.type === "-" ? null : uiProps(it.file, it.name, it.type);
         return (

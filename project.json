@@ -2,7 +2,7 @@
   "$comment": "The one place the product name and package scope live. Rename with: node scripts/rename.mjs --product \"New Name\" --scope @newscope --pro-scope @newscope-pro",
   "product": "BrandCloud",
   "scope": "@brandcloud",
-  "proScope": "@brandcloud-pro",
+  "proScope": "@brand-pro",
   "repository": "Zammi1/brandcloud",
   "docsUrl": "https://brandui.cloud"
 }

@@ -19,7 +19,7 @@ import { Notice } from "@brandcloud/ui/notice";
 import { CodeBlock } from "@brandcloud/ui/code-block";
 
 export interface FontChoice { id: string; label: string; stack: string }
-export interface Preset { name: string; label: string; accent: string; ink: string; paper: string; display: string; body: string; appearance: "depth" | "solid" }
+export interface Preset { profile?: "neutral" | "surface"; name: string; label: string; accent: string; ink: string; paper: string; display: string; body: string; appearance: "depth" | "solid" }
 
 interface Props {
   presets: Preset[];
@@ -37,8 +37,8 @@ const FRIENDLY: Record<string, string> = {
   "text-subtle": "Subtle text",
   accent: "Links (accent)",
   "accent-text": "Solid button label",
-  "inverse-text": "Text on dark sections",
-  "inverse-text-muted": "Muted text on dark sections",
+  "inverse-text": "Text on inverse sections",
+  "inverse-text-muted": "Muted text on inverse sections",
   "action-depth-text": "Depth button label",
   "action-ink-text": "Ink button label",
   "whatsapp-text": "WhatsApp button label",
@@ -166,6 +166,7 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
   const [display, setDisplay] = useState(fontFor(first.display));
   const [body, setBody] = useState(fontFor(first.body));
   const [appearance, setAppearance] = useState<"depth" | "solid">(first.appearance);
+  const [profile, setProfile] = useState<"neutral" | "surface">(first.profile ?? "neutral");
   const [mode, setMode] = useState<Mode>("light");
   const [logo, setLogo] = useState<{ name: string; colours: string[] } | null>(null);
   const [logoError, setLogoError] = useState<string>();
@@ -176,8 +177,8 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
   const fontStack = (id: string) => fonts.find((f) => f.id === id)?.stack ?? fonts[0].stack;
 
   const input: BrandInput = useMemo(
-    () => ({ name, label, accent: colours.accent, ink: colours.ink, paper: colours.paper, fonts: { display: fontStack(display), body: fontStack(body) }, appearance }),
-    [name, label, colours, display, body, appearance],
+    () => ({ name, label, profile, accent: colours.accent, ink: colours.ink, paper: colours.paper, fonts: { display: fontStack(display), body: fontStack(body) }, appearance }),
+    [name, label, colours, display, body, appearance, profile],
   );
 
   const result = useMemo(() => {
@@ -217,8 +218,8 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
   useEffect(() => () => styleRef.current?.remove(), []);
 
   const json = useMemo(() =>
-    JSON.stringify({ name, label, accent: colours.accent, ink: colours.ink, paper: colours.paper, fonts: { body: fontStack(body), display: fontStack(display) }, appearance }, null, 2) +
-    "\n", [name, label, colours, body, display, appearance]);
+    JSON.stringify({ name, label, profile, accent: colours.accent, ink: colours.ink, paper: colours.paper, fonts: { body: fontStack(body), display: fontStack(display) }, appearance }, null, 2) +
+    "\n", [name, label, colours, body, display, appearance, profile]);
   const css = useMemo(() => (result.ok ? brandCss(name, label, result.modes) : ""), [result, name, label]);
   const jsonUrl = useDownloadUrl(json, "application/json");
   const cssUrl = useDownloadUrl(css, "text/css");
@@ -237,6 +238,7 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
     setDisplay(fontFor(p.display));
     setBody(fontFor(p.body));
     setAppearance(p.appearance);
+    setProfile(p.profile ?? "neutral");
   };
 
   const onLogo = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -281,6 +283,8 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
   };
   const allPass = result.ok && (["light", "dark"] as Mode[]).every((m) => result.checks[m].errors.length === 0);
 
+  const canExport = allPass && Object.values(drafts).every((value) => Boolean(cleanHex(value)));
+
   return (
     <div className="bb">
       <form className="bb-controls" aria-labelledby="bb-controls-title" onSubmit={(e) => e.preventDefault()}>
@@ -297,9 +301,11 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
 
         <fieldset className="bb-group">
           <legend className="bb-legend">Colours</legend>
+          <RadioGroup legend="Surface style" name="bb-profile" value={profile} onValueChange={(v) => setProfile(v as "neutral" | "surface")}
+            options={[{ value: "surface", label: "Brand-coloured surfaces" }, { value: "neutral", label: "Neutral surfaces" }]} />
           {(["accent", "ink", "paper"] as Target[]).map((key) => {
             const valid = Boolean(cleanHex(drafts[key]));
-            const help = { accent: "Buttons, links and highlights.", ink: "Text. Made darker if it needs to be, to pass.", paper: "The page background." }[key];
+            const help = { accent: "Primary button fill and highlights.", ink: profile === "surface" ? "Primary button label. Page text adapts to your surfaces." : "Text. Adjusted when needed to pass contrast.", paper: profile === "surface" ? "Your brand colour across the page and working surfaces." : "The page background." }[key];
             return (
               <div className="bb-colour" key={key}>
                 <FormField label={key[0].toUpperCase() + key.slice(1)} description={help} error={valid ? undefined : colourHelp}>
@@ -404,10 +410,20 @@ export default function BrandBuilder({ presets, fonts, productName, children }: 
             <h2 id="bb-export-title" className="bb-h">Export</h2>
             <p className="bb-help">The JSON has the same shape as the brand files in the kit. The CSS holds every token for light and dark, ready to import.</p>
             <div className="s-cluster">
-              <Button render={<a href={jsonUrl} download={`${name}.json`} />} size="md">Download {name}.json</Button>
-              <Button render={<a href={cssUrl} download={`${name}.css`} />} tone="ink" size="md">Download {name}.css</Button>
+              <Button render={canExport ? <a href={jsonUrl} download={`${name}.json`} /> : undefined} disabled={!canExport} size="md">Download {name}.json</Button>
+              <Button render={canExport ? <a href={cssUrl} download={`${name}.css`} /> : undefined} disabled={!canExport} tone="ink" size="md">Download {name}.css</Button>
             </div>
-            {!allPass && <p className="bb-help">This brand still fails a required check. The kit's build refuses a brand file that fails, so fix it before you hand it over.</p>}
+            {!canExport && <p className="bb-help" role="status">Downloads unlock when every colour input is valid and both themes pass the required contrast checks. Fix the highlighted inputs or choose another starting example.</p>}
+            <details className="bb-details">
+              <summary>Install this brand in a project</summary>
+              <ol>
+                <li>Download both files. Add the CSS to your site and import it after the core tokens stylesheet.</li>
+                <li>Set <code>data-brand="{name}"</code> and <code>data-theme="light"</code> on your page wrapper. Use <code>data-theme="dark"</code> for dark mode.</li>
+                <li>Keep the JSON as the editable source. Add it to the kit’s brands folder when building your own token package.</li>
+                <li>Load the selected fonts in your app, then check a real page at mobile and desktop widths.</li>
+              </ol>
+              <a href="/developers/getting-started/">Get the free packages and installation guide</a>
+            </details>
             <CodeBlock title={`${name}.json`} language="JSON" code={json} />
           </section>
         )}

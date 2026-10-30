@@ -16,12 +16,11 @@ import { ruleCounts } from "../lib/rules";
 import type { FaqItem, HeroCopy, StepItem } from "@brandcloud/astro/copy-types";
 
 const hero: HeroCopy = {
-  heading: "Landing pages that look made by hand, not by a prompt",
-  lede: "Set your colours and fonts once and the whole page follows them, with every text colour checked for contrast. Before it goes live, score the page for " +
-    "the tells that make visitors think it was generated.",
+  heading: "One brand. Every page feels like yours.",
+  lede: "Give your brand a home: colours, type, buttons and complete page sections that work together. Build your free brand kit, put it on a real page and check the details before you publish.",
   primary: { label: "Build your brand, free", href: "/brand-builder/" },
-  secondary: { label: "Score a page for AI tells", href: "/ai-look-score/" },
-  note: "Both tools run in your browser. No account and no email needed.",
+  secondary: { label: "Explore the components", href: "/developers/components/" },
+  note: "Free brand builder · Open-source components · No account needed",
 };
 
 const steps: StepItem[] = [
@@ -63,6 +62,15 @@ const faq: FaqItem[] = [
     <Specimen slot="media" />
   </Hero>
 
+  <Section space="tight" aria-labelledby="start-title">
+    <div class="h-start">
+      <h2 id="start-title">Start where you are.</h2>
+      <a href="/brand-builder/"><span class="h-start__number">01</span><strong>I need a brand</strong><span>Choose colours, check contrast, export your kit.</span><span aria-hidden="true">↗</span></a>
+      <a href="/recipes/"><span class="h-start__number">02</span><strong>I need a page</strong><span>Pick a working recipe and make it your own.</span><span aria-hidden="true">↗</span></a>
+      <a href="/pro/"><span class="h-start__number">03</span><strong>I need the whole workflow</strong><span>Brief, draft, review and export with Pro.</span><span aria-hidden="true">↗</span></a>
+    </div>
+  </Section>
+
   <Section tone="raised" aria-labelledby="tools-title" id="tools">
     <div class="s-sechead" data-split>
       <Heading as="h2" id="tools-title">Two free tools to start with</Heading>
@@ -76,7 +84,7 @@ const faq: FaqItem[] = [
             contrast check listed beside it and its ratio. When it passes, export the brand file for your developer.</p>
         </div>
         <ul class="h-tool__facts">
-          <li><strong class="s-num">Four inputs</strong><span>accent, ink, paper and font</span></li>
+          <li><strong>Your brand</strong><span>colours, surface style and fonts</span></li>
           <li><strong>WCAG 2.2 AA</strong><span>checked on text, buttons and levels</span></li>
           <li><strong>JSON and CSS</strong><span>ready for the kit</span></li>
         </ul>
@@ -163,7 +171,7 @@ const faq: FaqItem[] = [
       <div class="h-split__col ba" data-surface="ink">
         <h3>{PRO_NAME}, opening with the first release</h3>
         <ul class="s-ticks">
-          <li><Icon name="plus" />A guided copywriting workflow, linted so it never reads as AI</li>
+          <li><Icon name="plus" />A guided copywriting workflow, checked for unsupported claims and common AI writing patterns</li>
           <li><Icon name="plus" />Selling sections: offer ladders, pricing tiers, guarantees and proof</li>
           <li><Icon name="plus" />A signature theme pack and premium page recipes</li>
           <li><Icon name="plus" />App sections and agent UI for product teams</li>
@@ -193,6 +201,16 @@ const faq: FaqItem[] = [
 </Base>
 
 <style>
+  .h-start { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:0 2rem; }
+  .h-start h2 { grid-column:1/-1; font-size:1.125rem; margin-block-end:1rem; }
+  .h-start a { position:relative; display:grid; gap:.55rem; border-block-start:1px solid var(--brand-border-strong); padding-block:1.25rem; text-decoration:none; color:var(--brand-text); }
+  .h-start a:hover strong { text-decoration:underline; text-underline-offset:.2em; }
+  .h-start strong { font-family:var(--brand-font-display); font-size:1.35rem; }
+  .h-start a>span:not(:last-child) { color:var(--brand-text-muted); }
+  .h-start a>span:last-child { position:absolute; inset-inline-end:0; top:1.25rem; }
+  .h-start__number { font-variant-numeric:tabular-nums; font-size:.875rem; }
+  @media(max-width:45rem) { .h-start { grid-template-columns:1fr; } }
+
   .h-tools { display: grid; gap: 1.5rem; }
   @media (min-width: 60rem) { .h-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; } }
   .h-tool {

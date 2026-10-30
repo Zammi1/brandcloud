@@ -18,14 +18,19 @@
     "instructions": []
   },
   "design": {
-    "colorMode": "unknown",
-    "colors": {},
+    "colorMode": "blue surfaces; deeper blue dark mode; explicit white inverse",
+    "colors": {
+      "canvas": "#1256e8",
+      "primary": "#ffffff",
+      "primaryLabel": "#080a0f",
+      "text": "#ffffff"
+    },
     "typography": {},
     "spacing": {},
     "radius": {},
     "shadows": {},
     "motion": {},
-    "density": "unknown"
+    "density": "comfortable marketing, compact application"
   },
   "components": {
     "installed": [],
@@ -34,7 +39,7 @@
   },
   "constraints": {
     "must": [
-      "Preserve docs brand, account-free local tools, MIT/private boundary",
+      "Preserve blue surfaces, white primary actions with black labels, account-free local tools, MIT/private boundary",
       "Reuse @brandcloud/astro primitives"
     ],
     "avoid": [
@@ -43,8 +48,12 @@
     ]
   },
   "decisions": [
-    "Existing Astro Button and form semantics reused; 21st search did not find a relevant improvement."
+    "Existing Astro Button and form semantics reused; 21st search did not find a relevant improvement.",
+    "2026-10-08: owner selected blue surfaces and white primary actions. Reusable surface brand profile derives full light/dark/inverse contexts and validates rendered depth-label contrast.",
+    "2026-10-08: out-of-box controlled sortable lists, semantic reorderable tables and cross-column Kanban use pinned MIT dnd-kit sensors with keyboard/touch/pointer support and consumer-owned persistence callbacks. Native primitives reused; catalogue search retained as provenance."
   ],
-  "evidence": [],
+  "evidence": [
+    "analysis/brandcloud-full-system-2026-10-08/evidence/drag-drop-catalogue-search.log"
+  ],
   "generatedAt": "2026-10-04T12:37:58.776Z"
 }

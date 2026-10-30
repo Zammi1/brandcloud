@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- ANTIPATTERN AP-MOT-06: a radial glow that follows the pointer across the page -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldnote: cursor spotlight (AP-MOT-06 bad)</title>
+<link rel="stylesheet" href="../_shared/good.css">
+<style>
+/* ANTIPATTERN AP-MOT-06 */
+.spot { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(520px circle at var(--x, 60%) var(--y, 30%), rgba(59, 130, 246, 0.16), transparent 45%); }
+main, .wrap { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="bar">
+    <a class="brand" href="#">Fieldnote <small>Job sheets for tree surgeons</small></a>
+    <nav class="nav" aria-label="Main"><a href="#">How it works</a><a href="#">Pricing</a><a href="#">Sign in</a><a class="btn btn-ink btn-sm" href="#">Try it for 30 days</a></nav>
+  </header></div>
+<main>
+<div class="spot" aria-hidden="true"></div>
+<section class="wrap hero">
+  <h1>Job sheets, quotes and photos for tree surgeons, on one phone.</h1>
+  <div class="hero-grid">
+    <div class="stack-lg">
+      <p class="lead">Write the quote in the garden, send it before you leave the drive, and have the job sheet ready for the crew on the day.</p>
+      <div class="actions"><a class="btn btn-depth" href="#">Try it for 30 days</a><a class="textlink" href="#">See a sample job sheet</a></div>
+    </div>
+    <div class="panel stack">
+      <h3>&pound;24 a month per crew</h3>
+      <p class="muted">Up to four people on one account. Cancel from the app.</p>
+      <ul class="plain-list">
+        <li>Quotes with photos and a signature box</li>
+        <li>Job sheets with access notes and the waste plan</li>
+        <li>Invoices that match the quote line by line</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<div class="wrap"><footer class="footer"><span>&copy; 2026 Fieldnote Software Ltd</span><span>Made in Ashby Vale</span></footer></div>
+<script>
+addEventListener('pointermove', (e) => { document.documentElement.style.setProperty('--x', e.clientX + 'px'); document.documentElement.style.setProperty('--y', e.clientY + 'px'); });
+</script>
+</body>
+</html>

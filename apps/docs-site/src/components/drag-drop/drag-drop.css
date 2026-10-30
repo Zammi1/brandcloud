@@ -1,0 +1,77 @@
+/* Drag and drop examples. Tokens only; the package styles the lists, table, board and handles. */
+.ddg-example {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+  padding: clamp(0.75rem, 3vw, 1.5rem);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-card);
+  background: var(--brand-surface);
+  color: var(--brand-text);
+}
+.ddg-example p { margin: 0; }
+
+.ddg-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; }
+.ddg-bar__state { font-size: 0.875rem; font-weight: 650; }
+.ddg-bar__state[data-state="dirty"] { padding-inline-start: 0.6rem; box-shadow: inset 3px 0 0 var(--brand-focus); }
+.ddg-bar__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
+.ddg-bar__status { flex: 1 1 100%; min-block-size: 1.4em; color: var(--brand-text-muted); font-size: 0.875rem; }
+.ddg-bar__status:empty { min-block-size: 0; }
+
+.ddg-note { color: var(--brand-text-muted); font-size: 0.875rem; }
+.ddg-num { font-variant-numeric: tabular-nums; color: var(--brand-text-muted); font-weight: 650; min-inline-size: 1.25rem; }
+.ddg-hidden {
+  position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.ddg-row-actions { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem; }
+
+.ddg-scroll { position: relative; overflow-x: auto; min-inline-size: 0; border-radius: var(--brand-radius-control); }
+.ddg-scroll:focus-visible { outline: 2px solid var(--brand-focus); outline-offset: 2px; }
+.ddg-scroll .brand-sortable-table__table { min-inline-size: 34rem; }
+
+.ddg-add { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem; max-inline-size: 32rem; }
+.ddg-add > :first-child { flex: 1 1 12rem; min-inline-size: 0; }
+
+.ddg-rename { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; min-inline-size: 0; }
+.ddg-rename > :first-child { flex: 1 1 10rem; min-inline-size: 0; }
+.ddg-rename__actions { display: inline-flex; gap: 0.25rem; }
+
+/* Kanban: columns scroll sideways on narrow screens instead of squeezing. */
+.ddg-board { position: relative; overflow-x: auto; min-inline-size: 0; padding-block-end: 0.25rem; }
+@media (min-width: 64rem) { .ddg-narrow { display: none; } }
+.ddg-card { display: grid; gap: 0.25rem; }
+.ddg-card__title { font-weight: 650; overflow-wrap: anywhere; }
+.ddg-card__tag { color: var(--brand-text-muted); font-size: 0.8125rem; }
+.ddg-card__tools { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-inline-start: -0.5rem; }
+
+.ddg-ticket { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; min-inline-size: 0; }
+.ddg-ticket__text { display: grid; flex: 1 1 12rem; min-inline-size: 0; }
+.ddg-ticket__title { font-weight: 650; overflow-wrap: anywhere; }
+.ddg-ticket__meta { color: var(--brand-text-muted); font-size: 0.875rem; }
+
+.ddg-blocks { display: grid; gap: 1.25rem; min-inline-size: 0; }
+@media (min-width: 48rem) { .ddg-blocks { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: start; } }
+.ddg-block { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; min-inline-size: 0; }
+.ddg-block[data-hidden] .ddg-block__text { opacity: 0.7; text-decoration: line-through; }
+.ddg-block__text { display: grid; min-inline-size: 0; flex: 1 1 10rem; }
+.ddg-block__kind { font-family: var(--brand-font-mono); font-size: 0.8125rem; color: var(--brand-text-muted); }
+.ddg-block__heading { font-weight: 650; overflow-wrap: anywhere; }
+
+.ddg-preview { margin: 0; display: grid; gap: 0.6rem; min-inline-size: 0; }
+.ddg-preview figcaption { font-size: 0.875rem; font-weight: 650; }
+.ddg-preview__page {
+  display: grid; gap: 0.4rem; margin: 0; padding: 0.6rem; list-style: none;
+  border: 1px solid var(--brand-border); border-radius: var(--brand-radius-card); background: var(--brand-canvas);
+}
+.ddg-preview__block {
+  display: grid; gap: 0.15rem; padding: 0.6rem 0.75rem; border-radius: var(--brand-radius-control);
+  background: var(--brand-surface-raised); font-size: 0.875rem; overflow-wrap: anywhere;
+}
+.ddg-preview__block[data-kind="Hero"] { padding-block: 1.25rem; font-size: 1rem; font-weight: 650; }
+.ddg-preview__block[data-kind="CtaBand"] { background: var(--brand-field-canvas); color: var(--brand-field-text); }
+.ddg-preview__kind { font-family: var(--brand-font-mono); font-size: 0.75rem; font-weight: 400; opacity: 0.85; }
+
+.ddg-log { display: grid; gap: 0.4rem; padding-block-start: 0.75rem; border-block-start: 1px solid var(--brand-border); }
+.ddg-log__title { font-family: var(--brand-font-mono); font-size: 0.8125rem; font-weight: 650; }
+.ddg-log ol { margin: 0; padding-inline-start: 1.25rem; display: grid; gap: 0.2rem; font-size: 0.875rem; }
