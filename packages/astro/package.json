@@ -49,7 +49,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@brandcloud/tokens": "workspace:*",
-    "astro": "^7.3.5",
+    "astro": "^7.4.7",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
